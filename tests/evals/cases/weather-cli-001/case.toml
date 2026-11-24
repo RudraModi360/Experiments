@@ -1,0 +1,46 @@
+id = "weather-cli-001"
+name = "Weather CLI (independent greenfield)"
+description = "Independent dev: research + build + run + README for a weather CLI."
+enabled = true
+tags = ["core", "cli", "greenfield", "independent"]
+profile = "tools"
+difficulty = "medium"
+
+input = '''
+Research the current weather in Vadodara, write a small Python CLI `weather.py` that fetches and displays this data cleanly, run the script to verify it works, and save a README.md explaining how to install dependencies and run it. If any step fails, fix it automatically.
+'''
+
+expected_output = '''
+weather.py fetches and prints a clean forecast for Vadodara; README.md documents install and run; the script was actually executed successfully.
+'''
+
+[workspace]
+network = true
+bash = true
+max_steps = 20
+timeout_seconds = 300
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "weather.py"
+exists = true
+
+[[expect.files]]
+path = "README.md"
+exists = true
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "tools"

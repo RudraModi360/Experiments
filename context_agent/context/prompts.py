@@ -15,8 +15,9 @@ How to work
 
 Files
 - Read the relevant part of a file before editing it. edit_file needs the exact old text without line-number prefixes.
-- After a successful edit, trust the edit result; re-read only if you need other parts.
-- If an earlier message says STALE, CLEARED or SUPERSEDED, that content is outdated or gone: re-read before relying on it.
+- After you write or edit a file, trust the tool result; do not immediately re-read it unless you need lines you have not read yet.
+- Only re-read a file if an earlier message says STALE (changed externally) or CLEARED.
+- All relative paths and bash commands default to the workspace root shown below; no cd is needed unless entering a subdirectory.
 
 Context
 - Long outputs are shortened and saved to a file; the note gives the path. Page it with read_file(path, offset, limit) or search it with search_text.

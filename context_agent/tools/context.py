@@ -28,15 +28,33 @@ class ToolExecutionContext:
     def spill_dir(self) -> str:
         return self.store.spill_dir
 
-    @staticmethod
-    def resolve(path: str) -> str:
+    def resolve(self, path: str) -> str:
         if not path or not path.strip():
             raise ToolError("empty path")
-        return os.path.abspath(os.path.expanduser(path.strip()))
+        raw = path.strip()
+        if raw.startswith("spill/") or raw.startswith("spill" + os.sep):
+            local = os.path.abspath(raw)
+            if not os.path.exists(local):
+                return os.path.abspath(os.path.join(self.store.spill_dir, raw[len("spill/"):]))
+        return os.path.abspath(os.path.expanduser(raw))
 
     def is_spill(self, path: str) -> bool:
         spill = os.path.normcase(os.path.abspath(self.store.spill_dir)) + os.sep
         return os.path.normcase(os.path.abspath(path)).startswith(spill)
+
+    def short_path(self, path: str) -> str:
+        abs_p = os.path.abspath(path)
+        if self.is_spill(abs_p):
+            return "spill/" + os.path.basename(abs_p)
+        try:
+            rel = os.path.relpath(abs_p, os.getcwd())
+            if rel == ".":
+                return "."
+            if not rel.startswith("..") and not os.path.isabs(rel):
+                return rel
+        except ValueError:
+            pass
+        return abs_p
 
     @staticmethod
     def display_path(path: str, base: str) -> str:
@@ -56,15 +74,14 @@ class ToolExecutionContext:
                     return
                 yield os.path.join(cur, name)
 
-    @staticmethod
-    def missing(p: str) -> ToolError:
+    def missing(self, p: str) -> ToolError:
         hint = ""
         parent = os.path.dirname(p) or "."
         if os.path.isdir(parent):
             close = difflib.get_close_matches(os.path.basename(p), os.listdir(parent), n=3, cutoff=0.5)
             if close:
                 hint = " Did you mean: " + ", ".join(close) + "?"
-        return ToolError(f"'{p}' does not exist.{hint}")
+        return ToolError(f"'{self.short_path(p)}' does not exist.{hint}")
 
     def save_spill(self, tag: str, text: str) -> str:
         digest = hashlib.sha1(text.encode("utf-8", "replace")).hexdigest()[:10]

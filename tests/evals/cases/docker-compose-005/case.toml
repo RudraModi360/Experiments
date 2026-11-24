@@ -1,0 +1,70 @@
+id = "docker-compose-005"
+name = "Docker compose (buildable image trap)"
+description = "Production Docker + compose; Dockerfile must actually build."
+enabled = true
+tags = ["docker", "devops", "greenfield", "consistency"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+Create a small Python HTTP service `service/app.py` (stdlib only) that reads `PORT` and `APP_TOKEN` from env and serves `GET /healthz` returning {"status":"ok"} and `GET /` returning a greeting with the token's first 4 chars. Then write a production-ready multi-stage `Dockerfile` (builder + slim runtime, non-root user, requirements copied before install for layer caching, correct CMD) and `compose.yaml` mapping host port 8080 and APP_TOKEN=demo-token-123. No Docker daemon - do not run docker. Validate via `smoke.sh`. Ensure names consistent. Write `DOCKER-NOTES.md`. If smoke fails, fix it. The Dockerfile must be buildable (no missing files).
+'''
+
+expected_output = '''
+service/app.py works; Dockerfile is multi-stage and buildable; compose maps 8080 and token; smoke.sh passes (smoke OK); DOCKER-NOTES.md explains decisions.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+
+[expect]
+truncated_ok = false
+
+[[expect.commands]]
+command = "bash smoke.sh"
+cwd = "."
+exit_code = 0
+contains = ["smoke OK"]
+timeout = 60
+
+[[expect.files]]
+path = "Dockerfile"
+exists = true
+contains = ["COPY --from=", "USER"]
+
+[[expect.files]]
+path = "compose.yaml"
+exists = true
+contains = ["8080", "APP_TOKEN", "demo-token-123"]
+
+[[expect.files]]
+path = "service/app.py"
+exists = true
+contains = ["PORT", "APP_TOKEN", "/healthz"]
+
+[[expect.files]]
+path = "DOCKER-NOTES.md"
+exists = true
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"
+use = ["cross_file_consistency"]

@@ -67,10 +67,11 @@ class FileSystemTools:
 
     def read_file(self, path: str, offset: int = 1, limit: int = 200, start_char: int = 0) -> ToolResult:
         p = self.ctx.resolve(path)
+        disp = self.ctx.short_path(p)
         info = self.read_core(p, offset, limit, start_char, max(800, self.ctx.cap - 400))
         first, last, total, version = info["first"], info["last"], info["total"], info["version"]
         spill = self.ctx.is_spill(p)
-        header = f"[read_file {p} | version {version} | "
+        header = f"[read_file {disp} | version {version} | "
         if not info["text"]:
             body = "(empty file)" if total == 0 else f"(offset {offset} is past the end; the file has {total} lines)"
             return ToolResult(header + f"{total} lines]\n" + body, capped=True)
@@ -81,25 +82,26 @@ class FileSystemTools:
         meta: Dict[str, Any] = {}
         if not spill:
             changed = self.files.note_read(p, first, last, total, version)
-            meta = {"path": path_key(p), "display": p, "version": version, "range": [first, last]}
+            meta = {"path": path_key(p), "display": disp, "version": version, "range": [first, last]}
             if changed:
                 header += "\nNOTE: this file changed since you last saw it; older copies in the conversation are outdated."
         return ToolResult(header + "\n" + info["text"], meta=meta, capped=True)
 
     def write_file(self, path: str, content: str, overwrite: bool = False) -> ToolResult:
         p = self.ctx.resolve(path)
+        disp = self.ctx.short_path(p)
         if os.path.isdir(p):
-            raise ToolError(f"'{p}' is a directory")
+            raise ToolError(f"'{disp}' is a directory")
         existed = os.path.exists(p)
         newline, bom = "\n", False
         if existed:
             rec, current = self.files.get(p), file_version(p)
             if not overwrite:
                 if rec is None:
-                    raise ToolError(f"'{p}' already exists and you have not read it in this session. "
+                    raise ToolError(f"'{disp}' already exists and you have not read it in this session. "
                                     f"Read it first, or call write_file again with overwrite=true to replace it.")
                 if rec.version != current:
-                    raise ToolError(f"'{p}' changed since you last saw it (v{rec.version} -> v{current}). "
+                    raise ToolError(f"'{disp}' changed since you last saw it (v{rec.version} -> v{current}). "
                                     f"Read it again, or use overwrite=true.")
             try:
                 _, newline, bom = decode_text_file(p)
@@ -110,8 +112,8 @@ class FileSystemTools:
         version = file_version(p) or ""
         lines = text.count("\n") + (0 if (text.endswith("\n") or not text) else 1)
         self.files.note_write(p, version, lines, created=not existed, edit=False)
-        return ToolResult(f"{'Overwrote' if existed else 'Created'} {p} ({lines} lines, {fmt_size(len(text.encode()))}, version {version}).",
-                          meta={"path": path_key(p), "display": p, "version": version}, capped=True)
+        return ToolResult(f"{'Overwrote' if existed else 'Created'} {disp} ({lines} lines, {fmt_size(len(text.encode()))}, version {version}).",
+                          meta={"path": path_key(p), "display": disp, "version": version}, capped=True)
 
     @staticmethod
     def _find_relaxed(lines: List[str], old_lines: List[str]) -> List[int]:
@@ -122,10 +124,11 @@ class FileSystemTools:
 
     def edit_file(self, path: str, old_content: str, new_content: str, replace_all: bool = False) -> ToolResult:
         p = self.ctx.resolve(path)
+        disp = self.ctx.short_path(p)
         if not os.path.exists(p):
             raise self.ctx.missing(p)
         if os.path.isdir(p):
-            raise ToolError(f"'{p}' is a directory")
+            raise ToolError(f"'{disp}' is a directory")
         text, newline, bom = decode_text_file(p)
         rec, before = self.files.get(p), file_version(p)
         warn = ""
@@ -135,6 +138,8 @@ class FileSystemTools:
         new = new_content.replace("\r\n", "\n")
         if not old:
             raise ToolError("old_content is empty")
+        if old == new:
+            raise ToolError("old_content and new_content are identical; no change made.")
 
         spans: List[Tuple[int, int]] = []  # (start, end) character offsets in text
         idx = text.find(old)
@@ -189,12 +194,15 @@ class FileSystemTools:
         version = file_version(p) or ""
         new_lines = updated.split("\n")
         total = len(new_lines) - (1 if updated.endswith("\n") else 0)
-        self.files.note_write(p, version, total, created=False, edit=True)
+        new_span_end = min(total, first_line + len(new.split("\n")) - 1)
+        self.files.note_write(p, version, total, created=False, edit=True, read_range=[first_line, new_span_end])
 
         lo = max(1, first_line - 2)
-        hi = min(total, first_line + len(new.split("\n")) + 1)
-        hi = min(hi, lo + 13)
+        full_hi = min(total, first_line + len(new.split("\n")) + 1)
+        hi = min(full_hi, lo + 23)
         snippet = "\n".join(f"{i}| {clip(new_lines[i - 1], 200)}" for i in range(lo, hi + 1))
-        return ToolResult(f"{warn}Edited {p}: replaced {len(chosen)} occurrence(s), first at line {first_line}. "
+        if full_hi > hi:
+            snippet += f"\n... (+{full_hi - hi} more edited lines through line {full_hi})"
+        return ToolResult(f"{warn}Edited {disp}: replaced {len(chosen)} occurrence(s), first at line {first_line}. "
                           f"New version {version}, {total} lines. Result around the change:\n{snippet}",
-                          meta={"path": path_key(p), "display": p, "version": version}, capped=True)
+                          meta={"path": path_key(p), "display": disp, "version": version}, capped=True)

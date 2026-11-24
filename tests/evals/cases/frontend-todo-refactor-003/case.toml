@@ -1,0 +1,57 @@
+id = "frontend-todo-refactor-003"
+name = "Frontend todo refactor (hidden regressions)"
+description = "Vanilla JS todo with storage + delegation + filter; tests are shallow."
+enabled = true
+tags = ["code", "frontend", "debug"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+`./site` is a vanilla HTML/CSS/JS todo app (no build step). Users report that tasks disappear after reload and the delete button stops working for newly added tasks. Find and fix both bugs, then add a filter bar (All / Active / Done) that persists the selected filter in the URL hash. Keep it dependency-free. Run `node --test site/tests/app.test.mjs` and make it pass. Report each root cause and files changed.
+'''
+
+expected_output = '''
+Storage keys match, event delegation on container, filter filters and persists in hash, tests pass.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/site"
+target = "site"
+
+[expect]
+truncated_ok = false
+
+[[expect.commands]]
+command = "node --test site/tests/app.test.mjs"
+cwd = "."
+exit_code = 0
+timeout = 120
+
+[[expect.files]]
+path = "site/app.js"
+contains = ["location.hash"]
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "edit_file"
+min_calls = 1
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

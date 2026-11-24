@@ -46,7 +46,7 @@ class SearchTools:
                 continue
             lines = data.decode("utf-8", "replace").splitlines()
             scanned += 1
-            rel = self.ctx.display_path(target, base) if os.path.isdir(root) else target
+            rel = self.ctx.display_path(target, base) if os.path.isdir(root) else self.ctx.short_path(target)
             for i, line in enumerate(lines):
                 match = rx.search(line)
                 if not match:
@@ -75,7 +75,7 @@ class SearchTools:
             rx = re.compile(re.escape(pattern), re.I)
         root = self.ctx.resolve(directory)
         if not os.path.isdir(root):
-            raise ToolError(f"'{root}' is not a directory")
+            raise ToolError(f"'{self.ctx.short_path(root)}' is not a directory")
         limit, found, more = max(1, min(max_results, 500)), [], False
         for target in self.ctx.walk_files(root, max_files=50000):
             if rx.search(os.path.basename(target)):
@@ -83,13 +83,13 @@ class SearchTools:
                     more = True
                     break
                 found.append(self.ctx.display_path(target, root))
-        head = f"{len(found)} file(s) match '{pattern}' under {root}" + (" (more exist)" if more else "")
+        head = f"{len(found)} file(s) match '{pattern}' under {self.ctx.short_path(root)}" + (" (more exist)" if more else "")
         return ToolResult(head + ("\n" + "\n".join(found) if found else ""))
 
     def list_files(self, directory: str = ".", max_depth: int = 2, max_entries: int = 150) -> ToolResult:
         root = self.ctx.resolve(directory)
         if not os.path.isdir(root):
-            raise ToolError(f"'{root}' is not a directory")
+            raise ToolError(f"'{self.ctx.short_path(root)}' is not a directory")
         max_depth, max_entries = max(1, min(max_depth, 6)), max(1, min(max_entries, 500))
         base_depth = root.rstrip(os.sep).count(os.sep)
         lines: List[str] = []
@@ -115,5 +115,5 @@ class SearchTools:
                 break
             if depth + 1 >= max_depth:
                 dirs[:] = []
-        head = f"{len(lines)} entries under {root} (depth {max_depth})" + (" - truncated; narrow the directory" if truncated else "")
+        head = f"{len(lines)} entries under {self.ctx.short_path(root)} (depth {max_depth})" + (" - truncated; narrow the directory" if truncated else "")
         return ToolResult(head + ("\n" + "\n".join(lines) if lines else ""))

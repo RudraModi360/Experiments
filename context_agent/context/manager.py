@@ -116,7 +116,7 @@ class ContextManager:
         sig = hashlib.sha1((name + json.dumps(args, sort_keys=True, default=str) + res.text)
                            .encode("utf-8", "replace")).hexdigest()[:12]
         meta["sig"] = sig
-        if meta.get("path") and meta.get("version"):
+        if name != "edit_file" and meta.get("path") and meta.get("version"):
             self.mark_stale(meta["path"], meta["version"])
         self.dedupe_strategy.apply(self.history, name, meta)
         self.add({"role": "tool", "tool_name": name, "content": res.text, "_meta": meta})
@@ -125,11 +125,13 @@ class ContextManager:
     def _save_full(self, tag: str, text: str) -> str:
         digest = hashlib.sha1(text.encode("utf-8", "replace")).hexdigest()[:10]
         os.makedirs(self.store.spill_dir, exist_ok=True)
-        path = os.path.join(self.store.spill_dir, f"{re.sub(r'[^A-Za-z0-9_]', '_', tag)}_{digest}.txt")
+        fname = f"{re.sub(r'[^A-Za-z0-9_]', '_', tag)}_{digest}.txt"
+        path = os.path.join(self.store.spill_dir, fname)
         with open(path, "w", encoding="utf-8", errors="replace") as handle:
             handle.write(text)
-        self.state.add_saved(path, f"{tag} output (cleared from context)")
-        return path
+        alias = f"spill/{fname}"
+        self.state.add_saved(alias, f"{tag} output (cleared from context)")
+        return alias
 
     def clear_old_outputs(self, target: int, keep_units: int, min_len: int = 500,
                           report: Optional[MaintainPass] = None) -> int:

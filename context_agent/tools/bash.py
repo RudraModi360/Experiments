@@ -24,16 +24,17 @@ class BashTool:
             raise ToolError("bash needs a non-empty command")
         workdir = self.ctx.resolve(cwd)
         if not os.path.isdir(workdir):
-            raise ToolError(f"'{workdir}' is not a directory")
+            raise ToolError(f"'{self.ctx.short_path(workdir)}' is not a directory")
         seconds = self.ctx.cfg.bash_timeout if timeout is None else int(timeout)
         seconds = max(1, min(seconds, self.ctx.cfg.bash_timeout_max))
         limit = max(1024, int(self.ctx.cfg.bash_max_output_bytes))
         shell = shutil.which("bash") or os.environ.get("SHELL") or "/bin/sh"
+        argv = [shell, "-o", "pipefail", "-c", command] if os.path.basename(shell) == "bash" else [shell, "-c", command]
         started = time.monotonic()
         meta = {"cwd": workdir, "timeout": seconds}
         try:
             proc = subprocess.Popen(
-                [shell, "-c", command],
+                argv,
                 cwd=workdir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -92,11 +93,12 @@ class BashTool:
         elapsed = time.monotonic() - started
         output = b"".join(chunks).decode("utf-8", "replace").rstrip("\n")
         notes = [f"[bash output truncated at {limit} bytes]"] if truncated else []
+        disp_cwd = self.ctx.short_path(workdir)
         if timed_out:
-            status = f"[bash timeout after {seconds}s | {elapsed:.2f}s | cwd {workdir}]"
+            status = f"[bash timeout after {seconds}s | {elapsed:.2f}s | cwd {disp_cwd}]"
             body = output or "(no output before timeout)"
         else:
-            status = f"[bash exit {proc.returncode} | {elapsed:.2f}s | cwd {workdir}]"
+            status = f"[bash exit {proc.returncode} | {elapsed:.2f}s | cwd {disp_cwd}]"
             body = output or "(no output)"
         text = status + "\n" + body + ("\n" + "\n".join(notes) if notes else "")
         meta.update({"exit_code": None if timed_out else proc.returncode,

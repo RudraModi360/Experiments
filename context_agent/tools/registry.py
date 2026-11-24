@@ -101,17 +101,36 @@ class Toolbox:
             return str(value)
         return value
 
+    @staticmethod
+    def _smart_truncate(name: str, res: ToolResult, cap: int) -> str:
+        """Preserve failure tracebacks in bash output; fall back to head_tail otherwise."""
+        text = res.text
+        if name == "bash" and (not res.ok or any(m in text for m in ("Traceback", "FAIL:", "ERROR:", "=== FAILURES ==="))):
+            first_nl = text.find("\n")
+            status = text[:first_nl] if first_nl != -1 else ""
+            body = text[first_nl + 1:] if first_nl != -1 else text
+            match = re.search(r"(?m)^(Traceback \(most recent call last\):|={3,}\s*FAILURES\s*={3,}|(?:FAIL|ERROR):\s+\S|E\s{3,}\S)", body)
+            if match:
+                tail_budget = int(cap * 0.25)
+                fail_budget = max(400, cap - len(status) - tail_budget - 120)
+                fail_slice = body[match.start(): match.start() + fail_budget]
+                tail_slice = body[-tail_budget:] if len(body) > match.start() + fail_budget + tail_budget else ""
+                parts = [p for p in (status, f"...[skipped {match.start()} header chars]..." if match.start() > 0 else "",
+                                     fail_slice, "...[middle omitted]..." if tail_slice else "", tail_slice) if p]
+                return "\n".join(parts)
+        return head_tail(text, int(cap * 0.6), int(cap * 0.2))
+
     def _finalize(self, name: str, args: Dict[str, Any], res: ToolResult, cap: int) -> ToolResult:
         """Bound every result. Oversized output is saved in full and shown head + tail."""
         if res.capped or len(res.text) <= cap:
             return res
         path = self.context.save_spill(name, res.text)
-        self.state.add_saved(path, f"{name}({short_args(args, 80)}) {len(res.text)} chars")
-        head, tail = int(cap * 0.6), int(cap * 0.2)
+        disp = self.context.short_path(path)
+        self.state.add_saved(disp, f"{name}({short_args(args, 80)}) {len(res.text)} chars")
         lines = res.text.count("\n") + 1
-        note = (f"[output truncated: {len(res.text)} chars / {lines} lines. Full copy: {path} - "
+        note = (f"[output truncated: {len(res.text)} chars / {lines} lines. Full copy: {disp} - "
                 f"use read_file(path, offset, limit) or search_text(pattern, path)]")
-        res.text = note + "\n" + head_tail(res.text, head, tail)
+        res.text = note + "\n" + self._smart_truncate(name, res, cap)
         res.meta["spill"] = path
         return res
 

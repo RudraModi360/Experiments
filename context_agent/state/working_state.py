@@ -21,6 +21,8 @@ class WorkingState:
         self.urls: Dict[str, str] = {}
         self.saved: List[Dict[str, str]] = []
         self.current_request = ""
+        self.step = 0
+        self.max_steps = 0
 
     def add_url(self, url: str, title: str = "") -> None:
         self.urls.pop(url, None)
@@ -46,6 +48,12 @@ class WorkingState:
 
     def render_volatile(self, files: FileTracker) -> str:
         sections = []
+        if self.max_steps > 0:
+            rem = max(0, self.max_steps - self.step)
+            budget = f"BUDGET: step {self.step}/{self.max_steps}"
+            if rem <= 3:
+                budget += f" — WARNING: only {rem} step(s) left; finish remaining deliverables, verify, and summarize now."
+            sections.append(budget)
         if self.plan:
             sections.append("PLAN (your checklist; keep it current with update_plan):\n" + clip(self.plan, 1200))
         file_block = files.render()

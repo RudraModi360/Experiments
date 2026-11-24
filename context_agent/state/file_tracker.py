@@ -52,13 +52,24 @@ class FileTracker:
         rec.last_ts = time.time()
         return changed
 
-    def note_write(self, path: str, version: str, lines: Optional[int], created: bool, edit: bool) -> None:
+    def note_write(self, path: str, version: str, lines: Optional[int], created: bool, edit: bool,
+                   read_range: Optional[List[int]] = None) -> None:
         key = path_key(path)
         rec = self.records.get(key)
         if rec is None:
             rec = self.records[key] = FileRecord(path=os.path.abspath(path))
         rec.version, rec.lines, rec.deleted = version, lines, False
-        rec.reads = []  # we no longer hold a verified copy of the new content
+        if not edit:
+            rec.reads = [[1, lines]] if lines and lines >= 1 else []
+        else:
+            clamped = []
+            for a, b in rec.reads:
+                if lines is not None and a > lines:
+                    continue
+                clamped.append([a, min(b, lines) if lines is not None else b])
+            if read_range and read_range[1] >= read_range[0] >= 1:
+                clamped.append(read_range)
+            rec.reads = merge_ranges(clamped)
         rec.changed_externally = False
         rec.created = rec.created or created
         if edit:
@@ -80,6 +91,18 @@ class FileTracker:
                 changed.append((key, current))
         return changed
 
+    @staticmethod
+    def _short_path(path: str) -> str:
+        try:
+            rel = os.path.relpath(os.path.abspath(path), os.getcwd())
+            if rel == ".":
+                return "."
+            if not rel.startswith("..") and not os.path.isabs(rel):
+                return rel
+        except ValueError:
+            pass
+        return path
+
     def render(self, limit: int = 12) -> str:
         if not self.records:
             return ""
@@ -93,16 +116,16 @@ class FileTracker:
                 bits.append(f"rewritten x{rec.writes}")
             if rec.edits:
                 bits.append(f"edited x{rec.edits}")
-            if rec.reads:
-                bits.append("you hold lines " + ", ".join(f"{a}-{b}" for a, b in rec.reads))
-            else:
-                bits.append("no verified copy in context - re-read before relying on it")
             if rec.deleted:
                 bits.append("DELETED on disk")
             elif rec.changed_externally:
-                bits.append("CHANGED outside your edits")
+                bits.append("CHANGED outside your edits - re-read before relying on it")
+            elif rec.reads:
+                bits.append("you hold lines " + ", ".join(f"{a}-{b}" for a, b in rec.reads))
+            elif not (rec.created or rec.writes or rec.edits):
+                bits.append("no verified copy in context - re-read before relying on it")
             size = f"{rec.lines} lines" if rec.lines is not None else "size unknown"
-            lines.append(clip(f"- {rec.path} | v{rec.version} | {size} | " + "; ".join(bits), 220))
+            lines.append(clip(f"- {self._short_path(rec.path)} | v{rec.version} | {size} | " + "; ".join(bits), 220))
         return "\n".join(lines)
 
     def to_dict(self) -> Dict[str, Any]:

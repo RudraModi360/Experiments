@@ -1,0 +1,60 @@
+id = "dsa-heap-debug-008"
+name = "DSA heap debug (complexity preserved)"
+description = "Fix priority queue + Dijkstra, preserve complexity, add edge tests."
+enabled = true
+tags = ["dsa", "debug", "algorithm", "precision"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+`./repo` has two failing modules: `heap.py` (priority queue) and `dijkstra.py` (shortest paths, wrong heap usage, tie handling, negative edges). Run the tests with `python3 -m unittest discover -s . -p "test_*.py"`, fix the root cause of each failure, and preserve required complexities: heap ops O(log n), Dijkstra O((V+E) log V). Add `test_edges.py` with edge cases (empty graph, single node, ties, disconnected, negative edge rejection). Do not modify existing tests. Run the full suite and `python3 bench.py`. Report exact bugs.
+'''
+
+expected_output = '''
+heap.py and dijkstra.py bugs fixed, complexities preserved, test_edges.py added, all tests pass, bench.py prints OK, existing tests unchanged.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s . -p \"test_*.py\" -q"
+cwd = "repo"
+exit_code = 0
+timeout = 120
+
+[[expect.commands]]
+command = "python3 bench.py"
+cwd = "repo"
+exit_code = 0
+contains = ["OK"]
+timeout = 60
+
+[[expect.files]]
+path = "repo/test_edges.py"
+exists = true
+
+[[expect.tools]]
+name = "edit_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

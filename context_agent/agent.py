@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import sys
 from datetime import datetime
@@ -219,9 +220,10 @@ class IntelligentAgent:
         lim = self.ctx.limits()
         if self.counter.text(text) > int(lim.prompt_limit * self.cfg.max_user_ratio):
             path = self.tools._save_spill("user_message", text)
-            self.state.add_saved(path, f"user's long message ({len(text)} chars)")
+            disp = self.tools.context.short_path(path)
+            self.state.add_saved(disp, f"user's long message ({len(text)} chars)")
             keep = int(lim.prompt_limit * self.cfg.max_user_ratio * 3.0)
-            text = (f"[The user's message is very long ({len(text)} chars); the full text is saved at {path}. "
+            text = (f"[The user's message is very long ({len(text)} chars); the full text is saved at {disp}. "
                     f"Read it in pages with read_file or search it with search_text.]\n"
                     + head_tail(text, int(keep * 0.7), int(keep * 0.2)))
             self.ctx.emit("ingestion", "user_message_spilled", path=path)
@@ -296,6 +298,8 @@ class IntelligentAgent:
             if steps >= self.cfg.max_steps_per_turn:
                 return self._wrap_up("step limit reached")
             steps += 1
+            self.state.step = steps
+            self.state.max_steps = self.cfg.max_steps_per_turn
             self.ctx.maintain()
             view = self.ctx.build_view(ephemeral)
             ephemeral = None
@@ -367,6 +371,22 @@ class IntelligentAgent:
         for row in body.splitlines():
             print("    " + paint(row), flush=True)
 
+    @staticmethod
+    def _loop_key(name: str, args: Dict[str, Any]) -> str:
+        if name == "bash" and isinstance(args.get("command"), str):
+            cmd = re.sub(r"\s*2>(?:&1|/dev/null)\b", "", args["command"]).strip()
+            cmd = re.sub(r"^pwd\s*&&\s*", "", cmd)
+            cmd = re.sub(r"\s+", " ", cmd)
+            if re.match(r"^(?:ls|pwd)\b", cmd):
+                cmd = cmd.split()[0]
+            return "bash:" + cmd + ":" + str(args.get("cwd", "."))
+        return name + json.dumps(args, sort_keys=True, default=str)
+
+    @staticmethod
+    def _result_digest(name: str, text: str) -> str:
+        norm = re.sub(r"\|\s*\d+\.\d+s\s*\|", "|", text) if name == "bash" else text
+        return hashlib.sha1(norm.encode("utf-8", "replace")).hexdigest()
+
     def _execute_calls(self, calls: List[Dict[str, Any]], loop: Dict[str, List[Any]]) -> None:
         lim = self.ctx.limits()
         unit_chars = int(lim.prompt_limit * self.cfg.max_unit_ratio * 3.2)
@@ -377,8 +397,11 @@ class IntelligentAgent:
             name, args = call["function"]["name"], call["function"]["arguments"]
             rewrite = self._tool_start(name, args)
             res = self.tools.run(name, args, cap)
-            key = name + json.dumps(args, sort_keys=True, default=str)
-            digest = hashlib.sha1(res.text.encode("utf-8", "replace")).hexdigest()
+            key = self._loop_key(name, args)
+            if name in ("write_file", "edit_file"):
+                for k in [k for k in loop if k.startswith(("bash:ls:", "bash:pwd:"))]:
+                    loop.pop(k, None)
+            digest = "inspect" if key.startswith(("bash:ls:", "bash:pwd:")) else self._result_digest(name, res.text)
             count, last = loop.get(key, [0, None])
             count = count + 1 if last == digest else 1
             loop[key] = [count, digest]
@@ -400,6 +423,30 @@ class IntelligentAgent:
             self._tool_done(name, status, note, res.text, rewrite)
             self.ctx.add_tool_result(name, args, res)
 
+    def _mechanical_wrap_up(self, reason: str) -> str:
+        parts = [f"Stopped early ({reason}). Current progress on disk:"]
+        touched = sorted(self.files.records.values(), key=lambda r: r.last_ts, reverse=True)
+        if touched:
+            items = []
+            for rec in touched[:10]:
+                actions = []
+                if rec.created:
+                    actions.append("created")
+                if rec.writes:
+                    actions.append(f"written x{rec.writes}")
+                if rec.edits:
+                    actions.append(f"edited x{rec.edits}")
+                tag = ", ".join(actions) if actions else "read"
+                items.append(f"- {self.files._short_path(rec.path)} ({tag})")
+            parts.append("Files:\n" + "\n".join(items))
+        if self.state.plan:
+            parts.append("Plan:\n" + clip(self.state.plan, 800))
+        if self.state.notes:
+            notes = "\n".join(f"- {k}: {clip(v, 200)}" for k, v in self.state.notes.items())
+            parts.append("Notes:\n" + notes)
+        parts.append("Progress is saved in context; say 'continue' to keep going.")
+        return "\n\n".join(parts)
+
     def _wrap_up(self, reason: str) -> str:
         note = (f"Stop using tools now ({reason}). Reply briefly: what is done, what remains, "
                 f"and the best next step.")
@@ -418,7 +465,7 @@ class IntelligentAgent:
                 if self._on_token is not None:
                     self._on_token(suffix)
         else:
-            text = f"I stopped because: {reason}. Progress is saved in context; say 'continue' to keep going."
+            text = self._mechanical_wrap_up(reason)
         self.ctx.add({"role": "assistant", "content": text})
         self._save()
         return text

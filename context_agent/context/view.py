@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, List, Optional
 
 from ..state.file_tracker import FileTracker
@@ -20,10 +21,11 @@ class ContextView:
         self.base_prompt = base_prompt
 
     def system_text(self) -> str:
+        base = self.base_prompt + f"\n\nWorkspace root: {os.getcwd()}"
         stable = self.state.render_stable()
         if not stable:
-            return self.base_prompt
-        return (self.base_prompt + "\n\n=== SESSION MEMORY (background from earlier in this session; the user's newest "
+            return base
+        return (base + "\n\n=== SESSION MEMORY (background from earlier in this session; the user's newest "
                 "message always takes priority) ===\n" + stable + "\n=== END SESSION MEMORY ===")
 
     def build(self, history: List[Dict[str, Any]], ephemeral: Optional[str] = None) -> List[Dict[str, Any]]:

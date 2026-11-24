@@ -1,0 +1,62 @@
+id = "fullstack-spec-chaos-010"
+name = "Fullstack spec chaos (static serving)"
+description = "Long spec + external mutation + static file serving."
+enabled = true
+tags = ["fullstack", "stress", "spill", "freshness", "hard"]
+profile = "code"
+difficulty = "hard"
+
+input = '''
+Implement the guestbook service described in the specification below. The spec is long; it may be saved to a file - read it from there if so. Build `server.py` (stdlib http.server) and `static/index.html` + `static/app.js` to the API contract and UI requirements. The contract test suite `tests/test_contract.py` is the source of truth - where the prose and the tests disagree, the tests win. `settings.json` may be updated externally while you work: after your first server draft, run `./mutate.sh`, then re-read `settings.json` (re-read it if you see a STALE marker) and adapt so the contract tests still pass. Serve static files so the UI is reachable.
+'''
+
+expected_output = '''
+server.py serves /healthz, / with current motd, /entries capped at current settings.max_entries, POST /entries with validation, and serves static/index.html + static/app.js. Contract tests pass. mutate.sh applied; settings re-read. 404/405 handled.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+
+[expect]
+truncated_ok = false
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "."
+exit_code = 0
+timeout = 120
+
+[[expect.files]]
+path = "server.py"
+exists = true
+contains = ["settings.json"]
+
+[[expect.files]]
+path = "static/index.html"
+exists = true
+
+[[expect.files]]
+path = "static/app.js"
+exists = true
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

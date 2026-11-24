@@ -1,0 +1,62 @@
+id = "nginx-forensics-004"
+name = "Nginx forensics (field-aware exact count)"
+description = "Large log with decoy lines; exact 502 status count required."
+enabled = true
+tags = ["devops", "stress", "spill", "hard"]
+profile = "code"
+difficulty = "hard"
+grounding = "tool_outputs"
+
+input = '''
+The service behind `./ops/nginx.conf` returns intermittent 502s. Analyze `./ops/access.log` (large - do not cat the whole file) to find the total 502 count (status field, not byte size) and the top 5 upstream paths by 502 count with exact counts. Fix the nginx config upstream timeout and keepalive. Validate the config structurally (nginx may not be installed). Write `incident-report.md` citing exact counts, top 5 paths, changed lines. Save numbers as notes.
+'''
+
+expected_output = '''
+Total 502 responses: 1847. Top 5 paths with exact counts. Nginx fixes applied. incident-report.md cites exact counts. Numbers computed from log and survived compaction via notes.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/ops"
+target = "ops"
+
+[expect]
+truncated_ok = false
+must_contain = ["1847"]
+
+[[expect.commands]]
+command = "grep -c '\" 502 ' ops/access.log"
+cwd = "."
+exit_code = 0
+contains = ["1847"]
+timeout = 60
+
+[[expect.files]]
+path = "incident-report.md"
+exists = true
+contains = ["1847", "912", "631", "304"]
+
+[[expect.files]]
+path = "ops/nginx.conf"
+not_contains = ["proxy_read_timeout 1s", "keepalive 0"]
+
+[[expect.tools]]
+name = "bash"
+min_calls = 3
+
+[[expect.tools]]
+name = "save_note"
+min_calls = 1
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"
+use = ["faithfulness"]

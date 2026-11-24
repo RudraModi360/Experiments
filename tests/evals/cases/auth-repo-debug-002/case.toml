@@ -1,0 +1,54 @@
+id = "auth-repo-debug-002"
+name = "Auth repo debug (multi root cause)"
+description = "Broken stdlib task API with cascading auth failures and red herrings."
+enabled = true
+tags = ["code", "debug", "backend"]
+profile = "code"
+difficulty = "hard"
+
+input = '''
+The repository in `./repo` is a small task API (Python stdlib http.server, JSON file store) with a failing test suite. Run the tests with `python3 -m unittest discover -s tests`, find why the login/build tests fail, fix the root cause(s) in the application code (not tests), and re-run the full suite to prove it passes before giving a final answer. Report each bug.
+'''
+
+expected_output = '''
+All root causes fixed in app code, no test files modified, full unittest suite passes.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_auth.py", "repo/tests/test_tasks.py", "repo/tests/test_store.py"]
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "repo"
+exit_code = 0
+timeout = 120
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "edit_file"
+min_calls = 1
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

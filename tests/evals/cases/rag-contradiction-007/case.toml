@@ -1,0 +1,70 @@
+id = "rag-contradiction-007"
+name = "RAG contradiction (compaction survival)"
+description = "Build TF-IDF/BM25-lite RAG, resolve contradictions by effective date, save notes."
+enabled = true
+tags = ["ai", "rag", "docs", "stress", "compaction", "grounding"]
+profile = "docs"
+difficulty = "hard"
+grounding = "tool_outputs"
+
+input = '''
+`./docs` contains a product handbook (multiple markdown files, some outdated). First build `rag.py`: a stdlib-only retrieval pipeline that chunks the docs, scores chunks against a query with a simple TF-IDF/BM25-lite ranker, and exposes `python3 rag.py "question"` printing the top answer excerpt and its source filename. Write `test_rag.py` with at least 5 retriever tests and run them. Then use your pipeline (and direct reading where needed) to answer these in `answers.md`, each with a source citation: (1) the refund window for annual plans as of 2026-06-01; (2) which policy document supersedes which, and why; (3) the API rate limit for the Pro tier. Resolve contradictions using effective dates, not file order. Save the key facts as notes so they survive context compaction.
+'''
+
+expected_output = '''
+As of 2026-06-01 the annual-plan refund window is 30 days per billing-policy-2026.md (effective 2026-03-01), which supersedes billing-policy-2025.md (14 days) because its effective date is later. Pro tier API rate limit is 1000 requests/min per rate-limits.md. answers.md cites sources. rag.py is stdlib TF-IDF/BM25-lite; `python3 rag.py "annual plan refund window"` ranks billing-policy-2026.md first; test_rag.py passes. 14-day figure is not the current answer.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.commands]]
+command = "python3 rag.py \"annual plan refund window\""
+cwd = "."
+exit_code = 0
+contains = ["billing-policy-2026"]
+timeout = 60
+
+[[expect.commands]]
+command = "python3 -m unittest -q"
+cwd = "."
+exit_code = 0
+timeout = 120
+
+[[expect.files]]
+path = "answers.md"
+exists = true
+contains = ["30 days", "billing-policy-2026.md", "supersedes", "rate-limits.md"]
+
+[[expect.files]]
+path = "rag.py"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 3
+
+[[expect.tools]]
+name = "save_note"
+min_calls = 1
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"
