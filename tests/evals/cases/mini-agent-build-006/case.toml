@@ -1,0 +1,66 @@
+id = "mini-agent-build-006"
+name = "Build a minimal tool-calling agent with guards"
+description = "Independent AI-systems build: tool registry, JSON action loop, max-step + repeat-loop guards, scripted scenarios, tests, and a demo transcript."
+enabled = true
+tags = ["ai", "agentic", "greenfield", "guards"]
+profile = "tools"
+difficulty = "medium"
+
+input = '''
+Implement a minimal text-only tool-calling agent in `mini_agent.py`. It must have: a tool registry with two tools — `calc` (safe arithmetic evaluation, no eval of arbitrary code) and `kv` (a notes key-value store with set/get); an agent loop driven by a deterministic fake model function `fake_model(step, history)` that you also write, which returns JSON actions {"tool":..., "args":...} or {"final":...}; a max-step guard (stop after N steps); and loop detection that stops when the same tool+args repeats 3 times. Drive it from a JSONL script file `scenario.jsonl` (one action per line) that you generate with three scenarios: happy path, max-step exhaustion, and repeated-action loop. Write `test_mini_agent.py` (unittest) covering all three guards plus unknown-tool handling. Run the tests and a demo that writes `demo_transcript.jsonl` recording each step (each line an object with "step" and "action"). Write README.md explaining the loop and guards. Fix any failing test before finishing.
+'''
+
+expected_output = '''
+mini_agent.py implements a tool registry (calc with safe arithmetic, kv set/get), a loop driven by fake_model returning JSON actions, a max-step guard, and repeat-loop detection (stop after 3 identical tool+args). scenario.jsonl has happy-path, max-step, and repeat-loop scenarios. test_mini_agent.py passes via unittest and covers all three guards plus unknown-tool handling. demo_transcript.jsonl records each step as {"step", "action"} and shows the max-step and repeat scenarios actually terminating with a stop reason. calc does not use eval of arbitrary code. README.md explains the loop and guards.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+
+[expect]
+truncated_ok = false
+
+[[expect.commands]]
+command = "python3 -m unittest -q"
+cwd = "."
+exit_code = 0
+timeout = 120
+
+[[expect.files]]
+path = "mini_agent.py"
+exists = true
+contains = ["max_steps"]
+
+[[expect.files]]
+path = "demo_transcript.jsonl"
+exists = true
+min_bytes = 1
+
+[[expect.files]]
+path = "scenario.jsonl"
+exists = true
+
+[[expect.files]]
+path = "README.md"
+exists = true
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 3
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "update_plan"
+min_calls = 1
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "tools"

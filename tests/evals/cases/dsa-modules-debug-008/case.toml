@@ -1,0 +1,66 @@
+id = "dsa-modules-debug-008"
+name = "Fix merge-intervals and LRU bugs, preserve complexity"
+description = "Two broken data-structure modules. Fix root causes, keep O(n log n)/O(1), add edge tests, do not edit existing tests."
+enabled = true
+tags = ["dsa", "debug", "algorithm", "precision"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+`./repo` has two failing modules: `intervals.py` (merge intervals) and `lru.py` (LRU cache). Run the tests with `python3 -m unittest discover -s . -p "test_*.py"`, fix the root cause of each failure, and preserve the required complexities: merge must stay O(n log n), LRU get/put must stay O(1). Add a new test file `test_edges.py` with edge cases (empty input, single element, touching intervals like [1,2],[2,3]; LRU capacity 1, get-refreshes-recency, eviction order). Do not modify the existing tests. Run the full suite and `python3 bench.py` to confirm no performance regression. Report the exact bug in each module.
+'''
+
+expected_output = '''
+intervals.py bug: the merge condition used `start >= last_end`, which splits touching intervals; it must be `start > last_end` so [1,2],[2,3] merge to [1,3]. lru.py bug: get() did not call move_to_end(key), so reads did not refresh recency and eviction behaved FIFO; get() must move the accessed key to most-recent. Complexities preserved (merge O(n log n), LRU O(1)). A new test_edges.py covers the edge cases. Existing tests were not modified. The full unittest suite passes and bench.py prints OK.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/test_intervals.py", "repo/test_lru.py"]
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s . -p \"test_*.py\" -q"
+cwd = "repo"
+exit_code = 0
+timeout = 120
+
+[[expect.commands]]
+command = "python3 bench.py"
+cwd = "repo"
+exit_code = 0
+contains = ["OK"]
+timeout = 60
+
+[[expect.files]]
+path = "repo/test_edges.py"
+exists = true
+
+[[expect.files]]
+path = "repo/intervals.py"
+contains = ["> last_end"]
+not_contains = [">= last_end"]
+
+[[expect.tools]]
+name = "edit_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

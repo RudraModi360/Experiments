@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Secrets
+.env
+.env.*
+
+# Virtual environments
+.venv
+.deepeval/
+mithi-v1-flash/
+python-version
+sample.py
+uzu_smoke.py
+models/
+config.yaml
+*.sh
+*.log
+served_model_logger.py
+

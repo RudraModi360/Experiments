@@ -1,0 +1,40 @@
+id = "conv-debug-refine-001"
+name = "Multi-turn: diagnose, fix, then extend a buggy calculator"
+description = "Conversational: turn 1 debugs a failing test, turn 2 extends the same session. Verifies context carries across turns via conversational LLM metrics."
+enabled = true
+tags = ["conversation", "debug", "code"]
+profile = "conversation"
+difficulty = "medium"
+
+expected_outcome = '''
+Across the turns the agent found that calc.py add() subtracted instead of adding, fixed the failing test so `python3 -m unittest -q` passes, and then in the second turn added a subtract() function with a passing test in the same files. The second turn built on the first (it did not lose track of the prior fix or re-break add), and the final full test suite passes.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 15
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[[turns]]
+role = "user"
+content = '''
+In ./repo the calculator tests fail. Run `python3 -m unittest -q`, find the bug in calc.py, fix the root cause, and re-run the tests to prove they pass. Report the fix.
+'''
+
+[[turns]]
+role = "user"
+content = '''
+Good. Now, using what you just changed, add a `subtract(a, b)` function to calc.py with its own test in test_calc.py, re-run the full suite, and tell me both the new function and that add() still works.
+'''
+
+[expect]
+files_unchanged = []
+
+[metrics]
+profile = "conversation"

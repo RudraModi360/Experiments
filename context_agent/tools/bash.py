@@ -1,0 +1,104 @@
+"""Bash command execution tool."""
+
+from __future__ import annotations
+
+import os
+import select
+import shutil
+import signal
+import subprocess
+import time
+from typing import List, Optional
+
+from .context import ToolExecutionContext
+from .result import ToolError, ToolResult
+
+
+class BashTool:
+    def __init__(self, ctx: ToolExecutionContext):
+        self.ctx = ctx
+
+    def run(self, command: str, cwd: str = ".", timeout: Optional[int] = None) -> ToolResult:
+        command = (command or "").strip()
+        if not command:
+            raise ToolError("bash needs a non-empty command")
+        workdir = self.ctx.resolve(cwd)
+        if not os.path.isdir(workdir):
+            raise ToolError(f"'{workdir}' is not a directory")
+        seconds = self.ctx.cfg.bash_timeout if timeout is None else int(timeout)
+        seconds = max(1, min(seconds, self.ctx.cfg.bash_timeout_max))
+        limit = max(1024, int(self.ctx.cfg.bash_max_output_bytes))
+        shell = shutil.which("bash") or os.environ.get("SHELL") or "/bin/sh"
+        started = time.monotonic()
+        meta = {"cwd": workdir, "timeout": seconds}
+        try:
+            proc = subprocess.Popen(
+                [shell, "-c", command],
+                cwd=workdir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
+            )
+        except OSError as exc:
+            raise ToolError(f"could not start bash: {exc}") from exc
+
+        def terminate() -> None:
+            try:
+                os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+            except Exception:
+                try:
+                    proc.kill()
+                except Exception:
+                    pass
+
+        assert proc.stdout is not None
+        fd = proc.stdout.fileno()
+        chunks: List[bytes] = []
+        total = 0
+        truncated = timed_out = False
+        deadline = started + seconds
+        try:
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    timed_out = True
+                    terminate()
+                    break
+                ready, _, _ = select.select([fd], [], [], min(0.05, remaining))
+                if ready:
+                    data = os.read(fd, 65536)
+                    if not data:
+                        break
+                    if total + len(data) > limit:
+                        chunks.append(data[:limit - total])
+                        total = limit
+                        truncated = True
+                        terminate()
+                        break
+                    chunks.append(data)
+                    total += len(data)
+                elif proc.poll() is not None:
+                    break
+        finally:
+            remaining = deadline - time.monotonic()
+            try:
+                proc.wait(timeout=max(0.0, remaining))
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                terminate()
+                proc.wait()
+            proc.stdout.close()
+
+        elapsed = time.monotonic() - started
+        output = b"".join(chunks).decode("utf-8", "replace").rstrip("\n")
+        notes = [f"[bash output truncated at {limit} bytes]"] if truncated else []
+        if timed_out:
+            status = f"[bash timeout after {seconds}s | {elapsed:.2f}s | cwd {workdir}]"
+            body = output or "(no output before timeout)"
+        else:
+            status = f"[bash exit {proc.returncode} | {elapsed:.2f}s | cwd {workdir}]"
+            body = output or "(no output)"
+        text = status + "\n" + body + ("\n" + "\n".join(notes) if notes else "")
+        meta.update({"exit_code": None if timed_out else proc.returncode,
+                     "timed_out": timed_out, "truncated": truncated, "duration": round(elapsed, 3)})
+        return ToolResult(text, ok=proc.returncode == 0 and not timed_out and not truncated, meta=meta)

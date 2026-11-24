@@ -1,0 +1,38 @@
+id = "conv-doc-followup-002"
+name = "Multi-turn: policy QA with a contradicting follow-up"
+description = "Conversational grounding: turn 1 asks a doc-grounded refund question, turn 2 changes constraints. Tests context retention + grounding across turns via conversational metrics."
+enabled = true
+tags = ["conversation", "docs", "grounding"]
+profile = "conversation"
+difficulty = "medium"
+grounding = "tool_outputs"
+
+expected_outcome = '''
+The agent answered from ./docs that as of 2026-06-01 the annual refund window is 30 days (billing-policy-2026.md, effective 2026-03-01, superseding the 14-day 2025 policy), and the Pro rate limit is 1000 req/min (rate-limits.md). On the follow-up it correctly handled the changed framing "as of 2025-06-01" by answering 14 days per the then-current 2025 policy, and it explained why the answer changed (the effective date of the superseding 2026 policy). Both turns were grounded in the documents, with no hallucinated values.
+'''
+
+[workspace]
+network = false
+bash = false
+max_steps = 12
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[[turns]]
+role = "user"
+content = '''
+Using the documents in ./docs, answer with a source citation: as of 2026-06-01, what is the refund window for annual plans, and what is the Pro tier API rate limit?
+'''
+
+[[turns]]
+role = "user"
+content = '''
+Wait — if someone asked the same refund question as of 2025-06-01 instead, what would the answer be, and why does it differ from your previous answer? Cite sources.
+'''
+
+[metrics]
+profile = "conversation"

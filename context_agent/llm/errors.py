@@ -1,0 +1,7 @@
+"""LLM adapter errors."""
+
+from __future__ import annotations
+
+
+class LLMError(RuntimeError):
+    pass

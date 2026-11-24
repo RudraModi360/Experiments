@@ -1,0 +1,59 @@
+id = "docker-greenfield-005"
+name = "Production Docker + compose for a stdlib service (no daemon)"
+description = "Independent build of app + multi-stage Dockerfile + compose. Stress: exact-value consistency across files; validated by a local smoke test, not Docker."
+enabled = true
+tags = ["docker", "devops", "greenfield", "consistency"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+Create a small Python HTTP service `service/app.py` (stdlib only) that reads `PORT` and `APP_TOKEN` from environment variables and serves `GET /healthz` returning {"status":"ok"} and `GET /` returning a greeting that includes the token's first 4 chars. Then write a production-ready multi-stage `Dockerfile` (builder + slim runtime, non-root user, requirements copied before install for layer caching, correct CMD) and a `compose.yaml` that maps the service to host port 8080 and passes APP_TOKEN=demo-token-123. The Docker daemon is NOT available — do not run docker. Validate by running the provided `smoke.sh` (it starts the service locally with the same env vars and curls both endpoints). Ensure the port and env var names are consistent across app.py, Dockerfile, and compose.yaml. Write `DOCKER-NOTES.md` explaining each Dockerfile decision. If the smoke test fails, fix it.
+'''
+
+expected_output = '''
+service/app.py reads PORT and APP_TOKEN, serves /healthz {"status":"ok"} and / with the token's first 4 chars. Dockerfile is multi-stage (builder + slim runtime), copies requirements before pip install, runs as a non-root user, and has a correct CMD pointing at service/app.py. compose.yaml maps host port 8080 to the service port and sets APP_TOKEN=demo-token-123. The port and env var names agree across app.py, Dockerfile, and compose.yaml. smoke.sh passes (smoke OK). DOCKER-NOTES.md explains the decisions. Docker was not run.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "file"
+source = "artifacts/smoke.sh"
+target = "smoke.sh"
+
+[expect]
+truncated_ok = false
+
+[[expect.commands]]
+command = "bash smoke.sh"
+cwd = "."
+exit_code = 0
+contains = ["smoke OK"]
+timeout = 60
+
+[[expect.files]]
+path = "Dockerfile"
+contains = ["COPY --from=", "USER"]
+
+[[expect.files]]
+path = "compose.yaml"
+contains = ["8080", "APP_TOKEN", "demo-token-123"]
+
+[[expect.files]]
+path = "service/app.py"
+contains = ["PORT", "APP_TOKEN", "/healthz"]
+
+[[expect.files]]
+path = "DOCKER-NOTES.md"
+exists = true
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"
+use = ["cross_file_consistency"]

@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "required": [
+    "api_version",
+    "auth_scheme",
+    "rate_limits",
+    "deprecation_dates",
+    "sources"
+  ],
+  "properties": {
+    "api_version": {
+      "type": "string"
+    },
+    "auth_scheme": {
+      "type": "string"
+    },
+    "rate_limits": {
+      "type": "object"
+    },
+    "deprecation_dates": {
+      "type": "array"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

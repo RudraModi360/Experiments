@@ -1,0 +1,59 @@
+id = "api-auth-debug-002"
+name = "Fix cascading auth test failures without editing tests"
+description = "Broken stdlib task API. Boundary bug in token expiry causes a cascading test failure; a misleading comment is a red herring."
+enabled = true
+tags = ["code", "debug", "backend"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+The repository in `./repo` is a small task API (Python stdlib http.server, JSON file store) with a failing test suite. Run the tests with `python3 -m unittest discover -s tests`, find why the auth/login tests fail, fix the root cause in the application code, and re-run the full suite to prove it passes before giving a final answer. Do not modify or delete any existing test to make it pass. Report the root cause and the exact change you made.
+'''
+
+expected_output = '''
+The root cause is in repo/app/auth.py verify_token: the expiry check uses `data["exp"] <= now`, which rejects a token exactly at its expiry instant. It must be `data["exp"] < now`. Fixing this single comparison also fixes the cascading failure in tests/test_tasks.py (which verifies a token at its boundary). No test files were modified. The full unittest suite passes after the fix. The misleading hashing FIXME comment is a red herring; the signing path is correct.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_auth.py", "repo/tests/test_tasks.py", "repo/tests/test_store.py"]
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "repo"
+exit_code = 0
+timeout = 120
+
+[[expect.files]]
+path = "repo/app/auth.py"
+contains = ["< now"]
+not_contains = ["<= now"]
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "edit_file"
+min_calls = 1
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

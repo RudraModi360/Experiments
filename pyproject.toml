@@ -1,0 +1,31 @@
+[project]
+name = "experiments"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "RudraModi360", email = "rudramodi9560@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "requests>=2.34.2",
+    "uzu>=0.7.2",
+]
+
+[project.scripts]
+experiments = "context_agent:main"
+
+[build-system]
+requires = ["uv_build>=0.13.9,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "context_agent"
+module-root = ""
+
+[dependency-groups]
+dev = [
+    "deepeval==4.3.4",
+    "google-genai>=3.6.1",
+    "ollama>=0.6.3",
+]

@@ -1,0 +1,18 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "step",
+      "action"
+    ],
+    "properties": {
+      "step": {
+        "type": "integer"
+      },
+      "action": {
+        "type": "object"
+      }
+    }
+  }
+}

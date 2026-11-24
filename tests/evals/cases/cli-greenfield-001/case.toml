@@ -1,0 +1,58 @@
+id = "cli-greenfield-001"
+name = "Greenfield stats CLI with self-verification"
+description = "Independent single-prompt build: CLI + tests + README, with a write-run-fix loop. Baseline context case."
+enabled = true
+tags = ["core", "cli", "greenfield", "backend"]
+profile = "tools"
+difficulty = "easy"
+
+input = '''
+Build a Python CLI tool `statcli.py` in the current directory that reads numbers from a file argument or stdin (one per line) and prints count, mean, median, stddev, and p95. Support `--format json|table` (default table) and `--rolling N` for a rolling-window mean over the last N values. Handle empty input and non-numeric lines with a clear error and exit code 2. Write `test_statcli.py` using unittest covering basic stats, p95 correctness, rolling mode, empty input, and bad input. Generate a 10,000-row numeric dataset with a fixed seed, run the tool against it to verify p95, and run the test suite. Do not print the dataset itself. Write a README.md with install (stdlib only) and usage examples. If any step fails, fix it and re-run until tests pass. Finish with a one-paragraph summary of what you built and the verified p95 value.
+'''
+
+expected_output = '''
+A working stdlib-only statcli.py computing count/mean/median/stddev/p95 with --format json|table and --rolling N, exit code 2 on empty or non-numeric input. test_statcli.py passes via unittest. A 10,000-row fixed-seed dataset was generated and used to verify p95 without printing the dataset. README.md documents install and usage. The final summary reports the verified p95 value and does not claim unrun tests.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[expect]
+truncated_ok = false
+
+[[expect.commands]]
+command = "python3 -m unittest -q"
+cwd = "."
+exit_code = 0
+timeout = 120
+
+[[expect.files]]
+path = "statcli.py"
+exists = true
+
+[[expect.files]]
+path = "test_statcli.py"
+exists = true
+
+[[expect.files]]
+path = "README.md"
+exists = true
+contains = ["--rolling"]
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "update_plan"
+min_calls = 1
+
+[metrics]
+profile = "tools"

@@ -1,0 +1,8 @@
+{
+  "total_502": 1847,
+  "top_paths": {
+    "/api/reports": 912,
+    "/api/export": 631,
+    "/api/search": 304
+  }
+}

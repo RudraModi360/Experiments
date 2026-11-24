@@ -1,0 +1,64 @@
+id = "frontend-state-debug-003"
+name = "Fix todo persistence + delete delegation, add hash filter"
+description = "Broken vanilla JS todo app: localStorage key mismatch and per-item delete binding. Add an All/Active/Done filter persisted in the URL hash."
+enabled = true
+tags = ["code", "frontend", "debug"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+`./site` is a vanilla HTML/CSS/JS todo app (no build step). Users report that tasks disappear after reload and the delete button stops working for newly added tasks. Find and fix both bugs, then add a filter bar (All / Active / Done) that persists the selected filter in the URL hash. Keep it dependency-free. A Node test file `site/tests/app.test.mjs` describes the expected behavior — run it with `node --test site/tests/` and make it pass. Report each root cause and the files you changed.
+'''
+
+expected_output = '''
+Bug 1: app.js saved todos under SAVE_KEY "todos" but loaded from LOAD_KEY "todo-items"; both must use the same key so tasks persist across reload. Bug 2: bindEvents attached a click listener per delete button, so dynamically added rows had no handler; it must use event delegation (one click listener on the list container). A filter bar (All/Active/Done) was added to index.html with the selection persisted in location.hash. The Node test suite `node --test site/tests/` passes. No test file was modified.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/site"
+target = "site"
+
+[[workspace.setup]]
+command = "node --version"
+cwd = "."
+timeout = 30
+optional = false
+
+[expect]
+truncated_ok = false
+files_unchanged = ["site/tests/app.test.mjs"]
+
+[[expect.commands]]
+command = "node --test tests/"
+cwd = "site"
+exit_code = 0
+timeout = 120
+
+[[expect.files]]
+path = "site/app.js"
+contains = ["location.hash"]
+
+[[expect.files]]
+path = "site/index.html"
+contains = ["Active", "Done"]
+
+[[expect.tools]]
+name = "search_text"
+min_calls = 1
+
+[[expect.tools]]
+name = "edit_file"
+min_calls = 2
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"
