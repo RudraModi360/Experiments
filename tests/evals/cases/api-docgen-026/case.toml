@@ -1,0 +1,33 @@
+id = "api-docgen-026"
+name = "API doc generator"
+enabled = true
+tags = ["docs","codegen","api"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = "From src/ Python modules, generate API.md: endpoints/functions, params, returns, examples, and a coverage table of undocumented items."
+expected_output = "API.md with functions, params, returns, examples, and coverage table of undocumented items."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/src"
+target = "src"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "API.md"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

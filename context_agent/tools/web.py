@@ -55,8 +55,9 @@ class WebTools:
             return ToolResult(f"No results for '{query}'.")
         text = f"{len(items)} result(s) for '{query}':\n" + "\n".join(compact)
         path = self.ctx.save_spill("web_search", "\n".join(full))
-        self.ctx.state.add_saved(path, f"web_search('{clip(query, 50)}') full text")
-        return ToolResult(text + f"\n[full result text saved: {path}]", capped=True)
+        disp = self.ctx.short_path(path)
+        self.ctx.state.add_saved(disp, f"web_search('{clip(query, 50)}') full text")
+        return ToolResult(text + f"\n[full result text saved: {disp}]", capped=True)
 
     def fetch_url(self, url: str) -> ToolResult:
         if not re.match(r"^https?://", url.strip(), re.I):
@@ -95,9 +96,10 @@ class WebTools:
             raise ToolError(f"unsupported content type '{kind or 'unknown'}' ({fmt_size(len(raw))})")
         body = f"URL: {url}\nTITLE: {title}\n\n{text}"
         path = self.ctx.save_spill("page", body)
+        disp = self.ctx.short_path(path)
         self.ctx.state.add_url(url, clip(title, 60))
-        self.ctx.state.add_saved(path, f"fetch_url({clip(url, 70)}) page text")
+        self.ctx.state.add_saved(disp, f"fetch_url({clip(url, 70)}) page text")
         info = self.filesystem.read_core(path, 1, 150, 0, max(800, self.ctx.cap - 500))
-        more = f" | read more: read_file(path, offset={info['last'] + 1})" if info["last"] < info["total"] else ""
-        header = (f"[fetch_url {url} | saved to {path} | lines {info['first']}-{info['last']} of {info['total']}{more}]")
+        more = f" | read more: read_file('{disp}', offset={info['last'] + 1})" if info["last"] < info["total"] else ""
+        header = (f"[fetch_url {url} | saved to {disp} | lines {info['first']}-{info['last']} of {info['total']}{more}]")
         return ToolResult(header + "\n" + info["text"], capped=True)

@@ -1,15 +1,7 @@
 """LLM-judge configuration with a sticky fallback chain.
 
-The judge is deliberately separate from the agent under test. By default it
-uses Google AI Studio's Gemini API and falls back, per test case, when a target
-is rate-limited or unavailable:
-
-    gemini-3.5-flash-lite -> gemma-4-31b-it -> gemma-4-26b-a4b-it
-                          -> ollama/nemotron-3.5-bolt:e4b-64k
-
-The final Ollama fallback is the safety net for a single test case when every
-Google target fails. Fallback is sticky for the life of one judge instance (one
-metric / one case), so a rate-limited target is not retried on every call.
+The judge is the local Ollama model nemotron-3.5-bolt:e4b-64k (single target,
+no fallback chain). It is deliberately separate from the agent under test.
 
 This is a DeepEval-compatible model: it implements ``DeepEvalBaseLLM`` and
 delegates ``generate`` / ``a_generate`` (with schema) to the active target,
@@ -35,9 +27,6 @@ from .serving import (
 JUDGE_PREFIX = "[eval-judge]"
 
 DEFAULT_JUDGE_CHAIN = (
-    "google:gemini-3.5-flash-lite",
-    "google:gemma-4-31b-it",
-    "google:gemma-4-26b-a4b-it",
     "ollama:nemotron-3.5-bolt:e4b-64k",
 )
 DEFAULT_OLLAMA_JUDGE = "nemotron-3.5-bolt:e4b-64k"

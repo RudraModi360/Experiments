@@ -1,0 +1,37 @@
+id = "kanban-board-013"
+name = "Kanban board (drag-drop + persistence)"
+enabled = true
+tags = ["code","frontend","debug"]
+profile = "code"
+difficulty = "medium"
+input = "`./site` is a vanilla HTML/CSS/JS kanban app (no build step). Columns lose state on reload and drag-drop breaks for newly added cards. Find and fix both bugs, then add column counts and a filter. Keep dependency-free. Run node --test site/tests/app.test.mjs and make it pass. Report root causes."
+expected_output = "State persists, drag-drop works via delegation, column counts and filter work, tests pass."
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/site"
+target = "site"
+[expect]
+truncated_ok = false
+[[expect.commands]]
+command = "node --test site/tests/app.test.mjs"
+cwd = "."
+exit_code = 0
+timeout = 120
+[[expect.files]]
+path = "site/app.js"
+contains = ["location.hash"]
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"

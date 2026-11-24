@@ -215,8 +215,12 @@ class IntelligentAgent:
             self._save()
             return f"Internal error ({type(exc).__name__}): {exc}\nContext is intact; you can continue."
 
+    _BOOKKEEPING_TOOLS = frozenset({"update_plan", "save_note"})
+    _MAX_FREE_BOOKKEEPING = 6
+
     def _start_turn(self, text: str) -> None:
         self.ctx.repair()
+        self.ctx.view.refresh_workspace()
         lim = self.ctx.limits()
         if self.counter.text(text) > int(lim.prompt_limit * self.cfg.max_user_ratio):
             path = self.tools._save_spill("user_message", text)
@@ -291,14 +295,13 @@ class IntelligentAgent:
                 self._on_reply()
 
     def _run_turn(self) -> str:
-        steps, empties, ephemeral = 0, 0, None
+        steps, free_bookkeeping, empties, ephemeral = 0, 0, 0, None
         loop: Dict[str, List[Any]] = {}
         self._loop_stop = False
         while True:
             if steps >= self.cfg.max_steps_per_turn:
                 return self._wrap_up("step limit reached")
-            steps += 1
-            self.state.step = steps
+            self.state.step = steps + 1
             self.state.max_steps = self.cfg.max_steps_per_turn
             self.ctx.maintain()
             view = self.ctx.build_view(ephemeral)
@@ -321,6 +324,11 @@ class IntelligentAgent:
                 self.ctx.add({"role": "assistant", "content": content})
                 self._save()
                 return content
+            is_bookkeeping = all(c["function"]["name"] in self._BOOKKEEPING_TOOLS for c in calls)
+            if is_bookkeeping and free_bookkeeping < self._MAX_FREE_BOOKKEEPING:
+                free_bookkeeping += 1
+            else:
+                steps += 1
             self.ctx.add({"role": "assistant", "content": content, "tool_calls": calls})
             self._streamed_content = bool(content) and self._last_chat_streamed
             self._execute_calls(calls, loop)
@@ -379,6 +387,11 @@ class IntelligentAgent:
             cmd = re.sub(r"\s+", " ", cmd)
             if re.match(r"^(?:ls|pwd)\b", cmd):
                 cmd = cmd.split()[0]
+            else:
+                m = re.match(r"^(?:wc\s+-[lwc]+\s+\S+\s*&&\s*)?cat\s+(?:-[A-Za-z]+\s+)*(\S+)$", cmd)
+                if m:
+                    target = os.path.normpath(m.group(1).strip("'\""))
+                    cmd = f"cat:{target}"
             return "bash:" + cmd + ":" + str(args.get("cwd", "."))
         return name + json.dumps(args, sort_keys=True, default=str)
 
@@ -399,16 +412,18 @@ class IntelligentAgent:
             res = self.tools.run(name, args, cap)
             key = self._loop_key(name, args)
             if name in ("write_file", "edit_file"):
-                for k in [k for k in loop if k.startswith(("bash:ls:", "bash:pwd:"))]:
+                for k in [k for k in loop if k.startswith(("bash:ls:", "bash:pwd:", "bash:cat:"))]:
                     loop.pop(k, None)
-            digest = "inspect" if key.startswith(("bash:ls:", "bash:pwd:")) else self._result_digest(name, res.text)
+            digest = "inspect" if key.startswith(("bash:ls:", "bash:pwd:", "bash:cat:")) else self._result_digest(name, res.text)
             count, last = loop.get(key, [0, None])
             count = count + 1 if last == digest else 1
             loop[key] = [count, digest]
             blocked = count >= self.cfg.loop_warn
             if blocked:
-                res.text += (f"\n[loop-guard] You made this exact call {count} times with identical results. "
-                             f"Change approach or give your final answer.")
+                res.ok = False
+                res.text = (f"[loop-guard BLOCKED] You already ran {name} with identical results {count} times "
+                            f"without modifying files. Output suppressed — edit the file, try a different command, "
+                            f"or give your final answer.")
             if count >= self.cfg.loop_stop:
                 self._loop_stop = True
             status = "blocked" if blocked else ("ok" if res.ok else "failed")

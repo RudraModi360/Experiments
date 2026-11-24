@@ -1,0 +1,45 @@
+id = "resume-screener-028"
+name = "Resume screener (multi-turn)"
+enabled = true
+tags = ["docs","hr","multi-turn"]
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = """
+Final report delivered.
+"""
+
+input = "Screen candidates against a job description and refine interactively."
+expected_output = "Final ranked candidates with rationale and per-candidate interview questions."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[[turns]]
+role = "user"
+content = "Here is a job description and 5 resumes in ./docs. Rank the candidates best-fit to worst with rationale."
+[[turns]]
+role = "assistant"
+content = "Initial ranking with rationale."
+[[turns]]
+role = "user"
+content = "Tighten criteria: remote-only and at least 3 years experience. Re-rank."
+[[turns]]
+role = "assistant"
+content = "Re-ranked list under tightened criteria."
+[[turns]]
+role = "user"
+content = "For the top 2 candidates, propose 3 interview questions each and write final_report.md."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "final_report.md"
+exists = true
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"

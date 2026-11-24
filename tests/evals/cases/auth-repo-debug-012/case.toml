@@ -1,0 +1,37 @@
+id = "auth-repo-debug-012"
+name = "Auth repo debug (JWT + RBAC)"
+enabled = true
+tags = ["code","debug","backend"]
+profile = "code"
+difficulty = "hard"
+input = "The repository in ./repo is a small task API with a failing test suite (JWT refresh rotation + RBAC). Run python3 -m unittest discover -s tests, find why login/build tests fail, fix root cause(s) in app code (not tests), re-run to prove green. Report each bug."
+expected_output = "All root causes fixed in app code, no test files modified, full unittest suite passes."
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+[expect]
+truncated_ok = false
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "repo"
+exit_code = 0
+timeout = 120
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "edit_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"

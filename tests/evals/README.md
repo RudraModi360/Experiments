@@ -38,7 +38,7 @@ Never mix single-turn and multi-turn metrics: the suites are separate.
 uv sync
 
 # 1. Judge env (Google key enables the judge chain; no key -> Ollama judge only)
-export GEMINI_API_KEY=...            # or GOOGLE_API_KEY
+export OLLAMA_HOST=http://localhost:11434  # optional
 
 # 2. SUT is the local uzu Qwen model by default (32k context)
 #    Override with AGENT_MODEL / AGENT_PROVIDER / AGENT_BASE_URL / AGENT_NUM_CTX
@@ -70,7 +70,7 @@ Running with system `python3` is not supported: it has deepeval but not uzu.
 | Role | Default | Config |
 |---|---|---|
 | SUT | `trymirai/Qwen3.5-9B-M` via uzu (`AGENT_PROVIDER=uzu`, 32k ctx) | `AGENT_MODEL`, `AGENT_PROVIDER`, `AGENT_BASE_URL`, `AGENT_NUM_CTX` |
-| Judge | Gemini 3.5 Flash Lite → Gemma 4 31B → Gemma 4 26B → Ollama `nemotron-3.5-bolt:e4b-64k` | `EVAL_JUDGE_CHAIN`, or `EVAL_JUDGE_PROVIDER=ollama\|local` for a single judge |
+| Judge | Ollama `nemotron-3.5-bolt:e4b-64k` only | `EVAL_JUDGE_CHAIN`, or `EVAL_JUDGE_PROVIDER=ollama\|local` for a single judge |
 | Environment | uv (Python 3.12); `uzu` runtime dep, `deepeval==4.3.4` dev dep | `uv sync`, `uv run ...` |
 
 Judge fallback is sticky per case: a rate-limited target is not retried within

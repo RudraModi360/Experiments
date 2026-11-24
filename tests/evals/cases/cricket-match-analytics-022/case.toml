@@ -1,0 +1,35 @@
+id = "cricket-match-analytics-022"
+name = "Cricket match analytics report"
+enabled = true
+tags = ["code","analytics","report"]
+profile = "code"
+difficulty = "medium"
+input = "Given match.json (scorecard), produce report.md and players.csv: per-player runs/balls/SR, bowling economy, partnerships, turning points, and a speciality tag per player."
+expected_output = "report.md and players.csv with exact per-player stats, partnerships, turning points, speciality tags."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "report.md"
+exists = true
+[[expect.files]]
+path = "players.csv"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 1
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"

@@ -1,0 +1,33 @@
+id = "market-brief-023"
+name = "Market research brief"
+enabled = true
+tags = ["docs","research","report"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = "From competitors/ docs + provided notes, produce brief.md: landscape table, SWOT, top 3 opportunities/risks, recommendations with citations."
+expected_output = "brief.md with landscape table, SWOT, opportunities/risks, recommendations with citations."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/competitors"
+target = "competitors"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "brief.md"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

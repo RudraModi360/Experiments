@@ -1,0 +1,43 @@
+id = "unionfind-mst-018"
+name = "Union-Find + MST debug"
+enabled = true
+tags = ["dsa","debug","algorithm","precision"]
+profile = "code"
+difficulty = "medium"
+input = "`./repo` has two failing modules: `unionfind.py` and `kruskal.py` (MST). Run tests with python3 -m unittest discover -s . -p \"test_*.py\", fix root causes, preserve complexities (near-constant find, O(E log E) Kruskal). Add test_edges.py (empty graph, single node, ties, disconnected). Do not modify existing tests. Run full suite and python3 bench.py. Report exact bugs."
+expected_output = "unionfind.py and kruskal.py bugs fixed, complexities preserved, test_edges.py added, all tests pass, bench.py prints OK, existing tests unchanged."
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+[expect]
+truncated_ok = false
+[[expect.commands]]
+command = "python3 -m unittest discover -s . -p \"test_*.py\" -q"
+cwd = "repo"
+exit_code = 0
+timeout = 120
+[[expect.commands]]
+command = "python3 bench.py"
+cwd = "repo"
+exit_code = 0
+contains = ["OK"]
+timeout = 60
+[[expect.files]]
+path = "repo/test_edges.py"
+exists = true
+[[expect.tools]]
+name = "edit_file"
+min_calls = 2
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"

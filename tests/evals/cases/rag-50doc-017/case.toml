@@ -1,0 +1,51 @@
+id = "rag-50doc-017"
+name = "RAG 50-doc corpus (compaction survival)"
+enabled = true
+tags = ["ai","rag","docs","stress","compaction","grounding"]
+profile = "docs"
+difficulty = "hard"
+grounding = "tool_outputs"
+input = "`./docs` contains a product handbook (many markdown files, some outdated). First build rag.py: stdlib-only retrieval pipeline that chunks docs, scores chunks with TF-IDF/BM25-lite, exposes python3 rag.py \"question\" printing top answer excerpt + source filename. Write test_rag.py with at least 5 retriever tests and run them. Then answer in answers.md with citations: (1) refund window for annual plans as of 2026-06-01; (2) which policy supersedes which and why; (3) Pro tier API rate limit. Resolve contradictions using effective dates. Save key facts as notes."
+expected_output = "As of 2026-06-01 annual-plan refund window is 30 days per billing-policy-2026.md (effective 2026-03-01), superseding billing-policy-2025.md. Pro tier rate limit 1000 req/min per rate-limits.md. rag.py stdlib; rag.py ranks 2026 policy first; tests pass. 14-day not current answer."
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[expect]
+truncated_ok = false
+[[expect.commands]]
+command = "python3 rag.py \"annual plan refund window\""
+cwd = "."
+exit_code = 0
+contains = ["billing-policy-2026"]
+timeout = 60
+[[expect.commands]]
+command = "python3 -m unittest -q"
+cwd = "."
+exit_code = 0
+timeout = 120
+[[expect.files]]
+path = "answers.md"
+exists = true
+contains = ["30 days","billing-policy-2026.md","supersedes","rate-limits.md"]
+[[expect.files]]
+path = "rag.py"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 3
+[[expect.tools]]
+name = "save_note"
+min_calls = 1
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

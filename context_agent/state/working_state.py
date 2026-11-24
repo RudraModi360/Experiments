@@ -55,7 +55,7 @@ class WorkingState:
                 budget += f" — WARNING: only {rem} step(s) left; finish remaining deliverables, verify, and summarize now."
             sections.append(budget)
         if self.plan:
-            sections.append("PLAN (your checklist; keep it current with update_plan):\n" + clip(self.plan, 1200))
+            sections.append("PLAN:\n" + clip(self.plan, 1200))
         file_block = files.render()
         if file_block:
             sections.append(file_block)

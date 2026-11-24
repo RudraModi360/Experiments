@@ -1,0 +1,45 @@
+id = "compose-db-healthcheck-015"
+name = "Compose with DB + healthchecks"
+enabled = true
+tags = ["docker","devops","greenfield","consistency"]
+profile = "code"
+difficulty = "medium"
+input = "Create a Python HTTP service service/app.py (stdlib, PORT/APP_TOKEN) plus a Postgres-backed compose.yaml with healthchecks, env, volumes, and a multi-stage buildable Dockerfile. No daemon. Validate via smoke.sh (app only). Write DOCKER-NOTES.md. Ensure consistency."
+expected_output = "service/app.py works; compose valid; Dockerfile buildable; smoke.sh passes; DOCKER-NOTES.md explains decisions."
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+[expect]
+truncated_ok = false
+[[expect.commands]]
+command = "bash smoke.sh"
+cwd = "."
+exit_code = 0
+contains = ["smoke OK"]
+timeout = 60
+[[expect.files]]
+path = "Dockerfile"
+exists = true
+contains = ["COPY --from=","USER"]
+[[expect.files]]
+path = "compose.yaml"
+exists = true
+contains = ["8080","APP_TOKEN"]
+[[expect.files]]
+path = "service/app.py"
+exists = true
+contains = ["/healthz"]
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"
+use = ["cross_file_consistency"]

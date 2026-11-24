@@ -326,7 +326,7 @@ def run_traced_case(case: Case, workspace: Workspace) -> RunResult:
         before=workspace.before,
         after=after,
         duration=duration,
-        steps=_steps_from_history(history),
+        steps=(agent.last_stats or {}).get("steps") or _steps_from_history(history),
         truncated=truncated,
         timed_out=timed_out,
         error=error,
@@ -394,6 +394,7 @@ def run_traced_conversation(case: Case, workspace: Workspace) -> tuple[Conversat
     timed_out = False
     error: str | None = None
     last_output = ""
+    total_steps = 0
     try:
         os.chdir(workspace.root)
         with _TimeLimit(case.workspace.timeout_seconds) as limit:
@@ -408,6 +409,7 @@ def run_traced_conversation(case: Case, workspace: Workspace) -> tuple[Conversat
                     continue
                 turns.append(Turn(role="user", content=content))
                 last_output = agent.process_query(content)
+                total_steps += (agent.last_stats or {}).get("steps", 0)
                 turns.append(Turn(role="assistant", content=last_output))
         timed_out = limit.timed_out
     except Exception as exc:
@@ -453,7 +455,7 @@ def run_traced_conversation(case: Case, workspace: Workspace) -> tuple[Conversat
         before=workspace.before,
         after=after,
         duration=duration,
-        steps=_steps_from_history(history),
+        steps=total_steps or _steps_from_history(history),
         truncated=truncated,
         timed_out=timed_out,
         error=error,

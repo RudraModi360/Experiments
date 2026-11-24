@@ -1,0 +1,38 @@
+id = "data-cleaning-024"
+name = "Data cleaning pipeline"
+enabled = true
+tags = ["code","data","pipeline"]
+profile = "code"
+difficulty = "medium"
+input = "Clean messy.csv (missing values, duplicates, bad types), write cleaned.csv + dq_report.md (rows dropped, nulls filled, type fixes) with reproducible script clean.py."
+expected_output = "cleaned.csv and dq_report.md produced by clean.py; report documents all fixes."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "cleaned.csv"
+exists = true
+[[expect.files]]
+path = "dq_report.md"
+exists = true
+[[expect.files]]
+path = "clean.py"
+exists = true
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"

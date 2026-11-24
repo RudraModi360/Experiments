@@ -1,0 +1,33 @@
+id = "release-notes-029"
+name = "Release notes generator"
+enabled = true
+tags = ["docs","release","format"]
+profile = "docs"
+difficulty = "easy"
+grounding = "tool_outputs"
+input = "From gitlog.txt, produce RELEASE_NOTES.md (features, fixes, breaking changes) grouped by type, with contributor credits and version header."
+expected_output = "RELEASE_NOTES.md grouped by type with contributor credits and version header."
+[workspace]
+network = false
+bash = true
+max_steps = 15
+timeout_seconds = 300
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "RELEASE_NOTES.md"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 1
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

@@ -1,0 +1,36 @@
+id = "research-report-021"
+name = "Research report (doc generation)"
+enabled = true
+tags = ["docs","research","report"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = "Research topic X from the local docs/ corpus (and web if available), then produce a structured Markdown report report.md with executive summary, sections, citations, and a CSV data appendix data.csv."
+expected_output = "report.md with executive summary, sections, citations; data.csv appendix; only these files created."
+[workspace]
+network = true
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "report.md"
+exists = true
+[[expect.files]]
+path = "data.csv"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

@@ -20,4 +20,5 @@ class ContractTest(unittest.TestCase):
         s,b=self._get("/"); self.assertEqual(b["motd"],_settings()["motd"])
     def test_max_entries_enforced_from_current_settings(self):
         s,b=self._get("/entries"); self.assertLessEqual(len(b["entries"]),_settings()["max_entries"]); self.assertEqual(b["max_entries"],_settings()["max_entries"])
-unittest.main()
+if __name__ == "__main__":
+    unittest.main()

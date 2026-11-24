@@ -1,0 +1,48 @@
+id = "agent-with-memory-016"
+name = "Agent with memory + RAG tool"
+enabled = true
+tags = ["ai","agentic","greenfield","guards"]
+profile = "tools"
+difficulty = "hard"
+input = "Implement mini_agent.py: tool registry (calc safe no eval, kv set/get, rag search over ./docs), agent loop driven by fake_model(step,history) returning JSON actions, max-step guard, loop detection (3 repeats), driven by scenario.jsonl (happy/max-step/repeat), test_mini_agent.py (unittest, all guards + unknown tool + calc safety + rag), demo writing demo_transcript.jsonl ({step,action}), README. Run tests."
+expected_output = "mini_agent.py implements registry (calc safe, kv, rag), loop, guards; scenario.jsonl 3 scenarios; tests pass; demo transcript with termination reasons; README explains loop and guards."
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[expect]
+truncated_ok = false
+[[expect.commands]]
+command = "python3 -m unittest -q"
+cwd = "."
+exit_code = 0
+timeout = 120
+[[expect.files]]
+path = "mini_agent.py"
+exists = true
+contains = ["max_steps"]
+[[expect.files]]
+path = "demo_transcript.jsonl"
+exists = true
+min_bytes = 1
+[[expect.files]]
+path = "scenario.jsonl"
+exists = true
+[[expect.files]]
+path = "README.md"
+exists = true
+[[expect.tools]]
+name = "write_file"
+min_calls = 4
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "tools"

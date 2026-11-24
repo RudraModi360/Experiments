@@ -1,0 +1,35 @@
+id = "nl2sql-025"
+name = "NL to SQL generation"
+enabled = true
+tags = ["tools","sql","code-gen"]
+profile = "tools"
+difficulty = "medium"
+input = "Given schema.sql + questions.txt, generate queries.sql with one query per question, expected result counts, and explain.md with plan notes."
+expected_output = "queries.sql with one query per question and expected counts; explain.md with plan notes."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "queries.sql"
+exists = true
+[[expect.files]]
+path = "explain.md"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "tools"

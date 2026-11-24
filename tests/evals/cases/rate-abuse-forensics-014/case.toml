@@ -1,0 +1,36 @@
+id = "rate-abuse-forensics-014"
+name = "Rate abuse forensics (large log)"
+enabled = true
+tags = ["devops","stress","spill","hard"]
+profile = "code"
+difficulty = "hard"
+grounding = "tool_outputs"
+input = "The service behind ./ops/nginx.conf returns intermittent 429s/502s. Analyze ./ops/access.log (large, do not cat) to find top abusive IPs and endpoints with exact counts, fix rate-limit + upstream config, validate structurally, write incident-report.md, save numbers as notes."
+expected_output = "Top abusive IPs/endpoints with exact counts, config fixed, incident-report.md cites counts, notes survive compaction."
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/ops"
+target = "ops"
+[expect]
+truncated_ok = false
+[[expect.commands]]
+command = "bash -c 'test -f ops/access.log'"
+cwd = "."
+exit_code = 0
+timeout = 60
+[[expect.tools]]
+name = "bash"
+min_calls = 3
+[[expect.tools]]
+name = "save_note"
+min_calls = 1
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"
+use = ["faithfulness"]
