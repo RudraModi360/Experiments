@@ -1,10 +1,19 @@
-"""OpenAI-compatible adapter for llama.cpp server and llama.cpp macOS app."""
+"""OpenAI-compatible adapter for llama.cpp and Google AI Studio.
+
+The same wire protocol covers llama.cpp's server, the llama.cpp macOS app and
+Google AI Studio's OpenAI-compatible endpoint. Gemini is stricter: tool calls
+need ids, tool results need a matching ``tool_call_id`` and Gemini 3 function
+calls need their ``thought_signature`` echoed back on the next turn. When the
+endpoint is Google (or ``google=True``), the adapter adds that bookkeeping and
+never sends an invalid history.
+"""
 
 from __future__ import annotations
 
+import copy
 import json
 import time
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import requests
 
@@ -14,12 +23,28 @@ from .reply import LLMReply
 from .streaming import TokenCallback
 
 
+def _canonical_args(args: Any) -> str:
+    if isinstance(args, str):
+        return args
+    try:
+        return json.dumps(args or {}, sort_keys=True, separators=(",", ":"), default=str)
+    except (TypeError, ValueError):
+        return str(args)
+
+
 class LlamaCppLLM:
     supports_streaming = True
 
-    def __init__(self, cfg: Config):
+    def __init__(self, cfg: Config, *, google: bool = False):
         self.cfg = cfg
         self.base_url = self._normalize_base_url(cfg.base_url or "http://127.0.0.1:8080/v1")
+        self._google = bool(google or "generativelanguage.googleapis.com" in self.base_url)
+        # Gemini needs signatures/ids from the previous reply. Keep them under
+        # (name, canonical args) because the agent stores calls without extras.
+        self._signatures: Dict[Tuple[str, str], Any] = {}
+        self._ids: Dict[Tuple[str, str], str] = {}
+        self._next_id = 0
+        self._force_flatten = False
         self._session = requests.Session()
         self._session.headers.update({"Content-Type": "application/json"})
         if cfg.api_key:
@@ -32,6 +57,9 @@ class LlamaCppLLM:
             url = "http://127.0.0.1:8080/v1"
         if url.endswith("/chat/completions"):
             return url[:-len("/chat/completions")]
+        # Google AI Studio's compatible base is .../v1beta/openai, not .../v1.
+        if "generativelanguage.googleapis.com" in url:
+            return url
         if not url.endswith("/v1"):
             url = f"{url}/v1"
         return url
@@ -44,7 +72,7 @@ class LlamaCppLLM:
                  stream: bool, temperature: Optional[float], num_predict: Optional[int]) -> Dict[str, Any]:
         payload: Dict[str, Any] = {
             "model": self.cfg.model,
-            "messages": messages,
+            "messages": self._messages(messages) if self._google else messages,
             "temperature": self.cfg.temperature if temperature is None else temperature,
             "max_tokens": num_predict or self.cfg.num_predict,
             "stream": stream,
@@ -66,12 +94,120 @@ class LlamaCppLLM:
         except Exception:
             return obj
 
-    @staticmethod
-    def _normalize_calls(raw_calls: Any) -> List[Dict[str, Any]]:
+    def _remember_call(self, name: str, args: Dict[str, Any], call_id: Optional[str],
+                       extra: Any) -> None:
+        key = (name, _canonical_args(args))
+        if extra:
+            self._signatures[key] = extra
+        if call_id:
+            self._ids[key] = call_id
+
+    def _new_id(self) -> str:
+        self._next_id += 1
+        return f"call_{self._next_id}"
+
+    def _messages(self, messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Convert the agent's history into what Google's endpoint accepts."""
+        prepared: List[Dict[str, Any]] = []
+        pending_ids: List[str] = []
+        flatten_tools = False
+
+        for original in messages:
+            message = copy.deepcopy(original or {})
+            role = message.get("role")
+            message.pop("_meta", None)
+            if role != "tool":
+                flatten_tools = False
+
+            if role == "assistant" and message.get("tool_calls"):
+                calls = []
+                missing_signature = False
+                pending_ids = []
+                for raw_call in message.get("tool_calls") or []:
+                    raw_call = self._plain(raw_call) or {}
+                    fn = self._plain(raw_call.get("function")) or {}
+                    name = fn.get("name") or ""
+                    args = self._plain(fn.get("arguments"))
+                    if isinstance(args, str):
+                        try:
+                            args = json.loads(args) if args.strip() else {}
+                        except json.JSONDecodeError:
+                            args = {"__invalid_json__": args[:300]}
+                    if not isinstance(args, dict):
+                        args = {}
+                    key = (name, _canonical_args(args))
+                    call_id = raw_call.get("id") or self._ids.get(key) or self._new_id()
+                    pending_ids.append(call_id)
+                    call = {
+                        "id": call_id,
+                        "type": "function",
+                        "function": {
+                            "name": name,
+                            "arguments": _canonical_args(args),
+                        },
+                    }
+                    extra = raw_call.get("extra_content") or self._signatures.get(key)
+                    if self._force_flatten:
+                        missing_signature = True
+                    elif extra:
+                        call["extra_content"] = copy.deepcopy(extra)
+                    else:
+                        missing_signature = True
+                    calls.append(call)
+
+                if missing_signature:
+                    # Gemini rejects a function-call history without its
+                    # original signature. Replay it as text so a resumed or
+                    # compacted session keeps working instead of erroring out.
+                    text = message.get("content") or ""
+                    summary = "\n".join(
+                        f"{call['function']['name']}({call['function']['arguments']})"
+                        for call in calls
+                    )
+                    message.pop("tool_calls", None)
+                    message["role"] = "assistant"
+                    message["content"] = (
+                        (text + "\n" if text else "")
+                        + "[Previous tool calls - replayed without signatures]\n"
+                        + summary
+                    ).strip()
+                    flatten_tools = True
+                    pending_ids = []
+                else:
+                    message["tool_calls"] = calls
+                    if message.get("content") is None:
+                        message["content"] = ""
+
+            elif role == "tool":
+                if flatten_tools:
+                    name = message.get("tool_name") or "tool"
+                    content = message.get("content") or ""
+                    prepared.append({
+                        "role": "user",
+                        "content": f"[Tool result: {name}]\n{content}",
+                    })
+                    continue
+                call_id = message.get("tool_call_id")
+                if not call_id and pending_ids:
+                    call_id = pending_ids.pop(0)
+                if not call_id:
+                    call_id = self._new_id()
+                message["tool_call_id"] = call_id
+                message.pop("tool_name", None)
+                if message.get("content") is None:
+                    message["content"] = ""
+
+            elif role == "assistant" and message.get("content") is None:
+                message["content"] = ""
+
+            prepared.append(message)
+        return prepared
+
+    def _normalize_calls(self, raw_calls: Any) -> List[Dict[str, Any]]:
         calls = []
-        for call in LlamaCppLLM._plain(raw_calls) or []:
-            call = LlamaCppLLM._plain(call) or {}
-            fn = LlamaCppLLM._plain(call.get("function")) or {}
+        for call in self._plain(raw_calls) or []:
+            call = self._plain(call) or {}
+            fn = self._plain(call.get("function")) or {}
             args = fn.get("arguments")
             if isinstance(args, str):
                 try:
@@ -80,11 +216,32 @@ class LlamaCppLLM:
                     args = {"__invalid_json__": args[:300]}
             if not isinstance(args, dict):
                 args = {}
-            calls.append({"function": {"name": fn.get("name") or "", "arguments": args}})
+            name = fn.get("name") or ""
+            call_id = call.get("id") or None
+            extra = call.get("extra_content")
+            if self._google:
+                self._remember_call(name, args, call_id, extra)
+            normalized: Dict[str, Any] = {"function": {"name": name, "arguments": args}}
+            if self._google:
+                if call_id:
+                    normalized["id"] = call_id
+                if extra:
+                    normalized["extra_content"] = copy.deepcopy(extra)
+            calls.append(normalized)
         return calls
 
+    _RETRYABLE_STATUSES = {429, 500, 502, 503, 504}
+    _RETRY_DELAYS = (3.0, 5.0, 7.0, 10.0)  # rolling backoff, capped at 10s
+    _MAX_RETRIES = 10
+
+    def _retry_delay(self, attempt: int) -> float:
+        if attempt < len(self._RETRY_DELAYS):
+            return self._RETRY_DELAYS[attempt]
+        return self._RETRY_DELAYS[-1]
+
     def _request(self, payload: Dict[str, Any], stream: bool) -> requests.Response:
-        for attempt in range(2):
+        last_exc: Optional[LLMError] = None
+        for attempt in range(self._MAX_RETRIES + 1):
             try:
                 response = self._session.post(
                     self.chat_url,
@@ -92,29 +249,79 @@ class LlamaCppLLM:
                     timeout=self.cfg.request_timeout,
                     stream=stream,
                 )
-                if response.status_code >= 400:
-                    detail = ""
-                    try:
-                        detail = response.text[:500]
-                    except Exception:
-                        pass
-                    raise LLMError(
-                        f"llama.cpp request failed ({response.status_code}) at {self.chat_url}: {detail}"
-                    )
-                return response
-            except LLMError:
-                raise
             except requests.RequestException as exc:
-                if attempt == 0:
-                    time.sleep(1.0)
+                last_exc = LLMError(
+                    f"llama.cpp endpoint unavailable at {self.chat_url}: {exc}"
+                )
+                if attempt < self._MAX_RETRIES:
+                    delay = self._retry_delay(attempt)
+                    print(
+                        f"[llm] network error ({exc}); "
+                        f"retry {attempt + 1}/{self._MAX_RETRIES} in {delay:.0f}s",
+                        flush=True,
+                    )
+                    time.sleep(delay)
                     continue
-                raise LLMError(f"llama.cpp endpoint unavailable at {self.chat_url}: {exc}") from exc
-        raise LLMError(f"llama.cpp endpoint unavailable at {self.chat_url}")
+                raise last_exc
+
+            if response.status_code in self._RETRYABLE_STATUSES:
+                detail = ""
+                try:
+                    detail = response.text[:500]
+                except Exception:
+                    pass
+                last_exc = LLMError(
+                    f"llama.cpp request failed ({response.status_code}) at {self.chat_url}: {detail}"
+                )
+                if attempt < self._MAX_RETRIES:
+                    delay = self._retry_delay(attempt)
+                    print(
+                        f"[llm] HTTP {response.status_code} (transient); "
+                        f"retry {attempt + 1}/{self._MAX_RETRIES} in {delay:.0f}s",
+                        flush=True,
+                    )
+                    time.sleep(delay)
+                    continue
+                raise last_exc
+
+            if response.status_code >= 400:
+                detail = ""
+                try:
+                    detail = response.text[:500]
+                except Exception:
+                    pass
+                raise LLMError(
+                    f"llama.cpp request failed ({response.status_code}) at {self.chat_url}: {detail}"
+                )
+            return response
+
+        raise last_exc or LLMError(f"llama.cpp request failed at {self.chat_url}")
+
+    @staticmethod
+    def _is_signature_error(exc: BaseException) -> bool:
+        text = str(exc or "").lower()
+        return "400" in text and (
+            "thought_signature" in text or "thought signature" in text
+        )
+
+    def _send(self, messages: List[Dict[str, Any]], tools: Optional[List[Dict[str, Any]]],
+              stream: bool, temperature: Optional[float],
+              num_predict: Optional[int]) -> requests.Response:
+        payload = self._payload(messages, tools, stream, temperature, num_predict)
+        try:
+            return self._request(payload, stream)
+        except LLMError as exc:
+            if self._google and not self._force_flatten and self._is_signature_error(exc):
+                # Google rejected a replayed signature: fall back to text
+                # tool history instead of failing the turn.
+                self._force_flatten = True
+                payload = self._payload(messages, tools, stream, temperature, num_predict)
+                return self._request(payload, stream)
+            raise
 
     def chat(self, messages: List[Dict[str, Any]], tools: Optional[List[Dict[str, Any]]] = None, *,
              temperature: Optional[float] = None, num_predict: Optional[int] = None) -> LLMReply:
-        payload = self._payload(messages, tools, False, temperature, num_predict)
-        response = self._request(payload, False)
+        response = self._send(messages, tools, False, temperature, num_predict)
         try:
             data = response.json()
         except Exception as exc:
@@ -148,8 +355,7 @@ class LlamaCppLLM:
     def chat_stream(self, messages: List[Dict[str, Any]], tools: Optional[List[Dict[str, Any]]] = None, *,
                     on_token: TokenCallback, temperature: Optional[float] = None,
                     num_predict: Optional[int] = None, on_stats: Optional[Any] = None) -> LLMReply:
-        payload = self._payload(messages, tools, True, temperature, num_predict)
-        response = self._request(payload, True)
+        response = self._send(messages, tools, True, temperature, num_predict)
         parts: List[str] = []
         call_parts: Dict[int, Dict[str, Any]] = {}
         prompt_tokens = output_tokens = None

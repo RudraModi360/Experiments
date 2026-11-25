@@ -283,6 +283,22 @@ def conversational_metrics_for(case) -> list[Any]:
     return [build_conversational_metric(key, case) for key in conv]
 
 
+def metric_infra_error(metrics: list[Any]) -> str | None:
+    """Return judge/infra failures DeepEval attached to metrics, if any.
+
+    ``assert_test`` raises ``AssertionError`` both for a real threshold miss and
+    for a metric that never produced a score (judge 503, bad schema, timeout).
+    The latter is an infra failure, not a quality verdict.
+    """
+    problems = []
+    for metric in metrics:
+        error = getattr(metric, "error", None)
+        if error and getattr(metric, "score", None) is None:
+            name = getattr(metric, "name", type(metric).__name__)
+            problems.append(f"{name}: {error}")
+    return "; ".join(problems) or None
+
+
 def metric_scores(metrics: list[Any]) -> list[dict[str, Any]]:
     """Serialize whatever DeepEval filled in on each metric instance."""
     rows = []

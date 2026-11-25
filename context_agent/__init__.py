@@ -8,6 +8,11 @@ Import surface kept compatible with the original single-file script:
     BASE_PROMPT, SUMMARIZER_SYSTEM, helpers and file constants.
 """
 
+from .env import load_env_file
+
+# Load the repo .env before Config reads AGENT_* / GEMINI_API_KEY at import time.
+load_env_file()
+
 from .agent import IntelligentAgent
 from .config import Config
 from .context.limits import Limits

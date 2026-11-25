@@ -219,11 +219,16 @@ def make_golden(case: Case, result: RunResult, checks: Any = None) -> Golden:
 
 
 @observe(type="agent")
-def run_traced_case(case: Case, workspace: Workspace) -> RunResult:
+def run_traced_case(
+    case: Case, workspace: Workspace, progress: Any = None
+) -> RunResult:
     """Run one case as a child of an agent span.
 
     The trace carries everything DeepEval's metrics read: input, expected
     output, context, retrieval context, tools called and expected tools.
+    ``progress`` is an optional live-status object (``CaseProgress``) that is
+    fed the agent's step and tool events so the terminal can show which case is
+    running.
     """
     retrieval = (
         list(case.retrieval_context)
@@ -246,6 +251,8 @@ def run_traced_case(case: Case, workspace: Workspace) -> RunResult:
         expected_tools=_trace_expected_tools(case) or None,
     )
 
+    if progress is not None:
+        progress.set_phase("agent")
     cfg = _agent_config(case, workspace)
     serving = build_serving_llm(cfg)
     if serving is not None:
@@ -253,9 +260,15 @@ def run_traced_case(case: Case, workspace: Workspace) -> RunResult:
         # budget inside the smallest serving target so a fallback cannot
         # suddenly see an over-long prompt.
         cfg.num_ctx = serving.num_ctx
-    recorder = Recorder()
+    recorder = Recorder(on_tool=progress.on_tool if progress is not None else None)
     policy = build_policy(case)
-    agent = EvalAgent(cfg, recorder, policy=policy, llm=serving)
+    agent = EvalAgent(
+        cfg,
+        recorder,
+        policy=policy,
+        llm=serving,
+        on_step=progress.on_step if progress is not None else None,
+    )
 
     previous_cwd = Path.cwd()
     previous_addopts = os.environ.get("PYTEST_ADDOPTS")
@@ -360,12 +373,15 @@ def run_traced_case(case: Case, workspace: Workspace) -> RunResult:
 
 
 @observe(type="agent")
-def run_traced_conversation(case: Case, workspace: Workspace) -> tuple[ConversationalTestCase, RunResult]:
+def run_traced_conversation(
+    case: Case, workspace: Workspace, progress: Any = None
+) -> tuple[ConversationalTestCase, RunResult]:
     """Run a scripted multi-turn case on one persistent agent session.
 
     Each ``user`` turn is sent to ``process_query`` on the same agent, so the
     session history, summary, notes and file tracker carry across turns. The
     resulting ``ConversationalTestCase`` is scored with conversational metrics.
+    ``progress`` is fed cumulative step and tool events for the live status.
     """
     update_current_trace(
         name=case.id,
@@ -375,13 +391,27 @@ def run_traced_conversation(case: Case, workspace: Workspace) -> tuple[Conversat
         expected_output=case.expected_outcome or None,
     )
 
+    if progress is not None:
+        progress.set_phase("agent")
     cfg = _agent_config(case, workspace)
     serving = build_serving_llm(cfg)
     if serving is not None:
         cfg.num_ctx = serving.num_ctx
-    recorder = Recorder()
+    recorder = Recorder(on_tool=progress.on_tool if progress is not None else None)
     policy = build_policy(case)
-    agent = EvalAgent(cfg, recorder, policy=policy, llm=serving)
+    step_base = {"total": 0}
+
+    def _on_step(turn_steps: int) -> None:
+        if progress is not None:
+            progress.on_step(step_base["total"] + int(turn_steps))
+
+    agent = EvalAgent(
+        cfg,
+        recorder,
+        policy=policy,
+        llm=serving,
+        on_step=_on_step if progress is not None else None,
+    )
 
     previous_cwd = Path.cwd()
     previous_addopts = os.environ.get("PYTEST_ADDOPTS")
@@ -410,6 +440,7 @@ def run_traced_conversation(case: Case, workspace: Workspace) -> tuple[Conversat
                 turns.append(Turn(role="user", content=content))
                 last_output = agent.process_query(content)
                 total_steps += (agent.last_stats or {}).get("steps", 0)
+                step_base["total"] = total_steps
                 turns.append(Turn(role="assistant", content=last_output))
         timed_out = limit.timed_out
     except Exception as exc:

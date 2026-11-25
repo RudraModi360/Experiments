@@ -60,24 +60,76 @@ uv run python -m tests.evals.harness.cli report
 uv run python -m tests.evals.harness.cli report --case nginx-log-forensics-004
 ```
 
+### Gemini via Google AI Studio (faster than the local SUT)
+
+`GEMINI_API_KEY` is loaded from the repo `.env` automatically (shell variables
+still win). To run one case with Gemini 3.5 Flash Lite as the SUT and the judge,
+with no local Ollama fallback:
+
+```bash
+uv run python -m tests.evals.harness.cli run \
+  --case weather-cli-011 \
+  --serving-chain google:gemini-3.5-flash-lite \
+  --no-final-ollama \
+  --judge-provider google \
+  --judge-model gemini-3.5-flash-lite \
+  --run-id gemini-smoke
+```
+
+- Drop `--no-final-ollama` to keep `ollama:nemotron-3.5-bolt:e4b-64k` as a
+  rate-limit/unavailable fallback.
+- Drop `--judge-provider google --judge-model ...` to keep the default local
+  Ollama judge.
+- `--serving-chain` now enables the served SUT automatically; you no longer
+  need to export `EVAL_SERVING_DISABLE=0`.
+- Transient Google errors (503 "overloaded", timeouts) are retried on the same
+  target before falling back: `EVAL_SERVING_RETRIES` (default `2`) and
+  `EVAL_SERVING_RETRY_DELAY` seconds (default `2`, doubled per retry). Set
+  `EVAL_SERVING_RETRIES=0` to disable.
+
 Plain `pytest` skips these tests; always use `deepeval test run` (or `evalctl run`).
 The harness CLI launches `.venv/bin/deepeval` from the active uv environment so
 the eval subprocess and the SUT share one interpreter (Python 3.12 with uzu).
 Running with system `python3` is not supported: it has deepeval but not uzu.
+
+## Live progress
+
+While a suite is running, the harness keeps one `[eval]` line pinned to the
+terminal (the same idea as the CLI's live `[stats]` line):
+
+```text
+[eval] single 3/10 weather-cli-011 | code | agent | 01:42 | step 7 | 14 tools | last bash
+```
+
+It shows the case position, id, profile, phase (`workspace`, `agent`, `checks`,
+`judging`, `report`), elapsed time, steps and tool calls. The line is written
+straight to the terminal because pytest captures normal stdout. Each case also
+prints static start and finish lines:
+
+```text
+[eval] single 3/10 weather-cli-011 | profile=code | starting
+[eval] single 3/10 weather-cli-011 | ok | 128.4s | 7 steps | 14 tools | qwen3.5-9b
+```
+
+On a non-interactive terminal (CI, redirected output) only the static lines are
+emitted, so logs still record every case. Disable the pinned line with
+`EVAL_LIVE_PROGRESS=0`.
 
 ## Models
 
 | Role | Default | Config |
 |---|---|---|
 | SUT | `trymirai/Qwen3.5-9B-M` via uzu (`AGENT_PROVIDER=uzu`, 32k ctx) | `AGENT_MODEL`, `AGENT_PROVIDER`, `AGENT_BASE_URL`, `AGENT_NUM_CTX` |
-| Judge | Ollama `nemotron-3.5-bolt:e4b-64k` only | `EVAL_JUDGE_CHAIN`, or `EVAL_JUDGE_PROVIDER=ollama\|local` for a single judge |
+| SUT (served) | off by default; optional Google AI Studio chain | `EVAL_SERVING_CHAIN=google:gemini-3.5-flash-lite`, `EVAL_SERVING_DISABLE=0` |
+| Judge | Ollama `nemotron-3.5-bolt:e4b-64k` | `EVAL_JUDGE_CHAIN`, or `EVAL_JUDGE_PROVIDER=ollama\|local\|google` |
 | Environment | uv (Python 3.12); `uzu` runtime dep, `deepeval==4.3.4` dev dep | `uv sync`, `uv run ...` |
 
 Judge fallback is sticky per case: a rate-limited target is not retried within
 the same case. The final Ollama fallback saves an individual case when every
 Google target fails. Authentication errors are fatal, not silently hidden.
 The SUT's own Google serving chain is **disabled by default**
-(`EVAL_SERVING_DISABLE=1`) so the Gemini key is used only for judging.
+(`EVAL_SERVING_DISABLE=1`). Pass `--serving-chain google:<model>` (or set
+`EVAL_SERVING_DISABLE=0`) to serve the SUT from Google AI Studio instead.
 
 ## The 12 cases
 

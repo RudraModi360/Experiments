@@ -183,6 +183,14 @@ def _unpack(archive: Path, destination: Path) -> None:
 # --------------------------------------------------------------------------- copy / fetch
 
 
+def _dir_has_files(source: Path) -> bool:
+    for _, dirnames, filenames in os.walk(source):
+        dirnames[:] = [d for d in dirnames if d not in IGNORE_DIRS]
+        if any(name not in IGNORE_FILES for name in filenames):
+            return True
+    return False
+
+
 def _copy_tree(source: Path, destination: Path, spec: ArtifactSpec) -> None:
     destination.mkdir(parents=True, exist_ok=True)
     for dirpath, dirnames, filenames in os.walk(source):
@@ -469,6 +477,8 @@ class Workspace:
         if spec.kind in {"repo", "docs"}:
             if not source.is_dir():
                 raise WorkspaceError(f"{spec.kind} artifact source is not a directory: {source}")
+            if not spec.optional and "greenfield" not in self.case.tags and not _dir_has_files(source):
+                raise WorkspaceError(f"{spec.kind} artifact directory is empty (0 files): {source}")
             if spec.mode == "symlink":
                 _symlink_tree(source, destination, spec)
             else:

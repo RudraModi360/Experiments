@@ -28,10 +28,13 @@ class ContextView:
             root = os.getcwd()
             base_depth = root.rstrip(os.sep).count(os.sep)
             entries: List[str] = []
+            top_dirs: List[str] = []
             extra = 0
             for cur, dirs, files in os.walk(root):
                 depth = cur.rstrip(os.sep).count(os.sep) - base_depth
                 dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS)
+                if depth == 0:
+                    top_dirs = [d + "/" for d in dirs]
                 for fname in sorted(files):
                     if fname == ".DS_Store":
                         continue
@@ -48,10 +51,14 @@ class ContextView:
                         else:
                             extra += 1
                     dirs[:] = []
-            if not entries:
-                return ""
-            listing = ", ".join(entries)
-            return f"{listing} (+{extra} more)" if extra else listing
+            if entries:
+                listing = ", ".join(entries)
+                suffix = f" (+{extra} more)" if extra else ""
+                return f"Existing workspace files (read before overwriting): {listing}{suffix}"
+            if top_dirs:
+                shown = ", ".join(top_dirs[:max_entries])
+                return f"Workspace status: empty (0 files; empty directories: {shown})"
+            return "Workspace status: empty (0 files)"
         except OSError:
             return ""
 
@@ -63,7 +70,7 @@ class ContextView:
             self._workspace_snapshot_cache = self._workspace_snapshot()
         base = self.base_prompt
         if self._workspace_snapshot_cache:
-            base += f"\n\nExisting workspace files (read before overwriting): {self._workspace_snapshot_cache}"
+            base += f"\n\n{self._workspace_snapshot_cache}"
         stable = self.state.render_stable()
         if not stable:
             return base

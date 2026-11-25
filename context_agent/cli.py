@@ -23,7 +23,7 @@ from .utilities.formatting import dim, format_stats, format_tool_stats, hint
 HELP = """Commands
   /help                 show this help
   /model [NAME]         show the model, or switch to NAME
-  /provider [NAME]      show the provider, or switch (mirai/uzu, ollama, llama-cpp)
+  /provider [NAME]      show the provider, or switch (mirai/uzu, ollama, llama-cpp, google)
   /sessions             list previous sessions grouped by day
   /resume <id|#>        resume a previous session (see /sessions)
   /new                  start a fresh session (/clear, /reset)
@@ -223,6 +223,8 @@ def _banner(cfg: Config, agent: IntelligentAgent) -> None:
     provider_detail = f" provider={cfg.provider}"
     if cfg.provider == "llama-cpp":
         provider_detail += f" endpoint={cfg.base_url or 'http://127.0.0.1:8080/v1'}"
+    elif cfg.provider == "google":
+        provider_detail += f" endpoint={cfg.base_url or 'Google AI Studio'}"
     print("Intelligent Agent v2 - type /help for commands, /quit to exit.")
     print(f"model={cfg.model} num_ctx={cfg.num_ctx} num_predict={cfg.num_predict}"
           f"{provider_detail} session={agent.store.sid}")
@@ -236,9 +238,11 @@ def main() -> None:
     parser.add_argument("--model", help="override the model name")
     parser.add_argument("--num-ctx", type=int, help="override the model context window")
     parser.add_argument("--num-predict", type=int, help="override the reply token budget")
-    parser.add_argument("--provider", choices=["mirai", "uzu", "ollama", "llama-cpp"], help="LLM provider")
-    parser.add_argument("--endpoint", help="llama.cpp OpenAI-compatible base URL")
-    parser.add_argument("--api-key", help="API key for llama.cpp endpoint")
+    parser.add_argument("--provider",
+                        choices=["mirai", "uzu", "ollama", "llama-cpp", "google", "gemini"],
+                        help="LLM provider")
+    parser.add_argument("--endpoint", help="llama.cpp or OpenAI-compatible base URL")
+    parser.add_argument("--api-key", help="API key for llama.cpp or Google AI Studio")
     parser.add_argument("--quiet", action="store_true",
                         help="hide [ctx:...] trace lines (tool calls and context passes stay visible)")
     parser.add_argument("--no-tools", action="store_true", help="hide tool calls and result previews")

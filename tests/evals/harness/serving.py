@@ -24,6 +24,7 @@ import json
 import os
 import re
 import sys
+import time
 from dataclasses import dataclass, replace
 from typing import Any, Dict, Iterable, List, Optional
 
@@ -37,6 +38,7 @@ from context_agent.llm.streaming import TokenCallback
 
 SERVING_PREFIX = "[eval-serving]"
 FALLBACK_PREFIX = "[eval-fallback]"
+RETRY_PREFIX = "[eval-retry]"
 
 DEFAULT_GOOGLE_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
 DEFAULT_GOOGLE_MODELS = (
@@ -50,6 +52,10 @@ DEFAULT_OLLAMA_MODEL = "nemotron-3.5-bolt:e4b-64k"
 GOOGLE_PROVIDERS = {"google", "gemini", "google-ai-studio", "google_ai_studio", "aistudio"}
 LOCAL_PROVIDERS = {"local", "openai", "openai-compatible", "openai_compatible", "llama-cpp"}
 FALLBACK_KINDS = {"rate_limit", "unavailable", "unsupported_tools", "invalid_model"}
+# Kinds worth retrying on the same target before moving on. Google AI Studio
+# answers 503 "overloaded" in bursts; with a single-target chain that used to
+# abort the whole case.
+RETRYABLE_KINDS = {"rate_limit", "unavailable"}
 
 RATE_LIMIT_SIGNALS = (
     "429",
@@ -197,6 +203,10 @@ def fallback_reason(exc: BaseException) -> Optional[str]:
     kind = getattr(exc, "kind", None)
     if kind in FALLBACK_KINDS:
         return kind
+    if kind == "fatal":
+        # The caller already classified this explicitly; do not re-guess from
+        # the message text.
+        return None
     text = str(exc or "")
     lower = text.lower()
     if any(signal in lower for signal in MISSING_PACKAGE_SIGNALS):
@@ -634,6 +644,7 @@ class FallbackLLM:
         self.targets = list(targets)
         self.index = 0
         self.switches: List[Dict[str, str]] = []
+        self.retries: List[Dict[str, str]] = []
         self.num_ctx = num_ctx
         self._announced = False
         _log(f"{SERVING_PREFIX} chain: " + " -> ".join(target.label for target in self.targets))
@@ -646,6 +657,20 @@ class FallbackLLM:
     def active_label(self) -> str:
         return self.active.label
 
+    @property
+    def max_retries(self) -> int:
+        try:
+            return max(0, int(_env("EVAL_SERVING_RETRIES", "2")))
+        except ValueError:
+            return 2
+
+    @property
+    def retry_delay(self) -> float:
+        try:
+            return max(0.0, float(_env("EVAL_SERVING_RETRY_DELAY", "2")))
+        except ValueError:
+            return 2.0
+
     def _announce(self) -> None:
         if not self._announced:
             self._announced = True
@@ -655,6 +680,40 @@ class FallbackLLM:
         if self.index >= len(self.targets) - 1:
             return None
         return fallback_reason(exc)
+
+    def _should_retry_same(self, exc: BaseException, attempt: int) -> bool:
+        """Whether to retry the current target instead of advancing.
+
+        Transient overloads (503/502/timeout) are retried on the same target
+        first. Rate limits skip ahead to the next target when there is one,
+        because the quota is per-model; on the last target they get a backoff
+        retry too.
+        """
+        if attempt >= self.max_retries:
+            return False
+        kind = fallback_reason(exc)
+        if kind not in RETRYABLE_KINDS:
+            return False
+        if kind == "rate_limit" and self.index < len(self.targets) - 1:
+            return False
+        return True
+
+    def _pause_before_retry(self, exc: BaseException, attempt: int) -> None:
+        reason = fallback_reason(exc) or "unavailable"
+        delay = self.retry_delay * (2 ** attempt)
+        detail = " ".join(str(exc or "").split())[:200]
+        _log(
+            f"{RETRY_PREFIX} {reason} on {self.active.label}: {detail} "
+            f"-> retry {attempt + 1}/{self.max_retries} in {delay:.1f}s"
+        )
+        self.retries.append({
+            "target": self.active.label,
+            "reason": reason,
+            "detail": detail,
+            "delay": f"{delay:.1f}",
+        })
+        if delay > 0:
+            time.sleep(delay)
 
     def _advance(self, reason: str, exc: BaseException) -> None:
         previous = self.active
@@ -677,6 +736,7 @@ class FallbackLLM:
              temperature: Optional[float] = None,
              num_predict: Optional[int] = None) -> LLMReply:
         self._announce()
+        attempt = 0
         while True:
             target = self.active
             try:
@@ -684,10 +744,15 @@ class FallbackLLM:
                     messages, tools, temperature=temperature, num_predict=num_predict
                 )
             except Exception as exc:
+                if self._should_retry_same(exc, attempt):
+                    self._pause_before_retry(exc, attempt)
+                    attempt += 1
+                    continue
                 reason = self._can_fallback(exc)
                 if reason is None:
                     raise
                 self._advance(reason, exc)
+                attempt = 0
 
     def chat_stream(self, messages: List[Dict[str, Any]],
                     tools: Optional[List[Dict[str, Any]]] = None, *,
@@ -695,6 +760,7 @@ class FallbackLLM:
                     temperature: Optional[float] = None,
                     num_predict: Optional[int] = None) -> LLMReply:
         self._announce()
+        attempt = 0
         while True:
             target = self.active
             emitted = False
@@ -710,12 +776,19 @@ class FallbackLLM:
                     temperature=temperature, num_predict=num_predict,
                 )
             except Exception as exc:
-                reason = self._can_fallback(exc)
                 # Never replay a partially streamed answer: that would duplicate
                 # text and corrupt the conversation.
-                if reason is None or emitted:
+                if emitted:
+                    raise
+                if self._should_retry_same(exc, attempt):
+                    self._pause_before_retry(exc, attempt)
+                    attempt += 1
+                    continue
+                reason = self._can_fallback(exc)
+                if reason is None:
                     raise
                 self._advance(reason, exc)
+                attempt = 0
 
 
 # --------------------------------------------------------------------- planning

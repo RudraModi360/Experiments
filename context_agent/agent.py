@@ -387,6 +387,10 @@ class IntelligentAgent:
             cmd = re.sub(r"\s+", " ", cmd)
             if re.match(r"^(?:ls|pwd)\b", cmd):
                 cmd = cmd.split()[0]
+            elif re.match(r"^find\b", cmd):
+                parts = cmd.split()
+                target = parts[1] if len(parts) > 1 and not parts[1].startswith("-") else "."
+                cmd = f"find:{os.path.normpath(target.strip(chr(39) + chr(34)))}"
             else:
                 m = re.match(r"^(?:wc\s+-[lwc]+\s+\S+\s*&&\s*)?cat\s+(?:-[A-Za-z]+\s+)*(\S+)$", cmd)
                 if m:
@@ -412,9 +416,9 @@ class IntelligentAgent:
             res = self.tools.run(name, args, cap)
             key = self._loop_key(name, args)
             if name in ("write_file", "edit_file"):
-                for k in [k for k in loop if k.startswith(("bash:ls:", "bash:pwd:", "bash:cat:"))]:
+                for k in [k for k in loop if k.startswith(("bash:ls:", "bash:pwd:", "bash:cat:", "bash:find:"))]:
                     loop.pop(k, None)
-            digest = "inspect" if key.startswith(("bash:ls:", "bash:pwd:", "bash:cat:")) else self._result_digest(name, res.text)
+            digest = "inspect" if key.startswith(("bash:ls:", "bash:pwd:", "bash:cat:", "bash:find:")) else self._result_digest(name, res.text)
             count, last = loop.get(key, [0, None])
             count = count + 1 if last == digest else 1
             loop[key] = [count, digest]

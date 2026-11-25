@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import select
 import shutil
 import signal
@@ -15,6 +16,11 @@ from .result import ToolError, ToolResult
 
 
 class BashTool:
+    _HOST_SCAN_RE = re.compile(
+        r"(?:^|[;&|]\s*)(?:find|ls)\b[^|;&\n]*?(?:\s/(?:\s|$|[|;&])|\s/(?:System|usr|Library|Users|private|var|etc|opt|Volumes)\b)"
+    )
+    _EARLY_PIPE_RE = re.compile(r"\|\s*(?:head|sed\s+-n|grep\s+-[^\s]*m)\b")
+
     def __init__(self, ctx: ToolExecutionContext):
         self.ctx = ctx
 
@@ -22,6 +28,8 @@ class BashTool:
         command = (command or "").strip()
         if not command:
             raise ToolError("bash needs a non-empty command")
+        if self._HOST_SCAN_RE.search(command):
+            raise ToolError("Searching outside the workspace (e.g. 'find /' or host system directories) is not allowed; stay inside the current workspace ('.').")
         workdir = self.ctx.resolve(cwd)
         if not os.path.isdir(workdir):
             raise ToolError(f"'{self.ctx.short_path(workdir)}' is not a directory")
@@ -94,13 +102,24 @@ class BashTool:
         output = b"".join(chunks).decode("utf-8", "replace").rstrip("\n")
         notes = [f"[bash output truncated at {limit} bytes]"] if truncated else []
         disp_cwd = self.ctx.short_path(workdir)
+        pipe_closed = (
+            not timed_out
+            and not truncated
+            and proc.returncode == 141
+            and bool(output)
+            and bool(self._EARLY_PIPE_RE.search(command))
+        )
         if timed_out:
             status = f"[bash timeout after {seconds}s | {elapsed:.2f}s | cwd {disp_cwd}]"
             body = output or "(no output before timeout)"
+        elif pipe_closed:
+            status = f"[bash exit 0 (pipe closed early) | {elapsed:.2f}s | cwd {disp_cwd}]"
+            body = output
         else:
             status = f"[bash exit {proc.returncode} | {elapsed:.2f}s | cwd {disp_cwd}]"
             body = output or "(no output)"
         text = status + "\n" + body + ("\n" + "\n".join(notes) if notes else "")
-        meta.update({"exit_code": None if timed_out else proc.returncode,
+        exit_code = None if timed_out else (0 if pipe_closed else proc.returncode)
+        meta.update({"exit_code": exit_code,
                      "timed_out": timed_out, "truncated": truncated, "duration": round(elapsed, 3)})
-        return ToolResult(text, ok=proc.returncode == 0 and not timed_out and not truncated, meta=meta)
+        return ToolResult(text, ok=(proc.returncode == 0 or pipe_closed) and not timed_out and not truncated, meta=meta)

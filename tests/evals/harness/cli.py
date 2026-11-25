@@ -296,6 +296,31 @@ def _python() -> str:
     return sys.executable or "python3"
 
 
+def _load_repo_env(env: dict[str, str]) -> None:
+    """Load repo-root ``.env`` values that are not already in *env*.
+
+    The eval subprocess needs ``GEMINI_API_KEY`` (and friends) even when the
+    caller only exported them in the project ``.env`` rather than the shell.
+    Existing environment variables always win.
+    """
+    path = REPO_ROOT / ".env"
+    if not path.is_file():
+        return
+    try:
+        from dotenv import dotenv_values
+    except ImportError:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            env.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        return
+    for key, value in dotenv_values(path).items():
+        if key and value is not None:
+            env.setdefault(key, value)
+
+
 def _deepeval() -> str:
     # Prefer the deepeval executable from the active environment (uv venv), so
     # the eval subprocess uses the same interpreter as the SUT (uzu). sys.prefix
@@ -311,6 +336,7 @@ def _deepeval() -> str:
 
 def cmd_run(args) -> int:
     env = os.environ.copy()
+    _load_repo_env(env)
     env["PYTHONPATH"] = os.pathsep.join(
         [str(REPO_ROOT), env.get("PYTHONPATH", "")]
     ).strip(os.pathsep)
@@ -340,7 +366,18 @@ def cmd_run(args) -> int:
     if args.agent_base_url:
         env["AGENT_BASE_URL"] = args.agent_base_url
     if args.serving_chain:
+        # An explicit chain must actually be used. Previously the default
+        # EVAL_SERVING_DISABLE=1 silently forced the app's local adapter.
         env["EVAL_SERVING_CHAIN"] = args.serving_chain
+        env["EVAL_SERVING_DISABLE"] = "0"
+    elif args.agent_provider and args.agent_provider.strip().lower() in {
+        "google", "gemini", "google-ai-studio", "google_ai_studio", "aistudio",
+    }:
+        env["EVAL_SERVING_DISABLE"] = "0"
+        if args.agent_model:
+            env["EVAL_SERVING_CHAIN"] = f"google:{args.agent_model}"
+    if args.no_final_ollama:
+        env["EVAL_SERVING_FINAL_OLLAMA"] = "0"
     if args.no_serving_fallback:
         env["EVAL_SERVING_DISABLE"] = "1"
 
@@ -349,6 +386,7 @@ def cmd_run(args) -> int:
     os.environ.update(env)
     try:
         chain = describe_chain()
+        judge_chain = describe_judge_chain()
     finally:
         os.environ.clear()
         os.environ.update(previous_env)
@@ -356,7 +394,7 @@ def cmd_run(args) -> int:
         print(f"[eval-serving] chain: {chain}")
     else:
         print("[eval-serving] SUT: app default (uzu/qwen unless AGENT_PROVIDER overrides)")
-    print(f"[eval-judge] chain: {describe_judge_chain()}")
+    print(f"[eval-judge] chain: {judge_chain}")
 
     suite = getattr(args, "suite", "both")
     files = {
@@ -607,6 +645,8 @@ def build_parser() -> argparse.ArgumentParser:
                         "google:gemma-4-31b-it,google:gemini-3.5-flash-lite,ollama:my-model")
     p.add_argument("--no-serving-fallback", action="store_true",
                    help="disable the Google/Ollama serving chain and use AGENT_PROVIDER")
+    p.add_argument("--no-final-ollama", action="store_true",
+                   help="do not append the local Ollama fallback to the serving chain")
     p.add_argument("--suite", choices=["single", "conversation", "both"], default="both",
                    help="which eval suite to run (default: both)")
     p.add_argument("--ignore-errors", action="store_true", default=True)

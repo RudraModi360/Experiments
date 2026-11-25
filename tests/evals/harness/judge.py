@@ -11,8 +11,10 @@ are fatal so a bad key is visible instead of silently scoring another model.
 
 from __future__ import annotations
 
+import asyncio
 import os
 import sys
+import time
 from dataclasses import dataclass
 from typing import Any, Optional
 
@@ -20,17 +22,21 @@ from deepeval.models import DeepEvalBaseLLM
 
 from .serving import (
     FALLBACK_KINDS,
+    RETRYABLE_KINDS,
     classify_error,
     google_api_key,
 )
 
 JUDGE_PREFIX = "[eval-judge]"
+RETRY_PREFIX = "[eval-judge-retry]"
+_LOGGED_CHAINS: set[str] = set()
 
 DEFAULT_JUDGE_CHAIN = (
     "ollama:nemotron-3.5-bolt:e4b-64k",
 )
 DEFAULT_OLLAMA_JUDGE = "nemotron-3.5-bolt:e4b-64k"
 DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
+DEFAULT_GOOGLE_JUDGE = "gemini-3.5-flash-lite"
 
 
 def _log(message: str) -> None:
@@ -78,14 +84,17 @@ def judge_chain() -> list[JudgeTarget]:
 
     Precedence:
       1. ``EVAL_JUDGE_CHAIN`` (explicit ``provider:model`` list).
-      2. ``EVAL_JUDGE_PROVIDER=ollama|local`` -> a single local judge.
-      3. Default Gemini chain when a Google key is present, else Ollama only.
+      2. ``EVAL_JUDGE_PROVIDER=google|gemini|ollama|local`` -> one judge.
+      3. Default Ollama chain (with Google targets filtered out if no key).
     """
     explicit = _env("EVAL_JUDGE_CHAIN")
     if explicit:
         return _parse_chain(explicit)
 
     provider = _env("EVAL_JUDGE_PROVIDER").lower()
+    if provider in {"google", "gemini", "google-ai-studio", "google_ai_studio", "aistudio"}:
+        model = _env("EVAL_JUDGE_MODEL", DEFAULT_GOOGLE_JUDGE)
+        return [JudgeTarget("google", model)]
     if provider in {"ollama", "local", "openai-compatible", "openai_compatible"}:
         model = _env("EVAL_JUDGE_MODEL", DEFAULT_OLLAMA_JUDGE)
         base_url = _env("EVAL_JUDGE_BASE_URL", DEFAULT_OLLAMA_BASE_URL)
@@ -167,7 +176,42 @@ class FallbackJudgeModel(DeepEvalBaseLLM):
             raise RuntimeError("empty judge chain")
         self.index = 0
         self.switches: list[dict[str, str]] = []
-        _log(f"{JUDGE_PREFIX} chain: {' -> '.join(t.label for t in self.targets)}")
+        label = " -> ".join(t.label for t in self.targets)
+        if label not in _LOGGED_CHAINS:
+            _LOGGED_CHAINS.add(label)
+            _log(f"{JUDGE_PREFIX} chain: {label}")
+
+    @property
+    def max_retries(self) -> int:
+        try:
+            return max(0, int(_env("EVAL_JUDGE_RETRIES", "2")))
+        except ValueError:
+            return 2
+
+    @property
+    def retry_delay(self) -> float:
+        try:
+            return max(0.0, float(_env("EVAL_JUDGE_RETRY_DELAY", "2")))
+        except ValueError:
+            return 2.0
+
+    def _should_retry_same(self, exc: BaseException, attempt: int) -> bool:
+        if attempt >= self.max_retries:
+            return False
+        if _reason(exc) not in RETRYABLE_KINDS:
+            return False
+        # With another target available, a rate limit should move on instead.
+        return not (_reason(exc) == "rate_limit" and self.index < len(self.targets) - 1)
+
+    def _retry_delay_for(self, exc: BaseException, attempt: int) -> float:
+        reason = _reason(exc) or "unavailable"
+        delay = self.retry_delay * (2 ** attempt)
+        detail = " ".join(str(exc or "").split())[:200]
+        _log(
+            f"{RETRY_PREFIX} {reason} on {self.targets[self.index].label}: {detail} "
+            f"-> retry {attempt + 1}/{self.max_retries} in {delay:.1f}s"
+        )
+        return delay
 
     # -- DeepEvalBaseLLM interface ------------------------------------------
     def load_model(self, *args, **kwargs) -> "FallbackJudgeModel":
@@ -199,20 +243,36 @@ class FallbackJudgeModel(DeepEvalBaseLLM):
         return False
 
     def generate(self, prompt: str, schema: Any = None, **kwargs):
+        attempt = 0
         while True:
             try:
                 return self._active().generate_with_schema(prompt, schema=schema, **kwargs)
             except Exception as exc:
+                if self._should_retry_same(exc, attempt):
+                    delay = self._retry_delay_for(exc, attempt)
+                    if delay > 0:
+                        time.sleep(delay)
+                    attempt += 1
+                    continue
                 if self._advance(exc):
+                    attempt = 0
                     continue
                 raise
 
     async def a_generate(self, prompt: str, schema: Any = None, **kwargs):
+        attempt = 0
         while True:
             try:
                 return await self._active().a_generate_with_schema(prompt, schema=schema, **kwargs)
             except Exception as exc:
+                if self._should_retry_same(exc, attempt):
+                    delay = self._retry_delay_for(exc, attempt)
+                    if delay > 0:
+                        await asyncio.sleep(delay)
+                    attempt += 1
+                    continue
                 if self._advance(exc):
+                    attempt = 0
                     continue
                 raise
 

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 from context_agent.agent import IntelligentAgent
 from context_agent.tools.registry import Toolbox
@@ -84,10 +84,14 @@ def build_policy(case) -> ToolPolicy:
 class Recorder:
     """Collects the agent's observable behavior for checks and reports."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        on_tool: Callable[[str, bool], None] | None = None,
+    ) -> None:
         self.tool_calls: list[ToolCallRecord] = []
         self.history: list[dict[str, Any]] = []
         self.agent: IntelligentAgent | None = None
+        self.on_tool = on_tool
 
     def record(self, name: str, args: Any, result: ToolResult, duration: float) -> None:
         self.tool_calls.append(
@@ -100,6 +104,17 @@ class Recorder:
                 duration=duration,
             )
         )
+        if self.on_tool is not None:
+            try:
+                self.on_tool(name, bool(result.ok))
+            except Exception:
+                # Progress reporting must never break a case.
+                pass
+
+    def sync_last(self, name: str, result: ToolResult) -> None:
+        if self.tool_calls and self.tool_calls[-1].name == name:
+            self.tool_calls[-1].output = result.text
+            self.tool_calls[-1].ok = bool(result.ok)
 
     def attach(self, agent: IntelligentAgent) -> None:
         self.agent = agent
@@ -194,8 +209,10 @@ class RecordingToolbox(Toolbox):
 class EvalAgent(IntelligentAgent):
     """An ``IntelligentAgent`` whose toolbox is replaced by the recorder."""
 
-    def __init__(self, cfg, recorder: Recorder, policy: ToolPolicy, **kwargs):
+    def __init__(self, cfg, recorder: Recorder, policy: ToolPolicy, *,
+                 on_step: Callable[[int], None] | None = None, **kwargs):
         super().__init__(cfg, **kwargs)
+        self._on_step = on_step
         # ContextManager only uses the schemas for a token estimate, so replacing
         # the toolbox after construction is safe.
         self.tools = RecordingToolbox(
@@ -206,4 +223,19 @@ class EvalAgent(IntelligentAgent):
             recorder=recorder,
             policy=policy,
         )
+        orig_add = self.ctx.add_tool_result
+
+        def _tracked_add_tool_result(name, args, res):
+            recorder.sync_last(name, res)
+            return orig_add(name, args, res)
+
+        self.ctx.add_tool_result = _tracked_add_tool_result
         recorder.attach(self)
+
+    def _record_stats(self, reply) -> None:
+        super()._record_stats(reply)
+        if self._on_step is not None:
+            try:
+                self._on_step(int((self.last_stats or {}).get("steps") or 0))
+            except Exception:
+                pass

@@ -1,0 +1,4 @@
+{"step": 1, "action": {"tool": "rag_search", "args": {"query": "agent", "top_k": 2}}}
+{"step": 2, "action": {"tool": "calc", "args": {"expr": "100 * 2.5 + 50"}}}
+{"step": 3, "action": {"tool": "kv_set", "args": {"key": "result", "value": 300}}}
+{"step": 4, "action": {"action": "finish", "output": "Successfully completed demo workflow"}}
