@@ -1,0 +1,9 @@
+Invoice #INV-002
+Vendor: Beta LLC
+Date: 2026-02-03
+Items:
+  Service X x1 @ 200.00 = 200.00
+Subtotal: 200.00
+Tax: 20.00
+Total: 220.00
+Category: Services

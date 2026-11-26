@@ -1,0 +1,44 @@
+id = "resume-cv-builder-048"
+name = "Resume CV builder (multi-turn)"
+enabled = true
+tags = ["docs","career","multi-turn"]
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = "Concise ATS-friendly CV + cover letter."
+input = "From notes.txt, draft CV, refine tone, finalize."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[[turns]]
+role = "user"
+content = "From notes.txt, draft cv.md (summary, experience, skills, education)."
+[[turns]]
+role = "assistant"
+content = "Draft CV."
+[[turns]]
+role = "user"
+content = "Make it more concise and ATS-friendly."
+[[turns]]
+role = "assistant"
+content = "Concise ATS-friendly CV."
+[[turns]]
+role = "user"
+content = "Finalize cv.md and add a cover letter cover.md."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "cv.md"
+exists = true
+[[expect.files]]
+path = "cover.md"
+exists = true
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"

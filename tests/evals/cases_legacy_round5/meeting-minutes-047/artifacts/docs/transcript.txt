@@ -1,0 +1,11 @@
+Alice: Good morning everyone. Let's get started. We have Bob, Carol, and Dave on the call.
+Bob: Morning. I'll give a quick update on the API migration. The auth module is done and all tests are passing. We're about 80% through the routes layer.
+Carol: UI is blocked on the API. I can't start the dashboard until the /entries endpoint is stable. Also, I found a CSS bug in the mobile view that I'll fix today.
+Dave: Infrastructure side — the staging environment is ready. I've set up the new database and migrated the test data. Production cutover is scheduled for next Thursday.
+Alice: Great. Decision: we ship the auth module to staging by Wednesday. Action items: Bob deploys auth by Wednesday EOD. Carol starts UI work once /entries is stable, target Friday. Dave to run load tests on staging by Tuesday.
+Alice: Open question: do we need a rollback plan for the database migration?
+Dave: I'll draft one and share by Monday.
+Alice: Any blockers?
+Carol: Just waiting on Bob's endpoint.
+Bob: I'll have /entries stable by tomorrow.
+Alice: Perfect. Let's wrap up. Next standup Thursday.

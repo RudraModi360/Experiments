@@ -1,0 +1,44 @@
+id = "patient-discharge-summary-052"
+name = "Patient discharge summary"
+enabled = true
+tags = ['docs', 'healthcare', 'summary']
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = """
+From ./notes/ (admission, progress, discharge), produce discharge_summary.md (diagnosis, meds, follow-up, red flags). Informational only.
+"""
+expected_output = """
+Structured discharge summary; red flags listed.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/notes"
+target = "notes"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "discharge_summary.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

@@ -1,0 +1,33 @@
+id = "meeting-minutes-047"
+name = "Meeting minutes"
+enabled = true
+tags = ["docs","productivity","summary"]
+profile = "docs"
+difficulty = "easy"
+grounding = "tool_outputs"
+input = "From transcript.txt, produce minutes.md: attendees, decisions, action items with owners and due dates, open questions."
+expected_output = "Structured minutes; action items with owners/dates."
+[workspace]
+network = false
+bash = true
+max_steps = 15
+timeout_seconds = 300
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "minutes.md"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 1
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

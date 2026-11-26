@@ -1,0 +1,47 @@
+id = "sales-forecast-058"
+name = "Sales forecast"
+enabled = true
+tags = ['code', 'analytics', 'forecast']
+profile = "code"
+difficulty = "medium"
+input = """
+From sales.csv (24 months), forecast next 6 months, write forecast.csv + report.md (trend, seasonality, assumptions, method).
+"""
+expected_output = """
+forecast.csv (6 rows) + report.md with method and assumptions.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "forecast.csv"
+exists = true
+
+[[expect.files]]
+path = "report.md"
+exists = true
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

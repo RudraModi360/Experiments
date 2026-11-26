@@ -1,0 +1,41 @@
+id = "contract-risk-review-046"
+name = "Contract risk review (multi-turn)"
+enabled = true
+tags = ["docs","legal","multi-turn"]
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = "risk_report.md with severity; narrowed focus; negotiation checklist."
+input = "Review contract for risky clauses, refine focus, finalize risk report."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[[turns]]
+role = "user"
+content = "Review contract.md for risky clauses; write risk_report.md with clause, risk, severity."
+[[turns]]
+role = "assistant"
+content = "Risk report with severity."
+[[turns]]
+role = "user"
+content = "Focus only on termination and liability clauses; re-score."
+[[turns]]
+role = "assistant"
+content = "Narrowed risk report."
+[[turns]]
+role = "user"
+content = "Finalize risk_report.md with a negotiation checklist."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "risk_report.md"
+exists = true
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"

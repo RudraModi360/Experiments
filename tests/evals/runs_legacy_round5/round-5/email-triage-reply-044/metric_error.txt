@@ -1,0 +1,1 @@
+Metrics: Conversation Completeness (score: None, threshold: 0.7, strict: False, error: Timed out/cancelled while evaluating metric. Increase DEEPEVAL_PER_TASK_TIMEOUT_SECONDS_OVERRIDE or set DEEPEVAL_LOG_STACK_TRACES=1 for full traceback., reason: None) failed.

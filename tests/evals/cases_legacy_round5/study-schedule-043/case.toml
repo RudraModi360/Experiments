@@ -1,0 +1,36 @@
+id = "study-schedule-043"
+name = "Study schedule generator"
+enabled = true
+tags = ["docs","education","planning"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = "Given syllabus.md and exams.csv (dates), produce study_plan.csv + study_plan.md: daily topics, hours, revision slots, spaced repetition."
+expected_output = "Plan covers all topics before exams; hours sum reasonable."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "study_plan.csv"
+exists = true
+[[expect.files]]
+path = "study_plan.md"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

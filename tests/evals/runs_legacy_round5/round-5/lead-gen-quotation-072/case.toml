@@ -1,0 +1,48 @@
+id = "lead-gen-quotation-072"
+name = "Lead gen quotation"
+enabled = true
+tags = ['docs', 'sales', 'leadgen']
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = """
+Given requirements.md (steel requirement) and pricing.csv (SKUs, unit prices, MOQ), produce quotation.md (itemized quote with quantities, unit price, subtotal, tax, total, terms, validity) and quote_summary.csv.
+"""
+expected_output = """
+quotation.md + quote_summary.csv with arithmetically correct totals and terms.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "quotation.md"
+exists = true
+
+[[expect.files]]
+path = "quote_summary.csv"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

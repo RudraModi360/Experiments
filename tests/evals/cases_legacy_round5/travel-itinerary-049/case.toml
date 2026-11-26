@@ -1,0 +1,36 @@
+id = "travel-itinerary-049"
+name = "Travel itinerary"
+enabled = true
+tags = ["docs","travel","planning"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = "Given preferences.md (budget, dates, interests) and options.md (flights/hotels/activities), produce itinerary.md (day-by-day) + budget.csv."
+expected_output = "Day-by-day itinerary within budget; budget.csv sums correctly."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "itinerary.md"
+exists = true
+[[expect.files]]
+path = "budget.csv"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

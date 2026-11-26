@@ -1,0 +1,13 @@
+{
+  "added": [
+    "analyze.py",
+    "analyze2.py",
+    "analyze_residuals.py",
+    "forecast.csv",
+    "forecast_model.py",
+    "generate_forecast.py",
+    "report.md"
+  ],
+  "modified": [],
+  "deleted": []
+}

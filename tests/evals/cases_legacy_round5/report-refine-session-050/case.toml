@@ -1,0 +1,44 @@
+id = "report-refine-session-050"
+name = "Report refine session (multi-turn)"
+enabled = true
+tags = ["docs","analytics","multi-turn"]
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = "report.md with trends, anomalies, limitations, exec summary, text tables."
+input = "Produce report from data, refine, finalize."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+[[turns]]
+role = "user"
+content = "Produce report.md summarizing data.csv (key trends, anomalies)."
+[[turns]]
+role = "assistant"
+content = "Initial report."
+[[turns]]
+role = "user"
+content = "Add a 'limitations' section and an executive summary."
+[[turns]]
+role = "assistant"
+content = "Report with limitations and exec summary."
+[[turns]]
+role = "user"
+content = "Finalize report.md and add charts.md (text-based tables)."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "report.md"
+exists = true
+[[expect.files]]
+path = "charts.md"
+exists = true
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"

@@ -1,0 +1,48 @@
+id = "lead-gen-outreach-071"
+name = "Lead gen outreach"
+enabled = true
+tags = ['docs', 'sales', 'leadgen']
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = """
+You are a steel broker. Given targets.csv (company, industry, city, contact, email) and catalog.md (products + prices), produce outreach.csv (personalized subject+body per target) and leads.md (priority 1-5 + rationale).
+"""
+expected_output = """
+outreach.csv + leads.md with priority scores and rationale; no fabricated emails.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "outreach.csv"
+exists = true
+
+[[expect.files]]
+path = "leads.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

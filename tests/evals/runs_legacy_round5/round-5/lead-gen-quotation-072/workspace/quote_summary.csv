@@ -1,0 +1,8 @@
+sku,description,quantity,unit_price,subtotal
+HR Coil,Structural Framework,50,42000,2100000
+TMT Bars,Reinforcement (Fe500),30,38000,1140000
+Steel Angles,Supports,10,36000,360000
+,,,,,
+Subtotal,,,3600000
+GST (18%),,,648000
+Total,,,4248000

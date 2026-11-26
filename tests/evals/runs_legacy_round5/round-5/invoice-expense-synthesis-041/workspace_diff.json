@@ -1,0 +1,15 @@
+{
+  "added": [
+    "analyze.py",
+    "build_consolidation.py",
+    "check_all.py",
+    "expenses.csv",
+    "generate_outputs.py",
+    "inspect_invoices.py",
+    "make_expenses.py",
+    "make_summary.py",
+    "summary.md"
+  ],
+  "modified": [],
+  "deleted": []
+}

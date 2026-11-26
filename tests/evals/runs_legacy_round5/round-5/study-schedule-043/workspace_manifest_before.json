@@ -1,0 +1,10 @@
+{
+  "docs/exams.csv": {
+    "sha256": "d8cf8daa2d884b840f27c3efb6e1901217dd0a94be0d2309db517ae568066a7e",
+    "size": 101
+  },
+  "docs/syllabus.md": {
+    "sha256": "a9907fb5cb302ab8dcf5b3ec006850861734de041bf51d57c2e81008e1ca71fc",
+    "size": 514
+  }
+}

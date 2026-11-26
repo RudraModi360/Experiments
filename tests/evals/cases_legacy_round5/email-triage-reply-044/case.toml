@@ -1,0 +1,44 @@
+id = "email-triage-reply-044"
+name = "Email triage and reply (multi-turn)"
+enabled = true
+tags = ["docs","support","multi-turn"]
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = "triage.md + replies.md with categorized emails, formal replies, follow-up dates."
+input = "Triage emails into urgent/action/info, draft replies, refine, finalize."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/inbox"
+target = "inbox"
+[[turns]]
+role = "user"
+content = "Triage ./inbox/ emails into urgent/action/info, draft short replies for urgent ones, write triage.md."
+[[turns]]
+role = "assistant"
+content = "Triage with replies."
+[[turns]]
+role = "user"
+content = "Make replies more formal and add a follow-up date."
+[[turns]]
+role = "assistant"
+content = "Formalized replies with follow-up dates."
+[[turns]]
+role = "user"
+content = "Finalize triage.md + replies.md."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "triage.md"
+exists = true
+[[expect.files]]
+path = "replies.md"
+exists = true
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"

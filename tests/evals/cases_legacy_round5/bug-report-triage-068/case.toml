@@ -1,0 +1,73 @@
+id = "bug-report-triage-068"
+name = "Bug report triage (multi-turn)"
+enabled = true
+tags = ['docs', 'support', 'multi-turn']
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = """
+triage.md + p0_list.md finalized.
+"""
+input = """
+Triage bug reports, narrow to P0/P1, finalize triage + p0 list.
+"""
+expected_output = """
+triage.md + p0_list.md with severity and components.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/bugs"
+target = "bugs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "triage.md"
+exists = true
+
+[[expect.files]]
+path = "p0_list.md"
+exists = true
+
+[[turns]]
+role = "user"
+content = """
+Triage bugs/ reports (severity, component, repro). Write triage.md.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Triage with severity.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Narrow to P0/P1 only.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Narrowed triage.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Finalize triage.md + p0_list.md.
+"""
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "conversation"

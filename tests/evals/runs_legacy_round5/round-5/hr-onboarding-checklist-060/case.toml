@@ -1,0 +1,44 @@
+id = "hr-onboarding-checklist-060"
+name = "HR onboarding checklist"
+enabled = true
+tags = ['docs', 'hr', 'onboarding']
+profile = "docs"
+difficulty = "easy"
+grounding = "tool_outputs"
+input = """
+From hr_docs/, produce onboarding_checklist.md (tasks, owners, due days, dependencies) for a new hire.
+"""
+expected_output = """
+onboarding_checklist.md with tasks, owners, due days, dependencies.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 15
+timeout_seconds = 300
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "onboarding_checklist.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 1
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

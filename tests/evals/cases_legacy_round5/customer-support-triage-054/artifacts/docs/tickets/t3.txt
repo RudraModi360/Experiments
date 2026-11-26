@@ -1,0 +1,6 @@
+From: customer3@example.com
+Subject: Billing question: invoice
+Date: 2026-11-26
+Priority: medium
+
+Body of ticket 3. Need assistance.

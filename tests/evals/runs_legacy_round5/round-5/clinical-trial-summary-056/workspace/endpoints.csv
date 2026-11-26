@@ -1,0 +1,3 @@
+Endpoint Type,Endpoint Name,Drug X,Placebo,P-Value
+Primary,Recovery Rate,78%,55%,0.001
+Secondary,Time to Recovery,5.2 days,8.1 days,0.003

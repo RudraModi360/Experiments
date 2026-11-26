@@ -1,0 +1,42 @@
+[
+  {
+    "name": "TaskCompletionMetric",
+    "score": 1.0,
+    "threshold": 0.7,
+    "success": true,
+    "reason": "The system successfully read the required files, performed the compliance analysis, and generated the requested compliance_report.md file containing the necessary components.",
+    "error": null
+  },
+  {
+    "name": "StepEfficiencyMetric",
+    "score": 0.5,
+    "threshold": 0.6,
+    "success": false,
+    "reason": "The agent performed unnecessary planning and note-saving steps that did not contribute to the final output. The task could have been completed by reading the files and writing the report directly.",
+    "error": null
+  },
+  {
+    "name": "Correctness",
+    "score": 1.0,
+    "threshold": 0.7,
+    "success": true,
+    "reason": "The agent successfully performed the requested task, verified the existence of the compliance_report.md file, and provided a summary that aligns with the expected output requirements.",
+    "error": null
+  },
+  {
+    "name": "FaithfulnessMetric",
+    "score": 1.0,
+    "threshold": 0.8,
+    "success": true,
+    "reason": "The score is 1.00 because the actual output is perfectly aligned with the retrieval context, demonstrating excellent accuracy and faithfulness!",
+    "error": null
+  },
+  {
+    "name": "ContextualRelevancyMetric",
+    "score": 0.5,
+    "threshold": 0.7,
+    "success": false,
+    "reason": "The score is 0.50 because while the context provides essential rules like 'All docs must have a title' and 'No PII in public docs', it is cluttered with irrelevant observations such as 'The document has no title heading issue' and 'It contains email john@example.com' which do not assist in the compliance check.",
+    "error": null
+  }
+]

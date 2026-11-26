@@ -1,0 +1,11 @@
+From: sender3@example.com
+To: me@company.com
+Subject: Invoice #1234 attached
+Date: 2026-11-26
+
+Hello,
+
+This is email 3 body. Please review and respond.
+
+Thanks,
+Sender 3

@@ -1,0 +1,11 @@
+From: sender2@example.com
+To: me@company.com
+Subject: Meeting tomorrow 3pm
+Date: 2026-11-26
+
+Hello,
+
+This is email 2 body. Please review and respond.
+
+Thanks,
+Sender 2

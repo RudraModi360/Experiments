@@ -1,0 +1,11 @@
+From: sender1@example.com
+To: me@company.com
+Subject: Urgent: server down
+Date: 2026-11-26
+
+Hello,
+
+This is email 1 body. Please review and respond.
+
+Thanks,
+Sender 1

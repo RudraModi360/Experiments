@@ -1,0 +1,27 @@
+Name: Jane Doe
+Email: jane.doe@email.com
+Phone: (555) 123-4567
+Location: San Francisco, CA
+
+Summary: Senior backend engineer with 7 years of experience building scalable distributed systems. Led teams of 4-6 engineers. Passionate about clean architecture and developer experience.
+
+Experience:
+- Senior Software Engineer, TechCorp Inc. (2021-Present)
+  - Led migration of monolithic payments platform to microservices (Python, Go, Kubernetes)
+  - Reduced API latency by 40% through caching and query optimization
+  - Mentored 3 junior engineers
+- Software Engineer, StartupXYZ (2018-2021)
+  - Built internal tools and admin dashboard (React, Node.js)
+  - Implemented CI/CD pipeline reducing deploy time from 2 hours to 15 minutes
+  - Designed and maintained PostgreSQL schemas for 5M+ records
+- Junior Developer, WebAgency (2017-2018)
+  - Developed client websites (HTML, CSS, JavaScript)
+  - Maintained legacy PHP applications
+
+Skills: Python, Go, SQL, PostgreSQL, Docker, Kubernetes, AWS, Redis, React, Node.js, Git, CI/CD
+
+Education:
+- BS Computer Science, University of California, 2017
+- AWS Certified Solutions Architect (2022)
+
+Seeking: Senior/Staff backend role, remote preferred, focus on distributed systems.

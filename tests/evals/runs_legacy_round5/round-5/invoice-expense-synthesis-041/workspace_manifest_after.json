@@ -1,0 +1,62 @@
+{
+  "analyze.py": {
+    "sha256": "cdb92e4bda154d322c147f853313ac66b1203ebf5f4d7543783229c3cf65bd0c",
+    "size": 2241
+  },
+  "build_consolidation.py": {
+    "sha256": "0cbc0cbe1726f41c94a19a0bc961fad7a42d51c37a7675480a8752224d8c2c8e",
+    "size": 1763
+  },
+  "check_all.py": {
+    "sha256": "333f386e1f77853bcad3db85a418067ca62a000ca9b021232b9e33853b4ac368",
+    "size": 138
+  },
+  "expenses.csv": {
+    "sha256": "e9d6463a8a5019e41bb3200a658b4d6e380be55eadca800d8acf4c0ebfe39dfd",
+    "size": 122
+  },
+  "generate_outputs.py": {
+    "sha256": "6385bb24f1a0c15d3fb1f82e20b13de95330cc5385ae353be0478339eb7b00fa",
+    "size": 2354
+  },
+  "inspect_invoices.py": {
+    "sha256": "fe1ba3a631a0e366bad32bab25dc80fe7e5616b65a181d6fe913969e0332875a",
+    "size": 186
+  },
+  "make_expenses.py": {
+    "sha256": "a661723ceec29bfcbaeff2586b07044699c06fd3e25ae4efab58ebfc630a302f",
+    "size": 490
+  },
+  "make_summary.py": {
+    "sha256": "c335d89d08ab7ac3999712e40645c040efd0c9cea0b2a5324e4db15636744cb2",
+    "size": 1992
+  },
+  "summary.md": {
+    "sha256": "4ea4df98e719baccb17faea2d12a3e1a146106d62802c2ec49fac24505711ea5",
+    "size": 1198
+  },
+  "invoices/inv1.txt": {
+    "sha256": "75768c5efbdcae5d7269cff6691c3f245eaa4d8a1212e90bb0e0b52b3e6f5799",
+    "size": 180
+  },
+  "invoices/inv2.txt": {
+    "sha256": "76b5ccc5cbdf87c4a33f7247d20f9068de8b9362d6ce3b083f8c1d280b5ef149",
+    "size": 152
+  },
+  "invoices/inv3.txt": {
+    "sha256": "7a781b2379b44a0b66b51e7adc96170b386b6d8b175fd99852b4917825669a3e",
+    "size": 152
+  },
+  "invoices/inv_acme.txt": {
+    "sha256": "f84d32dfc571a6e10879f2cb761e132f086742b9c723dc8adab1d7f11578800f",
+    "size": 279
+  },
+  "invoices/inv_acme_dup.txt": {
+    "sha256": "cd61055b3a43bb24f31399a9a0a67a939f8119b80c0d98c8a17123039830dae5",
+    "size": 260
+  },
+  "invoices/inv_beta.txt": {
+    "sha256": "d61d07021d9c4686d5b0ac42bf3e2d164ff0096931d6e34a8303cd0e7cd5b358",
+    "size": 252
+  }
+}

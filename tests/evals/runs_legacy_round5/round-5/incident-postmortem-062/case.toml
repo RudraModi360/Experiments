@@ -1,0 +1,44 @@
+id = "incident-postmortem-062"
+name = "Incident postmortem"
+enabled = true
+tags = ['docs', 'ops', 'postmortem']
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = """
+From incident_log.md + timeline.csv, produce postmortem.md (summary, root cause, impact, timeline, action items).
+"""
+expected_output = """
+postmortem.md with summary, root cause, impact, timeline, action items.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "postmortem.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

@@ -1,0 +1,12 @@
+{
+  "added": [
+    "generate_leads.py",
+    "generate_outreach.py",
+    "generate_pipeline.py",
+    "leads.csv",
+    "outreach_plan.md",
+    "pipeline.csv"
+  ],
+  "modified": [],
+  "deleted": []
+}

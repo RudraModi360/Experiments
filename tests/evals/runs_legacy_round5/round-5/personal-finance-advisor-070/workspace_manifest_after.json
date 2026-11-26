@@ -1,0 +1,14 @@
+{
+  "budget_analysis.md": {
+    "sha256": "84b669c43bbb0357c6659f6decf7e38d945ce236ced57b8e6af01949f0518b49",
+    "size": 3093
+  },
+  "plan.md": {
+    "sha256": "0667a9540bc35fa9dbb872ad4f65c2153c36083d123462550831f2bb03442831",
+    "size": 2216
+  },
+  "docs/budget.csv": {
+    "sha256": "ef510fb368726abebf902a6560f07140f6ce6cbb898b6454c6072b8b5b8c60f6",
+    "size": 79
+  }
+}

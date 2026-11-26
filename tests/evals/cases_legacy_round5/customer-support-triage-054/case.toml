@@ -1,0 +1,73 @@
+id = "customer-support-triage-054"
+name = "Customer support triage (multi-turn)"
+enabled = true
+tags = ['docs', 'support', 'multi-turn']
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = """
+triage.md + replies.md finalized.
+"""
+input = """
+Triage tickets, refine, finalize.
+"""
+expected_output = """
+triage.md + replies.md with categories, formal replies, follow-up dates.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/tickets"
+target = "tickets"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "triage.md"
+exists = true
+
+[[expect.files]]
+path = "replies.md"
+exists = true
+
+[[turns]]
+role = "user"
+content = """
+Triage ./tickets/ into urgent/action/info, draft short replies for urgent, write triage.md.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Triage with replies.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Make replies more formal and add a follow-up date.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Formalized replies with follow-up dates.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Finalize triage.md + replies.md.
+"""
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "conversation"

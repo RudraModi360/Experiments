@@ -1,0 +1,5 @@
+receipt,category,amount,notes,policy_violation
+r1.txt,Travel,450.00,"Flight: $450 (business travel)",None
+r2.txt,Lodging,320.00,"Hotel: $320 (2 nights)",None
+r3.txt,Meals,45.00,"Meals: $45 (client dinner)",None
+r4.txt,Transport,30.00,"Taxi: $30",None

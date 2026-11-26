@@ -1,0 +1,11 @@
+From: sender6@example.com
+To: me@company.com
+Subject: Bug: crash on export
+Date: 2026-11-26
+
+Hello,
+
+This is email 6 body. Please review and respond.
+
+Thanks,
+Sender 6

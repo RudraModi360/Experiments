@@ -1,0 +1,18 @@
+{
+  "summary.json": {
+    "sha256": "7188091dc255a852fd1dc67dc4e6e16bd0a0cdbb3f86e29d0758a275e79bff58",
+    "size": 833
+  },
+  "summary.md": {
+    "sha256": "6203747bf9e48d260bc880894b6134ba330d23074dd2272bd9f076d1919f28cd",
+    "size": 685
+  },
+  "notes/visit1.md": {
+    "sha256": "63bbf2ea3b56b166fa4b07214de3bad3f6f02c8da463d724fad75a5bef0ec55a",
+    "size": 168
+  },
+  "notes/visit2.md": {
+    "sha256": "e8411c48cad63638825c0b8ac8acfbbd9feccbccd19b3c346ea941af26411958",
+    "size": 146
+  }
+}

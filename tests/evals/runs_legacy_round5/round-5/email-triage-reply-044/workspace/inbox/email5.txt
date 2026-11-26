@@ -1,0 +1,11 @@
+From: sender5@example.com
+To: me@company.com
+Subject: Newsletter: Q4 updates
+Date: 2026-11-26
+
+Hello,
+
+This is email 5 body. Please review and respond.
+
+Thanks,
+Sender 5

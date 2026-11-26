@@ -1,0 +1,73 @@
+id = "vendor-comparison-067"
+name = "Vendor comparison (multi-turn)"
+enabled = true
+tags = ['docs', 'procurement', 'multi-turn']
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = """
+comparison.md + scorecard.csv finalized.
+"""
+input = """
+Compare 3 vendors, refine focus, finalize comparison + scorecard.
+"""
+expected_output = """
+comparison.md + scorecard.csv with weighted scores.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/vendors"
+target = "vendors"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "comparison.md"
+exists = true
+
+[[expect.files]]
+path = "scorecard.csv"
+exists = true
+
+[[turns]]
+role = "user"
+content = """
+Compare 3 vendors from vendors/ docs on cost, quality, SLA. Write comparison.md.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Initial comparison.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Focus only on cost + SLA, re-score.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Re-scored comparison.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Finalize comparison.md + scorecard.csv.
+"""
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "conversation"

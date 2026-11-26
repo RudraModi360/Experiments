@@ -1,0 +1,44 @@
+id = "course-outline-066"
+name = "Course outline"
+enabled = true
+tags = ['docs', 'education', 'planning']
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = """
+From topic.md + level, produce course_outline.md (modules, lessons, outcomes, assessments, timeline).
+"""
+expected_output = """
+course_outline.md with modules, lessons, outcomes, assessments, timeline.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "course_outline.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 1
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

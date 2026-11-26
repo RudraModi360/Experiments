@@ -1,0 +1,10 @@
+{
+  "doctors.csv": {
+    "sha256": "7869ee2e9db9840be8f71c903c12244f3daf2abddb8014609ba3a3e0525c1906",
+    "size": 107
+  },
+  "patients.csv": {
+    "sha256": "0a6e4d6a120c6927cb7d46fdb8eab1638622237adafa85e2a9668da6f7ca308c",
+    "size": 63
+  }
+}

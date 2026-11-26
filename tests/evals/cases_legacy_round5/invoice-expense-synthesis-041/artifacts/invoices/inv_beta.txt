@@ -1,0 +1,11 @@
+INVOICE #INV-2026-002
+Vendor: Beta LLC
+Date: 2026-02-03
+Bill To: MyCompany Inc.
+Items:
+  Consulting Service (SVC-201)  x20 hrs  @ $10.00 = $200.00
+Subtotal: $200.00
+Tax (10%): $20.00
+Total: $220.00
+Category: Professional Services
+Payment Terms: Net 15

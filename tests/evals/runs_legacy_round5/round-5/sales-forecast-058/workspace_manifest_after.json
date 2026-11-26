@@ -1,0 +1,18 @@
+{
+  "analyze.py": {
+    "sha256": "080c9448e195acccbc1858ad3b5a0a3ca4ff4ccdfabdb41e9262de76ea7bfc10",
+    "size": 318
+  },
+  "forecast.csv": {
+    "sha256": "521a6d0896aa3918ff64e2390df67947420f70343a342a20b39574a94c09d74c",
+    "size": 90
+  },
+  "report.md": {
+    "sha256": "19823315b31c9fab4f75afaf6eb07e53d93d68284eb20d11b05cfb368ad0a1db",
+    "size": 3590
+  },
+  "sales.csv": {
+    "sha256": "c80583414c273635c8ed3f9ee25fbd9b4bd14c55588e2e857bc1965c66d973b7",
+    "size": 324
+  }
+}

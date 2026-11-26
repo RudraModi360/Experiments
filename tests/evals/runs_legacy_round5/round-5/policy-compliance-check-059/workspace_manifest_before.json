@@ -1,0 +1,10 @@
+{
+  "docs/document.md": {
+    "sha256": "72d2356678f5286e6b45f8542aa96faa49579181e58b42f394d8dace8616a40b",
+    "size": 114
+  },
+  "docs/policy.md": {
+    "sha256": "050f95246ce9c3c629a1f37db25593a961aa4b2d9d091f6bbcff3fa5ba292a28",
+    "size": 93
+  }
+}

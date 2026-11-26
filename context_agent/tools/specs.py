@@ -43,8 +43,8 @@ TOOL_SPECS = [
           {"query": ("string", "Search query"), "max_results": ("integer", "Default 5")}, ("query",)),
     _spec("fetch_url", "Download a web page as text. Returns the first page and saves the rest to a file you can page with read_file.",
           {"url": ("string", "http(s) URL")}, ("url",)),
-    _spec("update_plan", "Replace your plan/checklist (e.g. '[x] step done' / '[ ] step todo'). It stays visible every step.",
+    _spec("update_plan", "Update your plan/checklist ONLY on complex multi-phase tasks (skip on simple read/write tasks and never call after finishing). Stays visible every step.",
           {"plan": ("string", "Full plan text")}, ("plan",)),
-    _spec("save_note", "Save a durable fact (decision, number, ID, finding) that survives context compaction. Empty content deletes it.",
-          {"key": ("string", "Short label"), "content": ("string", "The fact, max ~500 chars")}, ("key", "content")),
+    _spec("save_note", "Save a durable fact on long multi-source or multi-turn tasks that may compact (skip on short local tasks). Empty content deletes it.",
+          {"key": ("string", "Short label"), "content": ("string", "The fact to remember")}, ("key", "content")),
 ]

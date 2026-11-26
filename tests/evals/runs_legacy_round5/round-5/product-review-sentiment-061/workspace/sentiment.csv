@@ -1,0 +1,6 @@
+id,text,rating,sentiment_label,sentiment_score
+1,Great product love it,5,positive,1.0
+2,Terrible broke after a week,1,negative,-1.0
+3,Okay but shipping slow,3,neutral,0.0
+4,Excellent value,5,positive,1.0
+5,Not worth the price,2,negative,-0.5

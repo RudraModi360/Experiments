@@ -1,0 +1,36 @@
+id = "medical-visit-summary-042"
+name = "Medical visit summary"
+enabled = true
+tags = ["docs","healthcare","summary"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = "From ./notes/ (patient visit notes), produce summary.json + summary.md: diagnoses, medications, follow-ups, red flags. Informational only, no diagnosis."
+expected_output = "Structured summary; red flags listed; no medical advice beyond summarization."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/notes"
+target = "notes"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "summary.json"
+exists = true
+[[expect.files]]
+path = "summary.md"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

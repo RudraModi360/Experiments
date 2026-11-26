@@ -1,0 +1,77 @@
+id = "lead-gen-pipeline-073"
+name = "Lead gen pipeline (multi-turn)"
+enabled = true
+tags = ['docs', 'sales', 'leadgen', 'multi-turn']
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = """
+leads.csv + outreach_plan.md + pipeline.csv finalized.
+"""
+input = """
+Build lead list, narrow targeting, generate outreach sequence + pipeline tracker.
+"""
+expected_output = """
+leads.csv, outreach_plan.md, pipeline.csv with stages and next actions.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "leads.csv"
+exists = true
+
+[[expect.files]]
+path = "outreach_plan.md"
+exists = true
+
+[[expect.files]]
+path = "pipeline.csv"
+exists = true
+
+[[turns]]
+role = "user"
+content = """
+Build a lead list from companies.csv (name, industry, size, region). Score each 1-5 by fit for steel supply. Write leads.csv.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Lead list with scores.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Narrow to manufacturing + construction in region X. Re-score and produce outreach_plan.md.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Narrowed leads + outreach plan.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Generate a 3-step outreach sequence (email, follow-up, call script) for top 5 leads and write pipeline.csv (lead, stage, next action, owner). Finalize.
+"""
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "conversation"

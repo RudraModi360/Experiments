@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:minutes.md:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:read_file:min_calls",
+      "passed": true,
+      "detail": "1 calls, expected >= 1",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:write_file:min_calls",
+      "passed": true,
+      "detail": "1 calls, expected >= 1",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "3 steps (max 15)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [],
+  "infra_failures": [],
+  "commands": []
+}

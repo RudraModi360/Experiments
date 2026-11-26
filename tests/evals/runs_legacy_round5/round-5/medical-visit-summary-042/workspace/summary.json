@@ -1,0 +1,45 @@
+{
+  "patient": "John Doe",
+  "visits": [
+    {
+      "date": "2026-10-01",
+      "complaint": "headache, fatigue",
+      "vitals": {
+        "BP": "130/85",
+        "HR": "78"
+      },
+      "diagnosis": "tension headache",
+      "medications": "ibuprofen 400mg PRN",
+      "follow_up": "2 weeks",
+      "red_flags": null
+    },
+    {
+      "date": "2026-10-15",
+      "complaint": "improved",
+      "vitals": {
+        "BP": "125/80"
+      },
+      "diagnosis": "resolved",
+      "medications": "none",
+      "follow_up": "as needed",
+      "red_flags": "none"
+    }
+  ],
+  "summary": {
+    "diagnoses": [
+      "tension headache",
+      "resolved"
+    ],
+    "medications": [
+      "ibuprofen 400mg PRN",
+      "none"
+    ],
+    "follow_ups": [
+      "2 weeks",
+      "as needed"
+    ],
+    "red_flags": [
+      "none"
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+id = "knowledge-base-faq-063"
+name = "Knowledge base FAQ"
+enabled = true
+tags = ['docs', 'support', 'synthesis']
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = """
+From docs/ corpus, generate FAQ.md (Q&A pairs grouped by topic, with source citations).
+"""
+expected_output = """
+FAQ.md with Q&A pairs grouped by topic and citations.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "FAQ.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

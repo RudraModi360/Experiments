@@ -1,0 +1,6 @@
+From: customer1@example.com
+Subject: Urgent: cannot login
+Date: 2026-11-26
+Priority: high
+
+Body of ticket 1. Need assistance.

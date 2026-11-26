@@ -1,0 +1,47 @@
+id = "patient-appointment-scheduler-065"
+name = "Patient appointment scheduler"
+enabled = true
+tags = ['code', 'healthcare', 'scheduling']
+profile = "code"
+difficulty = "medium"
+input = """
+Given patients.csv + doctors.csv + constraints, produce schedule.csv (appointments) + schedule_report.md.
+"""
+expected_output = """
+schedule.csv + schedule_report.md with appointments.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "schedule.csv"
+exists = true
+
+[[expect.files]]
+path = "schedule_report.md"
+exists = true
+
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

@@ -1,0 +1,69 @@
+id = "personal-finance-advisor-070"
+name = "Personal finance advisor (multi-turn)"
+enabled = true
+tags = ['docs', 'finance', 'multi-turn']
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = """
+plan.md with monthly targets.
+"""
+input = """
+Analyze budget, suggest cuts, revise for 20% savings, finalize plan.
+"""
+expected_output = """
+plan.md with monthly targets.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "plan.md"
+exists = true
+
+[[turns]]
+role = "user"
+content = """
+Analyze budget.csv, suggest cuts.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Initial suggestions.
+"""
+
+[[turns]]
+role = "user"
+content = """
+I want to save 20% more; revise.
+"""
+
+[[turns]]
+role = "assistant"
+content = """
+Revised plan.
+"""
+
+[[turns]]
+role = "user"
+content = """
+Finalize plan.md with monthly targets.
+"""
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "conversation"

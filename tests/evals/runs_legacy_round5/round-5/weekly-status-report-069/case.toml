@@ -1,0 +1,44 @@
+id = "weekly-status-report-069"
+name = "Weekly status report"
+enabled = true
+tags = ['docs', 'ops', 'report']
+profile = "docs"
+difficulty = "easy"
+grounding = "tool_outputs"
+input = """
+From updates.txt (team standup notes), produce status_report.md (completed, in-progress, blockers, next week).
+"""
+expected_output = """
+status_report.md with completed, in-progress, blockers, next week.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 15
+timeout_seconds = 300
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "status_report.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 1
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

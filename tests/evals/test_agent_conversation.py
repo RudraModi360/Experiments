@@ -35,6 +35,35 @@ CASES = [case for case in discover_cases() if case.turns]
 CASE_NUMBER = {case.id: index for index, case in enumerate(CASES, 1)}
 
 
+def _sync_conversational_scores(metrics: list) -> None:
+    """Copy scores from DeepEval's global test run when assert_test copies metrics."""
+    if not metrics or all(getattr(m, "score", None) is not None or getattr(m, "error", None) for m in metrics):
+        return
+    try:
+        from deepeval.test_run import global_test_run_manager
+        run = global_test_run_manager.get_test_run()
+        conv_cases = getattr(run, "conversational_test_cases", None) or []
+        if not conv_cases:
+            return
+        data_list = getattr(conv_cases[-1], "metrics_data", None) or []
+        by_name = {getattr(d, "name", None): d for d in data_list}
+        for m in metrics:
+            key = getattr(m, "name", None) or getattr(m, "__name__", None) or type(m).__name__
+            d = by_name.get(key)
+            if d is None:
+                for k, v in by_name.items():
+                    if k and (k.lower() in key.lower() or key.lower() in k.lower()):
+                        d = v
+                        break
+            if d is not None and getattr(m, "score", None) is None:
+                m.score = getattr(d, "score", None)
+                m.success = getattr(d, "success", None)
+                m.reason = getattr(d, "reason", None)
+                m.error = getattr(d, "error", None)
+    except Exception:
+        pass
+
+
 @pytest.mark.parametrize("case", CASES, ids=[case.id for case in CASES])
 def test_agent_conversation(case):
     with CaseProgress(case, CASE_NUMBER[case.id], len(CASES), suite="conversation") as progress:
@@ -56,6 +85,7 @@ def test_agent_conversation(case):
                 try:
                     assert_test(test_case=test_case, metrics=metrics)
                 except AssertionError as exc:
+                    _sync_conversational_scores(metrics)
                     judge_error = metric_infra_error(metrics)
                     if judge_error:
                         metric_error = judge_error
@@ -63,8 +93,11 @@ def test_agent_conversation(case):
                     else:
                         metric_error = str(exc)
                 except Exception as exc:
+                    _sync_conversational_scores(metrics)
                     metric_error = f"{type(exc).__name__}: {exc}"
                     infra = metric_error
+                else:
+                    _sync_conversational_scores(metrics)
 
             failed = infra is not None or metric_error is not None
             if failed and case.workspace.keep_on_failure:

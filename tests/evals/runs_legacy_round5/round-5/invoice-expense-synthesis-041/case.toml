@@ -1,0 +1,36 @@
+id = "invoice-expense-synthesis-041"
+name = "Invoice expense synthesis"
+enabled = true
+tags = ["docs","finance","synthesis"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = "You are given 3 invoice text files in ./invoices/. Consolidate them into expenses.csv (vendor, date, amount, category) and summary.md (totals by vendor/category, anomalies)."
+expected_output = "expenses.csv + summary.md with correct totals; anomalies flagged (duplicate invoice number)."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/invoices"
+target = "invoices"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "expenses.csv"
+exists = true
+[[expect.files]]
+path = "summary.md"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "docs"

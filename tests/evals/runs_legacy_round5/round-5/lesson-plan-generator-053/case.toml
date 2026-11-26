@@ -1,0 +1,44 @@
+id = "lesson-plan-generator-053"
+name = "Lesson plan generator"
+enabled = true
+tags = ['docs', 'education', 'planning']
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = """
+Given topic.md + grade_level, produce lesson_plan.md (objectives, activities, assessment, materials).
+"""
+expected_output = """
+Lesson plan covering objectives, activities, assessment, materials.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "lesson_plan.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 1
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

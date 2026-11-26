@@ -1,0 +1,11 @@
+From: sender4@example.com
+To: me@company.com
+Subject: Feature request: dark mode
+Date: 2026-11-26
+
+Hello,
+
+This is email 4 body. Please review and respond.
+
+Thanks,
+Sender 4

@@ -1,0 +1,44 @@
+id = "policy-compliance-check-059"
+name = "Policy compliance check"
+enabled = true
+tags = ['docs', 'compliance', 'audit']
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+input = """
+Check document.md against policy.md; produce compliance_report.md (pass/fail per rule, evidence, remediation).
+"""
+expected_output = """
+compliance_report.md with pass/fail per rule, evidence, remediation.
+"""
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "compliance_report.md"
+exists = true
+
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+
+[[expect.tools]]
+name = "write_file"
+min_calls = 1
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

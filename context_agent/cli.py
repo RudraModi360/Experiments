@@ -15,7 +15,7 @@ if __package__ in (None, ""):  # allow: python3 context_agent/cli.py
     raise SystemExit
 
 from .agent import IntelligentAgent
-from .config import Config, parse_ctx_size
+from .config import Config
 from .llm.errors import LLMError
 from .llm.streaming import LiveTokenMeter, StreamPrinter
 from .utilities.formatting import dim, format_stats, format_tool_stats, hint
@@ -24,7 +24,6 @@ HELP = """Commands
   /help                 show this help
   /model [NAME]         show the model, or switch to NAME
   /provider [NAME]      show the provider, or switch (mirai/uzu, ollama, llama-cpp, google)
-  /ctx [SIZE]           show or resize context window (e.g. 32k, 128k, 256k, 1m) and auto-scale caps
   /sessions             list previous sessions grouped by day
   /resume <id|#>        resume a previous session (see /sessions)
   /new                  start a fresh session (/clear, /reset)
@@ -126,7 +125,7 @@ def _setup_readline() -> None:
         import readline
     except ImportError:
         return
-    commands = ["/help", "/model", "/provider", "/ctx", "/sessions", "/resume", "/new",
+    commands = ["/help", "/model", "/provider", "/sessions", "/resume", "/new",
                 "/compact", "/context", "/state", "/stats", "/quit"]
 
     def completer(text: str, state: int) -> Optional[str]:
@@ -196,16 +195,6 @@ def _handle_command(agent: IntelligentAgent, text: str,
         except LLMError as exc:
             print(f"Could not switch provider: {exc}")
         return True, False
-    if cmd == "/ctx":
-        if not arg:
-            print(f"num_ctx={agent.cfg.num_ctx} num_predict={agent.cfg.num_predict} "
-                  f"max_tool_chars={agent.cfg.max_tool_chars} keep_recent_units={agent.cfg.keep_recent_units}")
-            return True, False
-        try:
-            print(agent.set_context_window(arg))
-        except ValueError as exc:
-            print(f"Invalid context size: {exc}")
-        return True, False
     if cmd in ("/sessions", "/ls"):
         sessions[:] = agent.store.list_sessions()
         _print_sessions(sessions)
@@ -237,8 +226,8 @@ def _banner(cfg: Config, agent: IntelligentAgent) -> None:
     elif cfg.provider == "google":
         provider_detail += f" endpoint={cfg.base_url or 'Google AI Studio'}"
     print("Intelligent Agent v2 - type /help for commands, /quit to exit.")
-    print(f"model={cfg.model} num_ctx={cfg.num_ctx} num_predict={cfg.num_predict} "
-          f"max_tool_chars={cfg.max_tool_chars}{provider_detail} session={agent.store.sid}")
+    print(f"model={cfg.model} num_ctx={cfg.num_ctx} num_predict={cfg.num_predict}"
+          f"{provider_detail} session={agent.store.sid}")
     print("-" * 60)
 
 
@@ -247,7 +236,7 @@ def main() -> None:
     parser.add_argument("--resume", nargs="?", const="", default=None, metavar="SESSION_ID",
                         help="resume the latest (or a given) session")
     parser.add_argument("--model", help="override the model name")
-    parser.add_argument("--num-ctx", type=str, help="override the model context window (e.g. 32k, 128k, 256k, 1m)")
+    parser.add_argument("--num-ctx", type=int, help="override the model context window")
     parser.add_argument("--num-predict", type=int, help="override the reply token budget")
     parser.add_argument("--provider",
                         choices=["mirai", "uzu", "ollama", "llama-cpp", "google", "gemini"],
@@ -266,20 +255,9 @@ def main() -> None:
     if args.model:
         cfg.model = args.model
     if args.num_ctx:
-        cfg.num_ctx = parse_ctx_size(args.num_ctx)
-    elif args.query is None and sys.stdin.isatty():
-        try:
-            raw_ctx = input(f"Context window [32k / 64k / 128k / 256k / 1M, Enter={cfg.num_ctx}]: ").strip()
-            if raw_ctx:
-                cfg.num_ctx = parse_ctx_size(raw_ctx)
-        except ValueError as exc:
-            print(f"Using default num_ctx={cfg.num_ctx} ({exc})")
-        except (KeyboardInterrupt, EOFError):
-            print()
+        cfg.num_ctx = args.num_ctx
     if args.num_predict:
         cfg.num_predict = args.num_predict
-        cfg._explicit.add("num_predict")
-    cfg.apply_context_scale()
     if args.provider:
         cfg.provider = args.provider
     if args.endpoint:

@@ -1,0 +1,1096 @@
+[
+  {
+    "case": "budget-forecast-045",
+    "name": "Budget forecast",
+    "profile": "code",
+    "tags": [
+      "code",
+      "finance",
+      "analytics"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "budget:not_truncated"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "Correctness",
+      "CodeChangeQuality"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 0.1,
+      "CodeChangeQuality": 0.05
+    },
+    "steps": 20,
+    "duration": 82.22,
+    "tool_calls": 21,
+    "tool_errors": 2,
+    "truncated": true,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T14:36:36"
+  },
+  {
+    "case": "clinical-trial-summary-056",
+    "name": "Clinical trial summary",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "healthcare",
+      "research"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 7,
+    "duration": 22.04,
+    "tool_calls": 6,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T14:39:27"
+  },
+  {
+    "case": "contract-risk-review-046",
+    "name": "Contract risk review (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "docs",
+      "legal",
+      "multi-turn"
+    ],
+    "status": "pass",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 7,
+    "duration": 12.67,
+    "tool_calls": 7,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:41:31"
+  },
+  {
+    "case": "course-outline-066",
+    "name": "Course outline",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "education",
+      "planning"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 6,
+    "duration": 15.84,
+    "tool_calls": 5,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T14:42:21"
+  },
+  {
+    "case": "email-triage-reply-044",
+    "name": "Email triage and reply (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "docs",
+      "support",
+      "multi-turn"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 9,
+    "duration": 27.45,
+    "tool_calls": 13,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:44:59"
+  },
+  {
+    "case": "expense-audit-051",
+    "name": "Expense audit",
+    "profile": "code",
+    "tags": [
+      "code",
+      "finance",
+      "audit"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "tool:bash:min_calls",
+      "tool:write_file:min_calls"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "CodeChangeQuality"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "CodeChangeQuality": 0.5
+    },
+    "steps": 8,
+    "duration": 26.78,
+    "tool_calls": 9,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T14:44:12"
+  },
+  {
+    "case": "grade-calculator-057",
+    "name": "Grade calculator",
+    "profile": "code",
+    "tags": [
+      "code",
+      "education",
+      "analytics"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "tool:bash:min_calls",
+      "tool:write_file:min_calls"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "CodeChangeQuality"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "CodeChangeQuality": 0.1
+    },
+    "steps": 8,
+    "duration": 28.07,
+    "tool_calls": 8,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T14:49:21"
+  },
+  {
+    "case": "hr-onboarding-checklist-060",
+    "name": "HR onboarding checklist",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "hr",
+      "onboarding"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 8,
+    "duration": 23.67,
+    "tool_calls": 7,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T14:51:40"
+  },
+  {
+    "case": "incident-postmortem-062",
+    "name": "Incident postmortem",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "ops",
+      "postmortem"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 4,
+    "duration": 14.25,
+    "tool_calls": 6,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T14:53:19"
+  },
+  {
+    "case": "invoice-expense-synthesis-041",
+    "name": "Invoice expense synthesis",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "finance",
+      "synthesis"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 0.9,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 0.8666666666666667
+    },
+    "steps": 16,
+    "duration": 64.36,
+    "tool_calls": 21,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T14:56:36"
+  },
+  {
+    "case": "knowledge-base-faq-063",
+    "name": "Knowledge base FAQ",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "support",
+      "synthesis"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 0.8333333333333334,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 4,
+    "duration": 7.4,
+    "tool_calls": 8,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:03:23"
+  },
+  {
+    "case": "lead-gen-outreach-071",
+    "name": "Lead gen outreach",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "sales",
+      "leadgen"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 0.75
+    },
+    "steps": 8,
+    "duration": 36.36,
+    "tool_calls": 8,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:05:32"
+  },
+  {
+    "case": "lead-gen-pipeline-073",
+    "name": "Lead gen pipeline (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "docs",
+      "sales",
+      "leadgen",
+      "multi-turn"
+    ],
+    "status": "pass",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 17,
+    "duration": 53.39,
+    "tool_calls": 19,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:48:23"
+  },
+  {
+    "case": "lead-gen-quotation-072",
+    "name": "Lead gen quotation",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "sales",
+      "leadgen"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 0.8333333333333334
+    },
+    "steps": 5,
+    "duration": 15.71,
+    "tool_calls": 7,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:06:31"
+  },
+  {
+    "case": "lesson-plan-generator-053",
+    "name": "Lesson plan generator",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "education",
+      "planning"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 6,
+    "duration": 26.65,
+    "tool_calls": 5,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:08:48"
+  },
+  {
+    "case": "medical-visit-summary-042",
+    "name": "Medical visit summary",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "healthcare",
+      "summary"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 0.9230769230769231
+    },
+    "steps": 8,
+    "duration": 47.47,
+    "tool_calls": 8,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:10:06"
+  },
+  {
+    "case": "meeting-minutes-047",
+    "name": "Meeting minutes",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "productivity",
+      "summary"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "Correctness"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 0.5,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 3,
+    "duration": 8.93,
+    "tool_calls": 5,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:11:22"
+  },
+  {
+    "case": "patient-appointment-scheduler-065",
+    "name": "Patient appointment scheduler",
+    "profile": "code",
+    "tags": [
+      "code",
+      "healthcare",
+      "scheduling"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 1.0,
+      "CodeChangeQuality": 1.0
+    },
+    "steps": 15,
+    "duration": 45.34,
+    "tool_calls": 17,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:12:53"
+  },
+  {
+    "case": "personal-finance-advisor-070",
+    "name": "Personal finance advisor (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "docs",
+      "finance",
+      "multi-turn"
+    ],
+    "status": "pass",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 9,
+    "duration": 27.28,
+    "tool_calls": 8,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:48:59"
+  },
+  {
+    "case": "policy-compliance-check-059",
+    "name": "Policy compliance check",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "compliance",
+      "audit"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "ContextualRelevancyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 0.5
+    },
+    "steps": 3,
+    "duration": 6.68,
+    "tool_calls": 6,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:15:09"
+  },
+  {
+    "case": "product-review-sentiment-061",
+    "name": "Product review sentiment",
+    "profile": "code",
+    "tags": [
+      "code",
+      "analytics",
+      "nlp"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "tool:bash:min_calls"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "CodeChangeQuality"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "CodeChangeQuality": 0.1
+    },
+    "steps": 9,
+    "duration": 29.93,
+    "tool_calls": 10,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:18:17"
+  },
+  {
+    "case": "report-refine-session-050",
+    "name": "Report refine session (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "docs",
+      "analytics",
+      "multi-turn"
+    ],
+    "status": "pass",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 17,
+    "duration": 61.38,
+    "tool_calls": 14,
+    "tool_errors": 1,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:50:13"
+  },
+  {
+    "case": "resume-cv-builder-048",
+    "name": "Resume CV builder (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "docs",
+      "career",
+      "multi-turn"
+    ],
+    "status": "pass",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 8,
+    "duration": 32.81,
+    "tool_calls": 9,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:51:45"
+  },
+  {
+    "case": "sales-forecast-058",
+    "name": "Sales forecast",
+    "profile": "code",
+    "tags": [
+      "code",
+      "analytics",
+      "forecast"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "CodeChangeQuality": 1.0
+    },
+    "steps": 11,
+    "duration": 27.68,
+    "tool_calls": 11,
+    "tool_errors": 1,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:20:06"
+  },
+  {
+    "case": "study-schedule-043",
+    "name": "Study schedule generator",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "education",
+      "planning"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 0.875
+    },
+    "steps": 13,
+    "duration": 52.25,
+    "tool_calls": 13,
+    "tool_errors": 1,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:23:50"
+  },
+  {
+    "case": "tax-deduction-finder-055",
+    "name": "Tax deduction finder",
+    "profile": "code",
+    "tags": [
+      "code",
+      "finance",
+      "tax"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "tool:bash:min_calls"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "CodeChangeQuality"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 1.0,
+      "CodeChangeQuality": 0.05
+    },
+    "steps": 8,
+    "duration": 16.82,
+    "tool_calls": 10,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:27:50"
+  },
+  {
+    "case": "travel-expense-claim-064",
+    "name": "Travel expense claim",
+    "profile": "code",
+    "tags": [
+      "code",
+      "finance",
+      "expenses"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "tool:bash:min_calls"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "CodeChangeQuality"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "CodeChangeQuality": 0.1
+    },
+    "steps": 9,
+    "duration": 18.92,
+    "tool_calls": 11,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:29:52"
+  },
+  {
+    "case": "travel-itinerary-049",
+    "name": "Travel itinerary",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "travel",
+      "planning"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 7,
+    "duration": 33.0,
+    "tool_calls": 7,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:34:53"
+  },
+  {
+    "case": "weekly-status-report-069",
+    "name": "Weekly status report",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "ops",
+      "report"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 1.0
+    },
+    "steps": 4,
+    "duration": 12.78,
+    "tool_calls": 4,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-5",
+    "timestamp": "2026-11-26T15:38:20"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "charts.md": {
+    "sha256": "ce21220934f52e38fd01aadd8e2f9bd2358c69bfcde73aebb19908080a650ee4",
+    "size": 4962
+  },
+  "data.csv": {
+    "sha256": "8334ec52e1ab82643593ddeb20877e0109dbc7d7194e053d329991a85ee24bf2",
+    "size": 222
+  },
+  "report.md": {
+    "sha256": "383e5b47763bca4f731329f05a82c42c304b64db9a8f706010470fbc28f27167",
+    "size": 4960
+  }
+}

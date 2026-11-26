@@ -1,0 +1,18 @@
+{
+  "budget.csv": {
+    "sha256": "911ba62cfcde1907b20cb60b74b7cbb3174dd1326ae3f7399a7e2c8e85310a7f",
+    "size": 338
+  },
+  "itinerary.md": {
+    "sha256": "58237f4338103d9a95ca369a382024ff5861feeb46e2143fdd45ed8923593cf3",
+    "size": 1781
+  },
+  "docs/options.md": {
+    "sha256": "7f18fe273642bf81358fe50febccb4b38f8f34152c2f4701a1cf8151e69d0989",
+    "size": 118
+  },
+  "docs/preferences.md": {
+    "sha256": "44273d135add0167b0ecfef758f61765111b1db958b0dd0c0e083143c91e6f47",
+    "size": 94
+  }
+}

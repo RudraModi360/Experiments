@@ -1,0 +1,18 @@
+{
+  "grades.csv": {
+    "sha256": "11290a958d361a519a2285df9f520bab0be17d084edbae88132b9af5c9b8aaac",
+    "size": 147
+  },
+  "grades_out.csv": {
+    "sha256": "6cfaa3744a2cd5c90d3a86a7ffe633e6ceca099053795a85313fb38517054697",
+    "size": 215
+  },
+  "process_grades.py": {
+    "sha256": "6717801f652a1eb1276e53b825ffbb79d7456f39f22523e5a7d4aeb4394343a7",
+    "size": 2855
+  },
+  "stats.md": {
+    "sha256": "096619c1fc83cf2c8c71dffe03902d6acb4a446096e9bd3648cafb96f2589d79",
+    "size": 479
+  }
+}

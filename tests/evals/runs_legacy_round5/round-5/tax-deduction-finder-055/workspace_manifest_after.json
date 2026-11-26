@@ -1,0 +1,26 @@
+{
+  "deductions.csv": {
+    "sha256": "1c36115318c64bcfb3617066d16e8386509bcc53162392810491dc5d9d8d149f",
+    "size": 174
+  },
+  "rules.md": {
+    "sha256": "791136e4116dd500ad057e984307d19d9e8c7f0deef4571632210530e4662b2d",
+    "size": 125
+  },
+  "tax_summary.md": {
+    "sha256": "60b875299e207a848e44965f20f5612dbd1fa10d2a67a76bfa18973ddee1a4b1",
+    "size": 384
+  },
+  "receipts/r1.txt": {
+    "sha256": "f6a6f012edd499e80b1025f514e6231330bbd273adc06b52b1a164fa35ab3d4b",
+    "size": 43
+  },
+  "receipts/r2.txt": {
+    "sha256": "4136d8c5e84b2afb292c0ef35bd9f23b2a38efe14e8c42f05d304b93f5ba80e5",
+    "size": 48
+  },
+  "receipts/r3.txt": {
+    "sha256": "fd4937922ad7833cb7e9e04e3612a6894d7b3c430898216774dc21fd6af16a86",
+    "size": 52
+  }
+}

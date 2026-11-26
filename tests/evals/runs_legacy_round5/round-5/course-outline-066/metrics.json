@@ -1,0 +1,42 @@
+[
+  {
+    "name": "TaskCompletionMetric",
+    "score": 1.0,
+    "threshold": 0.7,
+    "success": true,
+    "reason": "The system successfully located the source document, extracted the topic information, and generated the course_outline.md file containing all required components including modules, lessons, learning outcomes, assessments, and a timeline.",
+    "error": null
+  },
+  {
+    "name": "StepEfficiencyMetric",
+    "score": 0.5,
+    "threshold": 0.6,
+    "success": false,
+    "reason": "The agent performed unnecessary planning steps (update_plan) and an initial file listing that were not required to complete the task. The core task could have been achieved by simply reading the file and writing the output.",
+    "error": null
+  },
+  {
+    "name": "Correctness",
+    "score": 1.0,
+    "threshold": 0.7,
+    "success": true,
+    "reason": "The agent successfully created the course_outline.md file as requested. The content includes all required components: modules, lessons, outcomes, assessments, and a timeline, matching the expected output structure.",
+    "error": null
+  },
+  {
+    "name": "FaithfulnessMetric",
+    "score": 1.0,
+    "threshold": 0.8,
+    "success": true,
+    "reason": "The score is 1.00 because the actual output is perfectly aligned with the retrieval context, demonstrating excellent accuracy and faithfulness!",
+    "error": null
+  },
+  {
+    "name": "ContextualRelevancyMetric",
+    "score": 1.0,
+    "threshold": 0.7,
+    "success": true,
+    "reason": "The score is 1.00 because the provided context perfectly aligns with the input by detailing the course topic, target audience, learning outcomes, and assessment structure, enabling the creation of a comprehensive course outline.",
+    "error": null
+  }
+]

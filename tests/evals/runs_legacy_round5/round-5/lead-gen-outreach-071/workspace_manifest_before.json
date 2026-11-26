@@ -1,0 +1,10 @@
+{
+  "docs/catalog.md": {
+    "sha256": "8a5cdd9bba7926e9288b3d80cd01922779baeb81ba14c165aba8ccec5e483a0f",
+    "size": 353
+  },
+  "docs/targets.csv": {
+    "sha256": "0c7ad798ea5b83389cb82df1aa98879d1c36bea88c9ab832cb252ea602fb7406",
+    "size": 416
+  }
+}

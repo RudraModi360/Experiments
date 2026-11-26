@@ -1,0 +1,6 @@
+From: customer4@example.com
+Subject: Bug: crash on save
+Date: 2026-11-26
+Priority: high
+
+Body of ticket 4. Need assistance.

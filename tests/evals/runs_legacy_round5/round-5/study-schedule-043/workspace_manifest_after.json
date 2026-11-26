@@ -1,0 +1,22 @@
+{
+  "script.py": {
+    "sha256": "cc615b7f646a9758309253c674bbd6d8d0531832166e617b372614746b579d91",
+    "size": 8990
+  },
+  "study_plan.csv": {
+    "sha256": "f393d174f6682dcc0c3eef7ec81e61ebbbc7c8bb70f3623adbcbaa200dd5ba03",
+    "size": 5209
+  },
+  "study_plan.md": {
+    "sha256": "2d175f46556c88eee0aadf0fa41716c649a94824e9d98080a84ae365c5e0d862",
+    "size": 7030
+  },
+  "docs/exams.csv": {
+    "sha256": "d8cf8daa2d884b840f27c3efb6e1901217dd0a94be0d2309db517ae568066a7e",
+    "size": 101
+  },
+  "docs/syllabus.md": {
+    "sha256": "a9907fb5cb302ab8dcf5b3ec006850861734de041bf51d57c2e81008e1ca71fc",
+    "size": 514
+  }
+}

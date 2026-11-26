@@ -1,0 +1,18 @@
+{
+  "analyze.py": {
+    "sha256": "3af551eafe6534d47d933b2142ece0d25b0c2108dd527879b950081916a4eaa9",
+    "size": 1418
+  },
+  "insights.md": {
+    "sha256": "d66d5410ac61922bd36b548759e61d5eeb490dafd7e8e216df08d936d718e781",
+    "size": 1688
+  },
+  "reviews.csv": {
+    "sha256": "eb60d1da5d1d85caf16f1bb5c12c9a784865beb98f37e4629736ae418803ac30",
+    "size": 144
+  },
+  "sentiment.csv": {
+    "sha256": "ff9bfc07fd2f290a9b4e93c4e84ace8e4bb8400589e24d935d154d5ac908c7f6",
+    "size": 248
+  }
+}

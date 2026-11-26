@@ -1,0 +1,14 @@
+{
+  "endpoints.csv": {
+    "sha256": "67c90dad1c89a107003c611f8a1caa5d20514bd227573e92f11976a6bd05a55d",
+    "size": 138
+  },
+  "trial_summary.md": {
+    "sha256": "a93cebf4b4a713f3df0a55907f1ce38e4e45265da371db0d23e1d2c7eba1b217",
+    "size": 816
+  },
+  "docs/trial_results.md": {
+    "sha256": "61dd435b88ab02e8dce4c66be9591dc762f0efe3e99fd6fe6f62423e4b1e9cd5",
+    "size": 248
+  }
+}

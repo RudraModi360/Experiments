@@ -1,0 +1,6 @@
+From: customer2@example.com
+Subject: Feature request: dark mode
+Date: 2026-11-26
+Priority: low
+
+Body of ticket 2. Need assistance.

@@ -1,0 +1,6 @@
+From: customer5@example.com
+Subject: How to reset password
+Date: 2026-11-26
+Priority: low
+
+Body of ticket 5. Need assistance.

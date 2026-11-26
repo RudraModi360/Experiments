@@ -1,0 +1,14 @@
+{
+  "cover.md": {
+    "sha256": "6cb8c94b8f94d11e2e76c7ec94616605286c83f9e4bd92aa04d8b401716e834e",
+    "size": 1612
+  },
+  "cv.md": {
+    "sha256": "a9835a63f4956ce400d57cd05613642720da95b92ff05bc2d97180db4b3910a0",
+    "size": 1533
+  },
+  "docs/notes.txt": {
+    "sha256": "1c9ff191b60544e776c00e3de7c688e0b08608ce3033db042bdddcc76bfa9de0",
+    "size": 1219
+  }
+}

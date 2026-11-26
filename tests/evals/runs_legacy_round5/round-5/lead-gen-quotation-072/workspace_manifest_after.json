@@ -1,0 +1,18 @@
+{
+  "quotation.md": {
+    "sha256": "28978a4d20e26a76fa032c7c9e916e95ea61ab40e2eb61ad24f314240ff3cf12",
+    "size": 1116
+  },
+  "quote_summary.csv": {
+    "sha256": "8ebbbc871cae6a760ec779cb378ae3c614fa8f23dff7aef373d03016d61e5843",
+    "size": 237
+  },
+  "docs/pricing.csv": {
+    "sha256": "64a9ed0edf14c0b7e14d192caa6236e30a87431bb34ff83369ab66f201b87322",
+    "size": 117
+  },
+  "docs/requirements.md": {
+    "sha256": "faf596bae7f8e8c12436726cba1a298f70c1fcac3a231f5bb88ddb0388d38b38",
+    "size": 312
+  }
+}

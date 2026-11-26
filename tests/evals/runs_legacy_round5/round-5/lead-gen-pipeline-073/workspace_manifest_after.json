@@ -1,0 +1,30 @@
+{
+  "generate_leads.py": {
+    "sha256": "96ec6e1d96e761a68e1a5299c27ee9a8d100be577378668e211db7300070231a",
+    "size": 2247
+  },
+  "generate_outreach.py": {
+    "sha256": "0fc39ceaeec519e6000201ae4a39e3b393d85b6c7b155667c92562fddcc3944b",
+    "size": 2507
+  },
+  "generate_pipeline.py": {
+    "sha256": "2f0ec7f3fb0f1270f243e89ccccfbd703d1b7881224ab900a1b310e7fd28645f",
+    "size": 1158
+  },
+  "leads.csv": {
+    "sha256": "c75144e74472003bcaa2396498ceda06fe7a90ede339f86d6065168f2574fdea",
+    "size": 875
+  },
+  "outreach_plan.md": {
+    "sha256": "8247d78134d98f3665a8a345283048b282432554b0914e3054e94621d13dc487",
+    "size": 3053
+  },
+  "pipeline.csv": {
+    "sha256": "acaf7cd3e2ba65f85a6873deeece1fb37fda2c31aa01e571b36812b337204359",
+    "size": 329
+  },
+  "docs/companies.csv": {
+    "sha256": "ca6b7d72ff5baf31f9dbe4fde889175efaf07072da8823411e9f1b9166899d24",
+    "size": 470
+  }
+}

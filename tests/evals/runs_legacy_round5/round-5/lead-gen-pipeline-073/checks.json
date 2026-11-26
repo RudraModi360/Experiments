@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:leads.csv:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:outreach_plan.md:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:pipeline.csv:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "17 steps (max 20)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [],
+  "infra_failures": [],
+  "commands": []
+}

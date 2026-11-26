@@ -1,0 +1,22 @@
+{
+  "audit.md": {
+    "sha256": "9a11f924aed4a2c476d605beb8894cba082c13a28ac420fc6431501e0bb3ec34",
+    "size": 459
+  },
+  "expenses.csv": {
+    "sha256": "b2a44088d0d02b7d186f1477287c71115b4ee71b6f9a267250e0c876a728634c",
+    "size": 139
+  },
+  "policy.md": {
+    "sha256": "bd21204a656cda0a15b03d2d571cebe5caaa20f5be551abda6965ed29b261b66",
+    "size": 83
+  },
+  "run_audit.py": {
+    "sha256": "bf60dbd5ddc56a16c1a5e2d7c1461e0c14565dcc8c942cb41c43049687ee6ff8",
+    "size": 2132
+  },
+  "violations.csv": {
+    "sha256": "bb765e78645a4eea663d95832e802b130215e12e7d1a005fcd39978cab935230",
+    "size": 115
+  }
+}

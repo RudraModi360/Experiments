@@ -1,0 +1,10 @@
+{
+  "expenses.csv": {
+    "sha256": "b2a44088d0d02b7d186f1477287c71115b4ee71b6f9a267250e0c876a728634c",
+    "size": 139
+  },
+  "policy.md": {
+    "sha256": "bd21204a656cda0a15b03d2d571cebe5caaa20f5be551abda6965ed29b261b66",
+    "size": 83
+  }
+}

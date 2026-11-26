@@ -1,0 +1,26 @@
+{
+  "doctors.csv": {
+    "sha256": "7869ee2e9db9840be8f71c903c12244f3daf2abddb8014609ba3a3e0525c1906",
+    "size": 107
+  },
+  "patients.csv": {
+    "sha256": "0a6e4d6a120c6927cb7d46fdb8eab1638622237adafa85e2a9668da6f7ca308c",
+    "size": 63
+  },
+  "schedule.csv": {
+    "sha256": "a1fa548852c30e9c71a37798474aef3257a3e02f1a573af6cdd4027b584795a3",
+    "size": 91
+  },
+  "schedule_report.md": {
+    "sha256": "4aea27645f83c38a9c262d5dd697c0f5989e0886467d4a5dab63baff609db239",
+    "size": 1159
+  },
+  "solve.py": {
+    "sha256": "c815be533fff955928e86f0d3e265f8f614f45790413ac225bba653f940a2bea",
+    "size": 1524
+  },
+  "validate.py": {
+    "sha256": "be82503060f8bb7d4491cca5452b174d4c0658859febdf826e356f2e2f78fd3d",
+    "size": 685
+  }
+}

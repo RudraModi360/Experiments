@@ -1,0 +1,18 @@
+{
+  "receipts/r1.txt": {
+    "sha256": "97c6aeea6c7082d7ef1ab03c7d4bbf235223cd785cb8ac01cad85897e57c2cb9",
+    "size": 31
+  },
+  "receipts/r2.txt": {
+    "sha256": "fd74af9f04b5570142f8410c0e534a8141363838ee485fe2b9cc0f504e145989",
+    "size": 23
+  },
+  "receipts/r3.txt": {
+    "sha256": "f23e8b85a39b29729af902c9be0e339647fcc31bec6ea80642aca6fde443b950",
+    "size": 27
+  },
+  "receipts/r4.txt": {
+    "sha256": "48fdb746ced0837bb95b494dd0227c516047d40439745decdb7141150cae8e58",
+    "size": 10
+  }
+}

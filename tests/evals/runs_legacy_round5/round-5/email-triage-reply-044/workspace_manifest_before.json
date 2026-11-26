@@ -1,0 +1,26 @@
+{
+  "inbox/email1.txt": {
+    "sha256": "d877adb56390d4271f342e220c374cf6e77c8164d9637d49eae2f73de76ed8c9",
+    "size": 167
+  },
+  "inbox/email2.txt": {
+    "sha256": "2fc9a7f0f8020cb96236f3050ea09428d55d27f9ae350f527f98cde825788385",
+    "size": 168
+  },
+  "inbox/email3.txt": {
+    "sha256": "b555e1c09955a18e7178f1c9977f085f7b71a2a39366a385a2a9018d33a6c5bb",
+    "size": 170
+  },
+  "inbox/email4.txt": {
+    "sha256": "122595a0a7ddedd0cdfb40ef59241366cc325989d6e1bb01d9cddc439a5f3f2c",
+    "size": 174
+  },
+  "inbox/email5.txt": {
+    "sha256": "cc6ac5045d0b2002a2d4ebaf18130e13013dfcbfaf06381a4d3e3f259f32a076",
+    "size": 170
+  },
+  "inbox/email6.txt": {
+    "sha256": "9f5c65c1831429c08912fe10a92c58c676f4cdff8961f008a3fb7be04b3dfb9d",
+    "size": 168
+  }
+}
