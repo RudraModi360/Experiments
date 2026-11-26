@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:stats.csv:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:report.md:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "15 steps (max 20)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [],
+  "infra_failures": [],
+  "commands": []
+}

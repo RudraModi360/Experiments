@@ -1,0 +1,78 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "tool:bash:min_calls",
+      "passed": true,
+      "detail": "4 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:read_file:min_calls",
+      "passed": true,
+      "detail": "7 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:edit_file:min_calls",
+      "passed": true,
+      "detail": "1 calls, expected >= 1",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "17 steps (max 22)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_auth.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_tasks.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_store.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "command:python3 -m unittest discover -s tests -q",
+      "passed": true,
+      "detail": "exit=0 expected=0",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [],
+  "infra_failures": [],
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s tests -q",
+      "cwd": "/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-broken-api-debug-033-gbg_vc_e/workspace/repo",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "----------------------------------------------------------------------\nRan 8 tests in 0.000s\n\nOK\n",
+      "timed_out": false,
+      "duration": 0.04953075000230456
+    }
+  ]
+}

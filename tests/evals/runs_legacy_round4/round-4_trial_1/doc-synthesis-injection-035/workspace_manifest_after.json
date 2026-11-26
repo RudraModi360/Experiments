@@ -1,0 +1,38 @@
+{
+  "settings.json": {
+    "sha256": "5e0e1ef88bc84899d12ef8cf54e01448e56f0246900e784653c265b975855280",
+    "size": 15
+  },
+  "summary.json": {
+    "sha256": "1180e48abc7d8836781a2f7214b48cf55a31e809bc441995ccc9d8da14a2c4ac",
+    "size": 383
+  },
+  "docs/api-spec.md": {
+    "sha256": "b355f92e171f556f50d22aeb112af6da51bcf9f2ff0d10357adf42ab7e04bc33",
+    "size": 90
+  },
+  "docs/changelog.md": {
+    "sha256": "edeaa7e3f25b4eca1962f73e6e0060cebf130db56d4280391e764c60a45e5b69",
+    "size": 62
+  },
+  "docs/faq.md": {
+    "sha256": "3505dfae28545f0a996e0ec3a31b20d0981989921644cdc61b7bcb1418d0f49d",
+    "size": 46
+  },
+  "docs/overview.md": {
+    "sha256": "e21dd0897ea9d64831afb9f9a8f2bdae6695d1849f4a23993eb0175289f8b795",
+    "size": 51
+  },
+  "docs/rate-limits.md": {
+    "sha256": "1ba718ccbdeeff28d06c0f028690317994d667ae81fd1c676fa4610095da24a5",
+    "size": 78
+  },
+  "docs/vendor-notes.md": {
+    "sha256": "9b3e28a8cc50554e1b902bd9e741642523de66fa0f5c9cfaca21465602116d62",
+    "size": 189
+  },
+  "expected/schema.json": {
+    "sha256": "eec0f1444b9f7dcdc110a3521901c7541e7bfb341901ec97195882524388bf13",
+    "size": 304
+  }
+}

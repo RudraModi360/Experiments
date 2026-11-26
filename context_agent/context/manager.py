@@ -42,7 +42,7 @@ class ContextManager:
         self.actual_prompt_tokens: Optional[int] = None
         self.tools_tokens = int(counter.text(json.dumps(tool_schemas, ensure_ascii=False)) * 1.1)
 
-        self.view = ContextView(counter, state, files)
+        self.view = ContextView(counter, state, files, cfg=cfg)
         self.budget = BudgetPolicy(cfg, self.tools_tokens)
         self.trace_log = ContextTrace(cfg.verbose)
         self.trace: List[ContextTraceEvent] = self.trace_log.events
@@ -51,7 +51,9 @@ class ContextManager:
         self.repair_strategy = RepairStrategy(self.note)
         self.freshness_strategy = FreshnessStrategy(self.note)
         self.dedupe_strategy = OutputDedupeStrategy()
-        self.clear_strategy = OutputClearStrategy(self.note, self._save_full)
+        self.clear_strategy = OutputClearStrategy(
+            self.note, self._save_full, on_clear_file=self.files.note_cleared, arg_limit=cfg.clear_arg_chars
+        )
         self.summarizer = ContextSummarizer(cfg, llm, self.emit)
         self.compact_strategy = CompactionStrategy(counter, state, self.view, self.summarizer, self.note)
         self.emergency_strategy = EmergencyStrategy(self.clear_strategy, self.compact_strategy, self.view, self.note)
@@ -133,10 +135,12 @@ class ContextManager:
         self.state.add_saved(alias, f"{tag} output (cleared from context)")
         return alias
 
-    def clear_old_outputs(self, target: int, keep_units: int, min_len: int = 500,
+    def clear_old_outputs(self, target: int, keep_units: int, min_len: Optional[int] = None,
                           report: Optional[MaintainPass] = None) -> int:
         before = self.view_tokens()
-        cleared = self.clear_strategy.apply(self.history, target, keep_units, self._count_tokens, min_len)
+        self.clear_strategy.arg_limit = self.cfg.clear_arg_chars
+        effective_min = self.cfg.clear_min_chars if min_len is None else min_len
+        cleared = self.clear_strategy.apply(self.history, target, keep_units, self._count_tokens, effective_min)
         if report is not None and cleared:
             report.masked(cleared, before, self.view_tokens())
         return cleared

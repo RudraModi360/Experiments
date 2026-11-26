@@ -432,6 +432,8 @@ def run_traced_conversation(
                 role = str(turn.get("role", "user")).strip().lower()
                 content = str(turn.get("content", ""))
                 if role == "assistant":
+                    if turns and turns[-1].role == "assistant":
+                        continue
                     # Scripted assistant context: inject without a model call.
                     agent.ctx.add({"role": "assistant", "content": content})
                     turns.append(Turn(role="assistant", content=content))

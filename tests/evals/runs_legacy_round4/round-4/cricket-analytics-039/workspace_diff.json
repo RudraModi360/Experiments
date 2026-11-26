@@ -1,0 +1,12 @@
+{
+  "added": [
+    "analyze.py",
+    "generate_csv.py",
+    "generate_stats.py",
+    "inspect_match.py",
+    "report.md",
+    "stats.csv"
+  ],
+  "modified": [],
+  "deleted": []
+}

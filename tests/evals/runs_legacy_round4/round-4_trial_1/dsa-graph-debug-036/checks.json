@@ -1,0 +1,40 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:final_report.md:exists",
+      "passed": false,
+      "detail": "file does not exist",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:bash:min_calls",
+      "passed": true,
+      "detail": "4 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "22 steps (max 25)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [
+    "file:final_report.md:exists"
+  ],
+  "infra_failures": [],
+  "commands": []
+}

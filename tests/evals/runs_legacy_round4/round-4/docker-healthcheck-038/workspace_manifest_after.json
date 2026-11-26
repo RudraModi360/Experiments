@@ -1,0 +1,26 @@
+{
+  "DOCKER-NOTES.md": {
+    "sha256": "c4717c3504e2263025733262263414f5b329f744c3f9ddbe7342f91507867f88",
+    "size": 2256
+  },
+  "Dockerfile": {
+    "sha256": "a41cbc2079a1efabe84374ddce1feb222aa7abb0d2a0a76aa503d58e4b6d9bd5",
+    "size": 1064
+  },
+  "compose.yaml": {
+    "sha256": "2fcc30190b5bcb1bbd4c8785c47ca232429afe2933afc947c52b0e410ed6f7b5",
+    "size": 430
+  },
+  "requirements.txt": {
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "size": 1
+  },
+  "smoke.sh": {
+    "sha256": "45ed5b414efdf6dd02f4839c1130596e76e03ebafbf5d89eea7a4b547d35bef2",
+    "size": 985
+  },
+  "service/app.py": {
+    "sha256": "88ff5444ab820de050f8eb17cb60f42551f987fb61a9bc09f573ca7b43a18154",
+    "size": 1776
+  }
+}

@@ -1,0 +1,44 @@
+id = "cricket-analytics-039"
+name = "Cricket analytics (multi-turn)"
+enabled = true
+tags = ["code","analytics","multi-turn"]
+profile = "conversation"
+difficulty = "medium"
+expected_outcome = "stats.csv and report.md with exact numbers, top-3 performers, what-if analysis."
+input = "Given match.json scorecard, compute per-player stats and produce reports."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+[[turns]]
+role = "user"
+content = "Given match.json scorecard, compute per-player runs/balls/SR, bowling economy, partnerships, turning points, and a speciality tag per player. Produce stats.csv."
+[[turns]]
+role = "assistant"
+content = "stats.csv produced."
+[[turns]]
+role = "user"
+content = "Now produce report.md with top-3 performers and a match summary."
+[[turns]]
+role = "assistant"
+content = "report.md produced."
+[[turns]]
+role = "user"
+content = "Add a what-if section: if player X had scored 20 more runs, how would the result change? Finalize."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "stats.csv"
+exists = true
+[[expect.files]]
+path = "report.md"
+exists = true
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"

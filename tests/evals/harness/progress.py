@@ -125,12 +125,12 @@ class CaseProgress:
     # -- lifecycle ---------------------------------------------------------
 
     def __enter__(self) -> "CaseProgress":
+        self._draw()
         self._emit_line(
             f"[eval] {self._head()} "
             f"| profile={self.case.profile or 'case'} | starting"
         )
         self._start_ticker()
-        self._draw()
         return self
 
     def __exit__(self, exc_type, exc, tb) -> bool:
@@ -228,7 +228,9 @@ class CaseProgress:
             if not self._live:
                 return
             try:
-                self._stream.write(_CLEAR_LINE + _paint(line, "36"))
+                # Pin the status line to the top row so it stays visible while
+                # the rest of the output scrolls underneath it.
+                self._stream.write("\033[s\033[1;1H\033[2K" + _paint(line, "36") + "\033[u")
                 self._stream.flush()
                 self._drawn = True
             except (OSError, ValueError):
@@ -239,7 +241,7 @@ class CaseProgress:
             if not self._drawn or self._stream is None:
                 return
             try:
-                self._stream.write(_CLEAR_LINE)
+                self._stream.write("\033[s\033[1;1H\033[2K\033[u")
                 self._stream.flush()
             except (OSError, ValueError):
                 self._live = False

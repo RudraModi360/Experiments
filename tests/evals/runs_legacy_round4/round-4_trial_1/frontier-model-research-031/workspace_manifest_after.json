@@ -1,0 +1,14 @@
+{
+  "comparison.csv": {
+    "sha256": "8b1256ebb6f9031521c81daf01af6a150f2f7e5651ae205800cf1f07e8756271",
+    "size": 422
+  },
+  "report.md": {
+    "sha256": "14d7f639a4f3246eda447e18cdc6463b909924212c31c2f5baee2d1e52ec992d",
+    "size": 2075
+  },
+  "docs/models.md": {
+    "sha256": "f3010c6f8616dbcdccfc0d7076f9e363b91f93eca4865fd6e0585ce21cff2c01",
+    "size": 2908
+  }
+}

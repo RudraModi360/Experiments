@@ -55,15 +55,15 @@ class WorkingState:
                 budget += f" — WARNING: only {rem} step(s) left; finish remaining deliverables, verify, and summarize now."
             sections.append(budget)
         if self.plan:
-            sections.append("PLAN:\n" + clip(self.plan, 1200))
-        file_block = files.render()
+            sections.append("PLAN:\n" + clip(self.plan, self.cfg.max_plan_chars))
+        file_block = files.render(limit=self.cfg.file_tracker_limit)
         if file_block:
             sections.append(file_block)
         if self.saved:
-            rows = [clip(f"- {s['path']} <- {s['desc']}", 200) for s in self.saved[-6:]]
+            rows = [clip(f"- {s['path']} <- {s['desc']}", 200) for s in self.saved[-self.cfg.max_saved_items:]]
             sections.append("SAVED OUTPUTS (full copies; page with read_file or search_text):\n" + "\n".join(rows))
         if self.urls:
-            rows = [clip(f"- {u} {t}".rstrip(), 160) for u, t in list(self.urls.items())[-8:]]
+            rows = [clip(f"- {u} {t}".rstrip(), 160) for u, t in list(self.urls.items())[-self.cfg.max_urls_items:]]
             sections.append("URLS SEEN:\n" + "\n".join(rows))
         return clip("\n\n".join(sections), self.cfg.max_ledger_chars)
 

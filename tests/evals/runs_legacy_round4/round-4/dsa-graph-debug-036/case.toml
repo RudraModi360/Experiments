@@ -1,0 +1,44 @@
+id = "dsa-graph-debug-036"
+name = "DSA graph debug (multi-turn)"
+enabled = true
+tags = ["dsa","debug","algorithm","multi-turn"]
+profile = "conversation"
+difficulty = "hard"
+expected_outcome = "Root cause fixed, complexity preserved, edge tests added, suite green, bench OK, final report written."
+input = "Repo has failing graph tests (BFS/DFS/Dijkstra)."
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+[[turns]]
+role = "user"
+content = "The repo in ./repo has failing graph tests (BFS/DFS/Dijkstra). Run the suite, diagnose the top suspect."
+[[turns]]
+role = "assistant"
+content = "Diagnosis with top suspect."
+[[turns]]
+role = "user"
+content = "Actually the bug is in negative-edge handling, not traversal. Re-evaluate."
+[[turns]]
+role = "assistant"
+content = "Re-evaluated diagnosis focusing on negative edges."
+[[turns]]
+role = "user"
+content = "Fix the root cause, preserve O((V+E) log V), add edge tests (empty, single, ties, disconnected, negative rejection), run suite + bench, write final_report.md."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "final_report.md"
+exists = true
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"

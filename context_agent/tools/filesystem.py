@@ -5,7 +5,7 @@ from __future__ import annotations
 import difflib
 import os
 import re
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ..utilities.file_text import decode_text_file, encode_text_file
 from ..utilities.files import atomic_write_bytes, file_version, path_key
@@ -65,10 +65,11 @@ class FileSystemTools:
     # Kept for compatibility with the original single-file Toolbox helper name.
     _read_core = read_core
 
-    def read_file(self, path: str, offset: int = 1, limit: int = 200, start_char: int = 0) -> ToolResult:
+    def read_file(self, path: str, offset: int = 1, limit: Optional[int] = None, start_char: int = 0) -> ToolResult:
         p = self.ctx.resolve(path)
         disp = self.ctx.short_path(p)
-        info = self.read_core(p, offset, limit, start_char, max(800, self.ctx.cap - 400))
+        page_limit = self.ctx.cfg.read_default_lines if limit is None else limit
+        info = self.read_core(p, offset, page_limit, start_char, max(800, self.ctx.cap - 400))
         first, last, total, version = info["first"], info["last"], info["total"], info["version"]
         spill = self.ctx.is_spill(p)
         header = f"[read_file {disp} | version {version} | "

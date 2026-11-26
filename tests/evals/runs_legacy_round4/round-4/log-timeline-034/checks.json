@@ -1,0 +1,53 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:timeline.md:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:anomalies.csv:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:bash:min_calls",
+      "passed": true,
+      "detail": "10 calls, expected >= 3",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:save_note:min_calls",
+      "passed": false,
+      "detail": "0 calls, expected >= 1",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": false,
+      "detail": "27 steps (max 25)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [
+    "tool:save_note:min_calls",
+    "budget:max_steps"
+  ],
+  "infra_failures": [],
+  "commands": []
+}

@@ -1,0 +1,22 @@
+Category,Player/Detail,Team,Runs,Balls,StrikeRate,Overs,RunsConceded,Wickets,Economy,Partnership,TurningPoint,SpecialityTag
+Batting,Rohit,India,82,54,151.85,,,,,,,Opener Anchor
+Batting,Kohli,India,63,47,134.04,,,,,,,Anchor Accumulator
+Batting,Gill,India,41,33,124.24,,,,,,,Top-Order Anchor
+Batting,Pant,India,28,19,147.37,,,,,,,Wicketkeeper Finisher
+Batting,Hardik,India,15,8,187.50,,,,,,,Power Finisher
+Batting,Warner,Australia,55,40,137.50,,,,,,,Explosive Opener
+Batting,Smith,Australia,48,38,126.32,,,,,,,Anchor Accumulator
+Batting,Labuschagne,Australia,32,29,110.34,,,,,,,Middle-Order Anchor
+Batting,Maxwell,Australia,22,14,157.14,,,,,,,Hard-Hitting All-Rounder
+Batting,Carey,Australia,18,12,150.00,,,,,,,Wicketkeeper Lower-Order
+Bowling,Bumrah,India,,,,4,24,3,6.00,,,,Strike Pacer
+Bowling,Shami,India,,,,4,31,2,7.75,,,,New-Ball Pacer
+Bowling,Kuldeep,India,,,,4,28,1,7.00,,,,Wrist Spinner
+Bowling,Starc,Australia,,,,4,38,2,9.50,,,,Lead Pacer
+Bowling,Hazlewood,Australia,,,,4,29,1,7.25,,,,Economical Pacer
+Bowling,Zampa,Australia,,,,4,33,1,8.25,,,,Leg Spinner
+Partnership,India 1st Wicket,India,,,,,,,,,Rohit & Gill (Solid start),,
+Partnership,India 2nd Wicket,India,,,,,,,,,Rohit & Kohli (Match-defining partnership),,
+Partnership,Australia 1st Wicket,Australia,,,,,,,,,Warner & Smith (Strong chase foundation),,
+TurningPoint,India Innings Surge,India,,,,,,,,,,Rohit and Kohli's acceleration in middle overs pushed India past 200.,
+TurningPoint,Bumrah's Death Spell,India,,,,,,,,,,Bumrah taking 2 wickets in the death overs stifled Australia's chase.,

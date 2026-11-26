@@ -2,28 +2,33 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 from ..message import message_units
 
 
 class OutputClearStrategy:
-    def __init__(self, emit: Callable[..., None], save_full: Callable[[str, str], str]):
+    def __init__(self, emit: Callable[..., None], save_full: Callable[[str, str], str],
+                 on_clear_file: Optional[Callable[[str], None]] = None,
+                 arg_limit: int = 600):
         self.emit = emit
         self.save_full = save_full
+        self.on_clear_file = on_clear_file
+        self.arg_limit = arg_limit
 
-    @staticmethod
-    def _shrink_args(m: Dict[str, Any]) -> bool:
+    def _shrink_args(self, m: Dict[str, Any]) -> bool:
         meta = m.setdefault("_meta", {})
         if meta.get("args_shrunk"):
             return False
         changed = False
+        limit = max(300, int(self.arg_limit))
+        keep = max(200, limit // 3)
         for call in m.get("tool_calls") or []:
             args = call["function"].get("arguments")
             if isinstance(args, dict):
                 for key, value in list(args.items()):
-                    if isinstance(value, str) and len(value) > 600:
-                        args[key] = value[:200] + f"...[{len(value) - 200} more chars omitted from history]"
+                    if isinstance(value, str) and len(value) > limit:
+                        args[key] = value[:keep] + f"...[{len(value) - keep} more chars omitted from history]"
                         changed = True
         meta["args_shrunk"] = True
         return changed
@@ -38,6 +43,8 @@ class OutputClearStrategy:
             rng = meta.get("range") or ["?", "?"]
             stub = (f"[CLEARED to save context: read_file {meta.get('display', meta['path'])} lines {rng[0]}-{rng[1]} "
                     f"(v{meta.get('version')}) - re-read it if you need the content]")
+            if self.on_clear_file is not None:
+                self.on_clear_file(meta["path"])
         else:
             path = meta.get("spill") or self.save_full(tool, text)
             start = " ".join(text[:200].split())

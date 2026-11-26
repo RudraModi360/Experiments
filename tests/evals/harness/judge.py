@@ -42,6 +42,12 @@ DEFAULT_GOOGLE_JUDGE = "gemini-3.5-flash-lite"
 def _log(message: str) -> None:
     stream = getattr(sys, "__stdout__", None) or sys.stdout
     try:
+        # Prefer the controlling terminal so retries are visible under pytest.
+        with open("/dev/tty", "w", encoding="utf-8") as fh:
+            print(message, file=fh, flush=True)
+    except OSError:
+        pass
+    try:
         print(message, file=stream, flush=True)
     except Exception:  # pragma: no cover
         pass
@@ -181,19 +187,24 @@ class FallbackJudgeModel(DeepEvalBaseLLM):
             _LOGGED_CHAINS.add(label)
             _log(f"{JUDGE_PREFIX} chain: {label}")
 
+    _RETRY_DELAYS = (3.0, 5.0, 7.0, 10.0)
+
     @property
     def max_retries(self) -> int:
         try:
-            return max(0, int(_env("EVAL_JUDGE_RETRIES", "2")))
+            return max(0, int(_env("EVAL_JUDGE_RETRIES", "4")))
         except ValueError:
-            return 2
+            return 4
 
     @property
     def retry_delay(self) -> float:
-        try:
-            return max(0.0, float(_env("EVAL_JUDGE_RETRY_DELAY", "2")))
-        except ValueError:
-            return 2.0
+        # Kept for backward compat; the rolling schedule below is authoritative.
+        return self._RETRY_DELAYS[0]
+
+    def _retry_delay_for_attempt(self, attempt: int) -> float:
+        if attempt < len(self._RETRY_DELAYS):
+            return self._RETRY_DELAYS[attempt]
+        return self._RETRY_DELAYS[-1]
 
     def _should_retry_same(self, exc: BaseException, attempt: int) -> bool:
         if attempt >= self.max_retries:
@@ -205,11 +216,11 @@ class FallbackJudgeModel(DeepEvalBaseLLM):
 
     def _retry_delay_for(self, exc: BaseException, attempt: int) -> float:
         reason = _reason(exc) or "unavailable"
-        delay = self.retry_delay * (2 ** attempt)
+        delay = self._retry_delay_for_attempt(attempt)
         detail = " ".join(str(exc or "").split())[:200]
         _log(
             f"{RETRY_PREFIX} {reason} on {self.targets[self.index].label}: {detail} "
-            f"-> retry {attempt + 1}/{self.max_retries} in {delay:.1f}s"
+            f"-> retry {attempt + 1}/{self.max_retries} in {delay:.0f}s"
         )
         return delay
 

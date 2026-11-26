@@ -1,0 +1,9 @@
+{
+  "added": [
+    "anomalies.csv",
+    "parse_logs.py",
+    "timeline.md"
+  ],
+  "modified": [],
+  "deleted": []
+}

@@ -1,0 +1,18 @@
+{
+  "anomalies.csv": {
+    "sha256": "ab12844e37ae92749d373be3e53a720e533963e7149fc69042c8b8f3a9a48402",
+    "size": 197977
+  },
+  "parse_logs.py": {
+    "sha256": "b80c8cbd7c965ff49a048564a52cf4548bcd84082d30350fe710002bff6e3656",
+    "size": 6985
+  },
+  "timeline.md": {
+    "sha256": "568239efb51511b4ef281ea866795a846a4878ed50eb0268fd1ce304b073cf10",
+    "size": 229970
+  },
+  "logs/app.log": {
+    "sha256": "0de86668e0fb51249f6504d5830ce7609b1ed19d752ba1e7a79f7da106247c42",
+    "size": 498701
+  }
+}

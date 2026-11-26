@@ -18,27 +18,29 @@ class ContextSummarizer:
         self.emit = emit
 
     @staticmethod
-    def render_old(msgs: List[Dict[str, Any]]) -> List[str]:
+    def render_old(msgs: List[Dict[str, Any]], scale: float = 1.0) -> List[str]:
+        s = max(1.0, min(3.0, float(scale)))
         lines = []
         for m in msgs:
             meta = m.get("_meta") or {}
             if m["role"] == "user":
-                lines.append("USER: " + head_tail(m.get("content") or "", 2200, 500))
+                lines.append("USER: " + head_tail(m.get("content") or "", int(2200 * s), int(500 * s)))
             elif m["role"] == "assistant":
                 text = (m.get("content") or "").strip()
-                calls = "; ".join(f"{c['function']['name']}({short_args(c['function'].get('arguments'), 300)})"
+                calls = "; ".join(f"{c['function']['name']}({short_args(c['function'].get('arguments'), int(300 * s))})"
                                   for c in m.get("tool_calls") or [])
-                lines.append("ASSISTANT: " + head_tail(text, 1200, 200) + (f"\n  CALLS: {calls}" if calls else ""))
+                lines.append("ASSISTANT: " + head_tail(text, int(1200 * s), int(200 * s)) + (f"\n  CALLS: {calls}" if calls else ""))
             elif m["role"] == "tool":
                 body = meta.get("full") or m.get("content") or ""
-                lines.append(f"RESULT[{m.get('tool_name', '?')}]: " + head_tail(body, 900, 300))
+                lines.append(f"RESULT[{m.get('tool_name', '?')}]: " + head_tail(body, int(900 * s), int(300 * s)))
         return lines
 
     def summarize(self, previous: str, chunk: str) -> Optional[str]:
+        word_target = max(400, int(self.cfg.max_summary_chars / 10))
         prompt = (
             "Update the agent's working memory.\n\n"
             "Rules:\n"
-            "- Merge PREVIOUS MEMORY with NEW EVENTS into one updated memory (max ~400 words).\n"
+            f"- Merge PREVIOUS MEMORY with NEW EVENTS into one updated memory (max ~{word_target} words).\n"
             "- Keep exact values that may be needed later: names, numbers, IDs, paths, URLs, commands, "
             "error messages, and the user's preferences or constraints.\n"
             "- For research/report tasks keep the data needed for the deliverable: per-entity stats, "
@@ -73,7 +75,8 @@ class ContextSummarizer:
             if len(text) > self.cfg.max_summary_chars else text
 
     def fold(self, old: List[Dict[str, Any]], previous: str, use_llm: bool) -> str:
-        lines = self.render_old(old)
+        scale = max(1.0, min(3.0, self.cfg.max_summary_chars / 4500.0))
+        lines = self.render_old(old, scale=scale)
         chunk_chars = max(3000, int(self.cfg.num_ctx * 0.5 * 3.0) - 6500)
         chunks, cur, size = [], [], 0
         for ln in lines:

@@ -50,7 +50,8 @@ class WebTools:
             date = item.get("publishedDate") or ""
             self.ctx.state.add_url(url, clip(title, 60))
             compact.append(f"{n}. {title}\n   {url}{' | ' + date[:10] if date else ''}\n   {clip(' '.join(text.split()), 450)}")
-            full.append(f"{n}. {title}\n{url}\n{date}\n{text[:4000]}\n")
+            spill_limit = max(4000, self.ctx.cfg.max_tool_chars)
+            full.append(f"{n}. {title}\n{url}\n{date}\n{text[:spill_limit]}\n")
         if not items:
             return ToolResult(f"No results for '{query}'.")
         text = f"{len(items)} result(s) for '{query}':\n" + "\n".join(compact)
@@ -99,7 +100,8 @@ class WebTools:
         disp = self.ctx.short_path(path)
         self.ctx.state.add_url(url, clip(title, 60))
         self.ctx.state.add_saved(disp, f"fetch_url({clip(url, 70)}) page text")
-        info = self.filesystem.read_core(path, 1, 150, 0, max(800, self.ctx.cap - 500))
+        page_lines = min(400, self.ctx.cfg.read_default_lines)
+        info = self.filesystem.read_core(path, 1, page_lines, 0, max(800, self.ctx.cap - 500))
         more = f" | read more: read_file('{disp}', offset={info['last'] + 1})" if info["last"] < info["total"] else ""
         header = (f"[fetch_url {url} | saved to {disp} | lines {info['first']}-{info['last']} of {info['total']}{more}]")
         return ToolResult(header + "\n" + info["text"], capped=True)

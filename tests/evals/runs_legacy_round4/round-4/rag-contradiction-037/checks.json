@@ -1,0 +1,120 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:answers.md:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:answers.md:contains:30 days",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:answers.md:contains:billing-policy-2026.md",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:answers.md:contains:supersedes",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:answers.md:contains:rate-limits.md",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:rag.py:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:read_file:min_calls",
+      "passed": false,
+      "detail": "0 calls, expected >= 3",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:save_note:min_calls",
+      "passed": true,
+      "detail": "1 calls, expected >= 1",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:bash:min_calls",
+      "passed": true,
+      "detail": "3 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "12 steps (max 25)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    },
+    {
+      "name": "command:python3 rag.py \"annual plan refund window\"",
+      "passed": true,
+      "detail": "exit=0 expected=0",
+      "kind": "deterministic"
+    },
+    {
+      "name": "command:python3 rag.py \"annual plan refund window\":contains:billing-policy-2026",
+      "passed": false,
+      "detail": "missing",
+      "kind": "deterministic"
+    },
+    {
+      "name": "command:python3 -m unittest -q",
+      "passed": true,
+      "detail": "exit=0 expected=0",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [
+    "tool:read_file:min_calls",
+    "command:python3 rag.py \"annual plan refund window\":contains:billing-policy-2026"
+  ],
+  "infra_failures": [],
+  "commands": [
+    {
+      "command": "python3 rag.py \"annual plan refund window\"",
+      "cwd": "/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-rag-contradiction-037-iwwt4y3m/workspace",
+      "exit_code": 0,
+      "stdout": "Source: billing-policy-2025.md\nAnswer excerpt:\n# Billing Policy 2025\nEffective: 2025-01-01.\nAnnual plans: 14-day refund window.\n",
+      "stderr": "",
+      "timed_out": false,
+      "duration": 0.0500300000057905
+    },
+    {
+      "command": "python3 -m unittest -q",
+      "cwd": "/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-rag-contradiction-037-iwwt4y3m/workspace",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nOK\n",
+      "timed_out": false,
+      "duration": 0.03342937499837717
+    }
+  ]
+}

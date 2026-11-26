@@ -29,6 +29,7 @@ from .utilities.text import clip, head_tail, short_args, strip_think
 class IntelligentAgent:
     def __init__(self, cfg: Optional[Config] = None, llm: Any = None, resume: Optional[str] = None):
         self.cfg = cfg or Config()
+        self.cfg.apply_context_scale()
         self.counter = TokenCounter()
         self.store = SessionStore(self.cfg)
         self.state = WorkingState(self.cfg)
@@ -109,6 +110,16 @@ class IntelligentAgent:
     def switch_provider(self, provider: str, model: Optional[str] = None) -> str:
         """Rebuild the LLM with a different provider, keeping the conversation."""
         return self._swap_llm(provider=provider, model=model)
+
+    def set_context_window(self, num_ctx: Any) -> str:
+        """Resize num_ctx and recompute all derived context/tool budgets live."""
+        self.cfg.apply_context_scale(num_ctx)
+        self.tools._cap = self.tools.context.cap = self.cfg.max_tool_chars
+        self.ctx.clear_strategy.arg_limit = self.cfg.clear_arg_chars
+        lim = self.ctx.limits()
+        return (f"Context window set to {self.cfg.num_ctx} (num_predict={self.cfg.num_predict}, "
+                f"usable_prompt={lim.prompt_limit}, max_tool_chars={self.cfg.max_tool_chars}, "
+                f"keep_recent_units={self.cfg.keep_recent_units}).")
 
     def _swap_llm(self, provider: Optional[str] = None, model: Optional[str] = None) -> str:
         old = self.llm
@@ -295,13 +306,14 @@ class IntelligentAgent:
                 self._on_reply()
 
     def _run_turn(self) -> str:
-        steps, free_bookkeeping, empties, ephemeral = 0, 0, 0, None
+        steps, empties, ephemeral = 0, 0, None
         loop: Dict[str, List[Any]] = {}
         self._loop_stop = False
         while True:
             if steps >= self.cfg.max_steps_per_turn:
                 return self._wrap_up("step limit reached")
-            self.state.step = steps + 1
+            steps += 1
+            self.state.step = steps
             self.state.max_steps = self.cfg.max_steps_per_turn
             self.ctx.maintain()
             view = self.ctx.build_view(ephemeral)
@@ -324,11 +336,6 @@ class IntelligentAgent:
                 self.ctx.add({"role": "assistant", "content": content})
                 self._save()
                 return content
-            is_bookkeeping = all(c["function"]["name"] in self._BOOKKEEPING_TOOLS for c in calls)
-            if is_bookkeeping and free_bookkeeping < self._MAX_FREE_BOOKKEEPING:
-                free_bookkeeping += 1
-            else:
-                steps += 1
             self.ctx.add({"role": "assistant", "content": content, "tool_calls": calls})
             self._streamed_content = bool(content) and self._last_chat_streamed
             self._execute_calls(calls, loop)

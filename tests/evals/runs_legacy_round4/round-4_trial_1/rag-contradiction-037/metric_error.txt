@@ -1,0 +1,1 @@
+Metrics: Correctness [GEval] (score: 0.1, threshold: 0.7, strict: False, error: None, reason: The actual output successfully implements the required stdlib-only RAG pipeline, includes the requested test suite, and provides accurate answers with citations that resolve policy contradictions based on effective dates as specified in the input.) failed.

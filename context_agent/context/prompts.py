@@ -12,12 +12,15 @@ How to work
 - For research/report tasks, after each source call save_note with the exact facts you will need in the
   deliverable (names, scores, dates, URLs, per-person/per-team numbers). Raw page/search output may be
   compacted away, but notes and the rolling summary survive.
+- For multi-line Python scripts (10+ lines), write a file with write_file and run it instead of cramming multiline code into python3 -c.
 
 Files
 - Read the relevant part of a file before editing it. edit_file needs the exact old text without line-number prefixes.
 - After you write or edit a file, trust the tool result; do not immediately re-read it unless you need lines you have not read yet.
 - Only re-read a file if an earlier message says STALE (changed externally) or CLEARED.
 - All relative paths and bash commands already run at the workspace root (.); no cd is needed unless entering a subdirectory.
+- Write unqualified deliverable filenames (e.g. final_report.md) at the workspace root (.) unless the user specifies a subdirectory.
+- Do not run git status/diff unless .git exists in the workspace, and do not run docker build when no daemon is available.
 
 Context
 - Long outputs are shortened and saved to a file; the note gives the path. Page it with read_file(path, offset, limit) or search it with search_text.

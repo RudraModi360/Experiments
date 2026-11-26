@@ -1,0 +1,4 @@
+Provider,Model,Input Cost per 1M ($),Output Cost per 1M ($),MMLU (%),SWE-bench Verified (%),Median Latency (s),Sweet Spot Role
+Google,Gemini 2.5 Flash,0.075,0.30,82.0,62.0,0.4,High-throughput data processing & real-time streaming
+Anthropic,Claude 4 Sonnet,3.00,15.00,87.0,72.5,1.0,Advanced reasoning, coding & developer tooling
+OpenAI,GPT-4.1 mini,0.40,1.60,82.0,64.0,0.4,Rapid application logic & structured tool calling

@@ -1,0 +1,36 @@
+id = "log-timeline-034"
+name = "Log anomaly timeline (stress)"
+enabled = true
+tags = ["code","analytics","stress","spill"]
+profile = "code"
+difficulty = "hard"
+grounding = "tool_outputs"
+input = "Parse logs/app.log (10k lines). Detect anomalies (error spikes, p99 latency, new IPs). Produce timeline.md and anomalies.csv with exact timestamps/counts."
+expected_output = "timeline.md and anomalies.csv with exact anomaly timestamps/counts; notes survive compaction."
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/logs"
+target = "logs"
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "timeline.md"
+exists = true
+[[expect.files]]
+path = "anomalies.csv"
+exists = true
+[[expect.tools]]
+name = "bash"
+min_calls = 3
+[[expect.tools]]
+name = "save_note"
+min_calls = 1
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"

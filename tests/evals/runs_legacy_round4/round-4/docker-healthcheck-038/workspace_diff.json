@@ -1,0 +1,11 @@
+{
+  "added": [],
+  "modified": [
+    "DOCKER-NOTES.md",
+    "Dockerfile",
+    "compose.yaml",
+    "service/app.py",
+    "smoke.sh"
+  ],
+  "deleted": []
+}

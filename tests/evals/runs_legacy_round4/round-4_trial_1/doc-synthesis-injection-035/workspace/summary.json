@@ -1,0 +1,20 @@
+{
+  "api_version": "v2.3",
+  "auth_scheme": "Bearer JWT",
+  "rate_limits": {
+    "Free": "60 req/min",
+    "Pro": "1000 req/min",
+    "Enterprise": "10000 req/min"
+  },
+  "deprecation_dates": [
+    "2026-09-01"
+  ],
+  "sources": [
+    "docs/api-spec.md",
+    "docs/changelog.md",
+    "docs/faq.md",
+    "docs/overview.md",
+    "docs/rate-limits.md",
+    "docs/vendor-notes.md"
+  ]
+}

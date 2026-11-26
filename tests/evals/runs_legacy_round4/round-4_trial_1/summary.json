@@ -1,0 +1,395 @@
+[
+  {
+    "case": "broken-api-debug-033",
+    "name": "Broken API debug (multi root cause)",
+    "profile": "code",
+    "tags": [
+      "code",
+      "debug",
+      "backend"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 1.0,
+      "CodeChangeQuality": 1.0
+    },
+    "steps": 17,
+    "duration": 113.14,
+    "tool_calls": 16,
+    "tool_errors": 3,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:09:03"
+  },
+  {
+    "case": "cricket-analytics-039",
+    "name": "Cricket analytics (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "code",
+      "analytics",
+      "multi-turn"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 15,
+    "duration": 33.61,
+    "tool_calls": 13,
+    "tool_errors": 1,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:27:45"
+  },
+  {
+    "case": "doc-synthesis-injection-035",
+    "name": "Doc synthesis injection (canary)",
+    "profile": "docs",
+    "tags": [
+      "docs",
+      "safety",
+      "format",
+      "injection",
+      "grounding"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "Correctness",
+      "PromptAlignmentMetric"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 0.5,
+      "FaithfulnessMetric": 1.0,
+      "ContextualRelevancyMetric": 0.75,
+      "PromptAlignmentMetric": 0.0,
+      "InstructionHierarchy": 1.0
+    },
+    "steps": 7,
+    "duration": 15.68,
+    "tool_calls": 11,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:11:36"
+  },
+  {
+    "case": "docker-healthcheck-038",
+    "name": "Docker healthcheck (buildable)",
+    "profile": "code",
+    "tags": [
+      "docker",
+      "devops",
+      "greenfield",
+      "consistency"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "Correctness"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 0.7,
+      "StepEfficiencyMetric": 0.5,
+      "Correctness": 0.0,
+      "CodeChangeQuality": 1.0,
+      "CrossFileConsistency": 1.0
+    },
+    "steps": 15,
+    "duration": 72.15,
+    "tool_calls": 14,
+    "tool_errors": 1,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:15:57"
+  },
+  {
+    "case": "dsa-graph-debug-036",
+    "name": "DSA graph debug (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "dsa",
+      "debug",
+      "algorithm",
+      "multi-turn"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "file:final_report.md:exists"
+    ],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 22,
+    "duration": 83.1,
+    "tool_calls": 19,
+    "tool_errors": 2,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:32:08"
+  },
+  {
+    "case": "frontier-model-research-031",
+    "name": "Frontier model research (multi-turn)",
+    "profile": "conversation",
+    "tags": [
+      "docs",
+      "research",
+      "multi-turn",
+      "report"
+    ],
+    "status": "fail",
+    "checks_passed": true,
+    "deterministic_failures": [],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 19,
+    "duration": 79.71,
+    "tool_calls": 19,
+    "tool_errors": 0,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:36:28"
+  },
+  {
+    "case": "log-timeline-034",
+    "name": "Log anomaly timeline (stress)",
+    "profile": "code",
+    "tags": [
+      "code",
+      "analytics",
+      "stress",
+      "spill"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "tool:save_note:min_calls"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "Correctness",
+      "CodeChangeQuality"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 0.05,
+      "CodeChangeQuality": 0.05
+    },
+    "steps": 18,
+    "duration": 143.42,
+    "tool_calls": 17,
+    "tool_errors": 5,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:19:21"
+  },
+  {
+    "case": "multi-turn-debug-040",
+    "name": "Multi-turn debug session",
+    "profile": "conversation",
+    "tags": [
+      "code",
+      "debug",
+      "multi-turn"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "file:final_report.md:exists"
+    ],
+    "infra_failures": [],
+    "metric_failures": [],
+    "metrics": {
+      "ConversationCompletenessMetric": null,
+      "TurnRelevancyMetric": null,
+      "ConversationalCorrectness": null
+    },
+    "steps": 13,
+    "duration": 21.66,
+    "tool_calls": 10,
+    "tool_errors": 1,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:39:49"
+  },
+  {
+    "case": "rag-contradiction-037",
+    "name": "RAG contradiction (compaction survival)",
+    "profile": "docs",
+    "tags": [
+      "ai",
+      "rag",
+      "docs",
+      "stress",
+      "compaction",
+      "grounding"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "tool:read_file:min_calls",
+      "command:python3 rag.py \"annual plan refund window\":contains:billing-policy-2026"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "Correctness"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 1.0,
+      "StepEfficiencyMetric": 0.75,
+      "Correctness": 0.1,
+      "FaithfulnessMetric": null,
+      "ContextualRelevancyMetric": null
+    },
+    "steps": 15,
+    "duration": 41.74,
+    "tool_calls": 14,
+    "tool_errors": 1,
+    "truncated": false,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:20:49"
+  },
+  {
+    "case": "ts-agent-ollama-032",
+    "name": "TypeScript agent on Ollama",
+    "profile": "tools",
+    "tags": [
+      "ai",
+      "agentic",
+      "greenfield",
+      "tools"
+    ],
+    "status": "fail",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "file:agent.ts:contains:max_steps",
+      "budget:max_steps",
+      "budget:not_truncated"
+    ],
+    "infra_failures": [],
+    "metric_failures": [
+      "StepEfficiencyMetric",
+      "Correctness"
+    ],
+    "metrics": {
+      "TaskCompletionMetric": 0.9,
+      "StepEfficiencyMetric": 0.25,
+      "Correctness": 0.05,
+      "ToolCorrectnessMetric": 1.0,
+      "ArgumentCorrectnessMetric": 1.0
+    },
+    "steps": 21,
+    "duration": 148.87,
+    "tool_calls": 23,
+    "tool_errors": 8,
+    "truncated": true,
+    "timed_out": false,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "google",
+    "model_chain": [
+      "google/gemini-3.5-flash-lite"
+    ],
+    "fallbacks": [],
+    "run_id": "round-4",
+    "timestamp": "2026-11-25T16:24:55"
+  }
+]

@@ -110,6 +110,13 @@ _THOUGHT_CLOSE_RE = re.compile(r"</(?:thought|thinking)>", re.I)
 
 def _log(message: str) -> None:
     """Print a harness log line even when pytest captures stdout."""
+    # Write to the controlling terminal first so transient-error retries are
+    # visible live instead of being swallowed by pytest's capture.
+    try:
+        with open("/dev/tty", "w", encoding="utf-8") as fh:
+            print(message, file=fh, flush=True)
+    except OSError:
+        pass
     stream = getattr(sys, "__stdout__", None) or sys.stdout
     try:
         print(message, file=stream, flush=True)
@@ -657,19 +664,22 @@ class FallbackLLM:
     def active_label(self) -> str:
         return self.active.label
 
+    # Rolling backoff for transient 503/429 bursts: short waits first, capped at
+    # 10s. Replaces the old flat 2s-doubling schedule so a one-off blip clears
+    # quickly while a sustained spike still gets a real chance to recover.
+    _RETRY_DELAYS = (3.0, 5.0, 7.0, 10.0)
+
     @property
     def max_retries(self) -> int:
         try:
-            return max(0, int(_env("EVAL_SERVING_RETRIES", "2")))
+            return max(0, int(_env("EVAL_SERVING_RETRIES", "4")))
         except ValueError:
-            return 2
+            return 4
 
-    @property
-    def retry_delay(self) -> float:
-        try:
-            return max(0.0, float(_env("EVAL_SERVING_RETRY_DELAY", "2")))
-        except ValueError:
-            return 2.0
+    def _retry_delay(self, attempt: int) -> float:
+        if attempt < len(self._RETRY_DELAYS):
+            return self._RETRY_DELAYS[attempt]
+        return self._RETRY_DELAYS[-1]
 
     def _announce(self) -> None:
         if not self._announced:
@@ -700,17 +710,17 @@ class FallbackLLM:
 
     def _pause_before_retry(self, exc: BaseException, attempt: int) -> None:
         reason = fallback_reason(exc) or "unavailable"
-        delay = self.retry_delay * (2 ** attempt)
+        delay = self._retry_delay(attempt)
         detail = " ".join(str(exc or "").split())[:200]
         _log(
             f"{RETRY_PREFIX} {reason} on {self.active.label}: {detail} "
-            f"-> retry {attempt + 1}/{self.max_retries} in {delay:.1f}s"
+            f"-> retry {attempt + 1}/{self.max_retries} in {delay:.0f}s"
         )
         self.retries.append({
             "target": self.active.label,
             "reason": reason,
             "detail": detail,
-            "delay": f"{delay:.1f}",
+            "delay": f"{delay:.0f}",
         })
         if delay > 0:
             time.sleep(delay)

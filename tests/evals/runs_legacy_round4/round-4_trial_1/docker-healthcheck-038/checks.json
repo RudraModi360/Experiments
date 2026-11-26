@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:Dockerfile:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:Dockerfile:contains:COPY --from=",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:Dockerfile:contains:USER",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:compose.yaml:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:compose.yaml:contains:8080",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:compose.yaml:contains:APP_TOKEN",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:service/app.py:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:service/app.py:contains:/healthz",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:bash:min_calls",
+      "passed": true,
+      "detail": "3 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "15 steps (max 22)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    },
+    {
+      "name": "command:bash smoke.sh",
+      "passed": true,
+      "detail": "exit=0 expected=0",
+      "kind": "deterministic"
+    },
+    {
+      "name": "command:bash smoke.sh:contains:smoke OK",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [],
+  "infra_failures": [],
+  "commands": [
+    {
+      "command": "bash smoke.sh",
+      "cwd": "/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-docker-healthcheck-038-2i_vi9cu/workspace",
+      "exit_code": 0,
+      "stdout": "smoke OK\n",
+      "stderr": "",
+      "timed_out": false,
+      "duration": 1.0474833339976612
+    }
+  ]
+}

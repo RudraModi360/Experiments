@@ -1,0 +1,45 @@
+id = "docker-healthcheck-038"
+name = "Docker healthcheck (buildable)"
+enabled = true
+tags = ["docker","devops","greenfield","consistency"]
+profile = "code"
+difficulty = "medium"
+input = "Create a small Python HTTP service service/app.py (stdlib, PORT/APP_TOKEN) plus a multi-stage buildable Dockerfile (builder+slim, non-root, layer-cached, correct CMD), compose.yaml with healthchecks (8080, APP_TOKEN=demo-token-123), and DOCKER-NOTES.md. No daemon. Run smoke.sh. Ensure Dockerfile buildable."
+expected_output = "service/app.py works; Dockerfile buildable; compose valid with healthchecks; smoke.sh passes (smoke OK); DOCKER-NOTES.md explains decisions."
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "."
+[expect]
+truncated_ok = false
+[[expect.commands]]
+command = "bash smoke.sh"
+cwd = "."
+exit_code = 0
+contains = ["smoke OK"]
+timeout = 60
+[[expect.files]]
+path = "Dockerfile"
+exists = true
+contains = ["COPY --from=","USER"]
+[[expect.files]]
+path = "compose.yaml"
+exists = true
+contains = ["8080","APP_TOKEN"]
+[[expect.files]]
+path = "service/app.py"
+exists = true
+contains = ["/healthz"]
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "code"
+use = ["cross_file_consistency"]

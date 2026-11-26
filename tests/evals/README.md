@@ -83,9 +83,10 @@ uv run python -m tests.evals.harness.cli run \
 - `--serving-chain` now enables the served SUT automatically; you no longer
   need to export `EVAL_SERVING_DISABLE=0`.
 - Transient Google errors (503 "overloaded", timeouts) are retried on the same
-  target before falling back: `EVAL_SERVING_RETRIES` (default `2`) and
-  `EVAL_SERVING_RETRY_DELAY` seconds (default `2`, doubled per retry). Set
-  `EVAL_SERVING_RETRIES=0` to disable.
+  target before falling back: `EVAL_SERVING_RETRIES` (default `4`) attempts with
+  a rolling backoff of 3s, 5s, 7s, then 10s (capped). Set
+  `EVAL_SERVING_RETRIES=0` to disable. The judge uses the same schedule via
+  `EVAL_JUDGE_RETRIES`.
 
 Plain `pytest` skips these tests; always use `deepeval test run` (or `evalctl run`).
 The harness CLI launches `.venv/bin/deepeval` from the active uv environment so

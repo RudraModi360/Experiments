@@ -1,0 +1,85 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "name": "infra:model_call",
+      "passed": false,
+      "detail": "Internal error (BrokenPipeError): [Errno 32] Broken pipe",
+      "kind": "infra"
+    },
+    {
+      "name": "tool:bash:min_calls",
+      "passed": false,
+      "detail": "1 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:read_file:min_calls",
+      "passed": true,
+      "detail": "3 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:edit_file:min_calls",
+      "passed": false,
+      "detail": "0 calls, expected >= 1",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "4 steps (max 22)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_auth.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_tasks.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_store.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "command:python3 -m unittest discover -s tests -q",
+      "passed": false,
+      "detail": "exit=1 expected=0",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [
+    "infra:model_call",
+    "tool:bash:min_calls",
+    "tool:edit_file:min_calls",
+    "command:python3 -m unittest discover -s tests -q"
+  ],
+  "infra_failures": [
+    "infra:model_call"
+  ],
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s tests -q",
+      "cwd": "/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-broken-api-debug-033-sec7iqtu/workspace/repo",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "======================================================================\nFAIL: test_boundary (test_auth.T.test_boundary)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-broken-api-debug-033-sec7iqtu/workspace/repo/tests/test_auth.py\", line 9, in test_boundary\n    t=issue_token(\"alice\",ttl=100,now=1000); self.assertEqual(verify_token(t,now=1100),\"alice\")\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: None != 'alice'\n\n======================================================================\nFAIL: test_boundary (test_routes.T.test_boundary)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-broken-api-debug-033-sec7iqtu/workspace/repo/tests/test_routes.py\", line 8, in test_boundary\n    t=issue_token(\"alice\",ttl=100,now=1000); self.assertEqual(list_items(t,now=1100)[0],200)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 401 != 200\n\n----------------------------------------------------------------------\nRan 8 tests in 0.000s\n\nFAILED (failures=2)\n",
+      "timed_out": false,
+      "duration": 0.03814579100435367
+    }
+  ]
+}

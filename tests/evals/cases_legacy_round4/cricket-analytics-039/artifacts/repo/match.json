@@ -1,0 +1,6 @@
+{"match":"India vs Australia","date":"2026-11-25","innings":[
+ {"team":"India","batting":[{"name":"Rohit","runs":82,"balls":54},{"name":"Kohli","runs":63,"balls":47},{"name":"Gill","runs":41,"balls":33},{"name":"Pant","runs":28,"balls":19},{"name":"Hardik","runs":15,"balls":8}],
+   "bowling":[{"name":"Bumrah","overs":4,"runs":24,"wickets":3},{"name":"Shami","overs":4,"runs":31,"wickets":2},{"name":"Kuldeep","overs":4,"runs":28,"wickets":1}]},
+ {"team":"Australia","batting":[{"name":"Warner","runs":55,"balls":40},{"name":"Smith","runs":48,"balls":38},{"name":"Labuschagne","runs":32,"balls":29},{"name":"Maxwell","runs":22,"balls":14},{"name":"Carey","runs":18,"balls":12}],
+   "bowling":[{"name":"Starc","overs":4,"runs":38,"wickets":2},{"name":"Hazlewood","overs":4,"runs":29,"wickets":1},{"name":"Zampa","overs":4,"runs":33,"wickets":1}]}
+]}

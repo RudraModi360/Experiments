@@ -1,0 +1,3 @@
+{"ts": "2026-11-25T18:38:17", "msg": {"role": "user", "content": "Research the latest frontier models from Google, Anthropic, and OpenAI. Compare their top 3 models on cost, speed, performance/intelligence. Make a comparison table and a final assessment."}}
+{"ts": "2026-11-25T18:38:43", "msg": {"role": "user", "content": "Narrow it to the cost-performance sweet spot and add benchmark citations."}}
+{"ts": "2026-11-25T18:39:09", "msg": {"role": "user", "content": "Produce an executive-summary report report.md + comparison.csv."}}

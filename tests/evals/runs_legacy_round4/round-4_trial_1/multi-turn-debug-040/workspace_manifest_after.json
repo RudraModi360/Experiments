@@ -1,0 +1,22 @@
+{
+  "repo/final_report.md": {
+    "sha256": "d7ec0f2c7a289ba85eb6d13a2af67c4732bc04bcf86df3a9c6ea98e43c667f75",
+    "size": 709
+  },
+  "repo/app/__init__.py": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0
+  },
+  "repo/app/auth.py": {
+    "sha256": "46ed977bd2fddb5b34b058e7dbf60e652ed8e943e1d8abbfd3388c305611e499",
+    "size": 744
+  },
+  "repo/tests/__init__.py": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0
+  },
+  "repo/tests/test_auth.py": {
+    "sha256": "b29641d64c2aa71ae1c0849afb635f5fb38e738d61ab50271183633b747fa180",
+    "size": 227
+  }
+}

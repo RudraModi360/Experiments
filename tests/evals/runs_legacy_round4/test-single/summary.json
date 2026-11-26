@@ -1,0 +1,38 @@
+[
+  {
+    "case": "broken-api-debug-033",
+    "name": "Broken API debug (multi root cause)",
+    "profile": "code",
+    "tags": [
+      "code",
+      "debug",
+      "backend"
+    ],
+    "status": "infra",
+    "checks_passed": false,
+    "deterministic_failures": [
+      "tool:bash:min_calls",
+      "tool:edit_file:min_calls",
+      "command:python3 -m unittest discover -s tests -q"
+    ],
+    "infra_failures": [
+      "infra:model_call"
+    ],
+    "metric_failures": [],
+    "metrics": {},
+    "steps": 4,
+    "duration": 22.11,
+    "tool_calls": 7,
+    "tool_errors": 1,
+    "truncated": false,
+    "timed_out": false,
+    "model": "trymirai/Qwen3.5-9B-M",
+    "provider": "uzu",
+    "model_chain": [
+      "uzu/trymirai/Qwen3.5-9B-M"
+    ],
+    "fallbacks": [],
+    "run_id": "test-single",
+    "timestamp": "2026-11-25T17:50:22"
+  }
+]

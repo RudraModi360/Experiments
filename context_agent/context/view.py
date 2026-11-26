@@ -15,11 +15,12 @@ from .token_counter import TokenCounter
 
 class ContextView:
     def __init__(self, counter: TokenCounter, state: WorkingState, files: FileTracker,
-                 base_prompt: str = BASE_PROMPT):
+                 base_prompt: str = BASE_PROMPT, cfg: Any = None):
         self.counter = counter
         self.state = state
         self.files = files
         self.base_prompt = base_prompt
+        self.cfg = cfg
         self._workspace_snapshot_cache: Optional[str] = None
 
     @staticmethod
@@ -63,11 +64,12 @@ class ContextView:
             return ""
 
     def refresh_workspace(self) -> None:
-        self._workspace_snapshot_cache = self._workspace_snapshot()
+        max_entries = getattr(self.cfg, "workspace_snapshot_entries", None) or 40
+        self._workspace_snapshot_cache = self._workspace_snapshot(max_entries=max_entries)
 
     def system_text(self) -> str:
         if self._workspace_snapshot_cache is None:
-            self._workspace_snapshot_cache = self._workspace_snapshot()
+            self.refresh_workspace()
         base = self.base_prompt
         if self._workspace_snapshot_cache:
             base += f"\n\n{self._workspace_snapshot_cache}"

@@ -14,7 +14,7 @@ class MemoryTools:
         self.state = state
 
     def update_plan(self, plan: str) -> ToolResult:
-        self.state.plan = plan.strip()[:1500]
+        self.state.plan = plan.strip()[:self.cfg.max_plan_chars]
         return ToolResult("Plan updated.", capped=True)
 
     def save_note(self, key: str, content: str) -> ToolResult:
@@ -24,7 +24,7 @@ class MemoryTools:
         if not content:
             self.state.notes.pop(key, None)
             return ToolResult(f"Deleted note '{key}'.", capped=True)
-        content = clip(content, 500)
+        content = clip(content, self.cfg.max_note_chars)
         old = self.state.notes.pop(key, "")
         if self.state.notes_chars() + len(key) + len(content) > self.cfg.max_notes_chars:
             if old:

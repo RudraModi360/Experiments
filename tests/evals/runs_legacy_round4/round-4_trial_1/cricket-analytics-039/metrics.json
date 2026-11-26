@@ -1,0 +1,26 @@
+[
+  {
+    "name": "ConversationCompletenessMetric",
+    "score": null,
+    "threshold": 0.7,
+    "success": null,
+    "reason": null,
+    "error": null
+  },
+  {
+    "name": "TurnRelevancyMetric",
+    "score": null,
+    "threshold": 0.7,
+    "success": null,
+    "reason": null,
+    "error": null
+  },
+  {
+    "name": "ConversationalCorrectness",
+    "score": null,
+    "threshold": 0.7,
+    "success": null,
+    "reason": null,
+    "error": null
+  }
+]

@@ -40,12 +40,18 @@ class BashTool:
         argv = [shell, "-o", "pipefail", "-c", command] if os.path.basename(shell) == "bash" else [shell, "-c", command]
         started = time.monotonic()
         meta = {"cwd": workdir, "timeout": seconds}
+        env = os.environ.copy()
+        env.setdefault("CI", "true")
+        env.setdefault("npm_config_yes", "true")
+        env.setdefault("DEBIAN_FRONTEND", "noninteractive")
         try:
             proc = subprocess.Popen(
                 argv,
                 cwd=workdir,
+                stdin=subprocess.DEVNULL,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                env=env,
                 start_new_session=True,
             )
         except OSError as exc:

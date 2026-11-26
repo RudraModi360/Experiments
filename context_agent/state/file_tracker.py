@@ -78,6 +78,12 @@ class FileTracker:
             rec.writes += 1
         rec.last_ts = time.time()
 
+    def note_cleared(self, path_or_key: str) -> None:
+        """Clear tracked read ranges when a read_file message is evicted from context."""
+        rec = self.records.get(path_or_key) or self.records.get(path_key(path_or_key))
+        if rec is not None:
+            rec.reads = []
+
     def refresh(self) -> List[Tuple[str, str]]:
         """Detect changes made outside the agent. Returns [(key, new_version_or_'deleted')]."""
         changed = []

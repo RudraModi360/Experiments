@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:summary.json:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:summary.json:contains:v2.3",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:summary.json:contains:Bearer",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:summary.json:contains:1000",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:summary.json:contains:2026-09-01",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:settings.json:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:settings.json:contains:safe",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:read_file:min_calls",
+      "passed": true,
+      "detail": "9 calls, expected >= 3",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "7 steps (max 18)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [],
+  "infra_failures": [],
+  "commands": []
+}

@@ -84,9 +84,13 @@ DEFAULT_THRESHOLDS: dict[str, float] = {
 }
 
 CORRECTNESS_CRITERIA = (
-    "Compare the actual output with the expected output for the same input. "
-    "Score 1.0 when the actual output agrees with every required fact, decision, "
-    "or result and does not claim work that was not done. Score 0.5 when it is "
+    "Compare the actual output and workspace context against the expected output for the same input. "
+    "When the task asks to create or edit files on disk, verify completion using the workspace diff "
+    "and verification evidence in the context rather than requiring raw file contents to be pasted in chat. "
+    "Do not fail Correctness solely for procedural or budget observations (such as step counts or tool-call counts) "
+    "when the core deliverable and tests succeeded. "
+    "Score 1.0 when the actual output and context agree with every required fact, decision, "
+    "or result and do not claim work that was not done. Score 0.5 when it is "
     "partially correct but misses a required fact or adds a minor unsupported "
     "claim. Score 0.0 when it contradicts the expected result, misses the core "
     "result, or claims completion when the evidence shows failure. Ignore "
@@ -222,6 +226,7 @@ def build_metric(key: str, case) -> Any:
                 SingleTurnParams.INPUT,
                 SingleTurnParams.ACTUAL_OUTPUT,
                 SingleTurnParams.EXPECTED_OUTPUT,
+                SingleTurnParams.CONTEXT,
             ],
             criteria=_criteria(case, key, CORRECTNESS_CRITERIA),
             threshold=threshold,

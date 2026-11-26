@@ -1,0 +1,37 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "name": "infra:model_call",
+      "passed": false,
+      "detail": "Model error: google/gemini-3.5-flash-lite request failed (HTTP 429): [{",
+      "kind": "infra"
+    },
+    {
+      "name": "file:final_report.md:exists",
+      "passed": false,
+      "detail": "file does not exist",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": true,
+      "detail": "0 steps (max 25)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [
+    "infra:model_call",
+    "file:final_report.md:exists"
+  ],
+  "infra_failures": [
+    "infra:model_call"
+  ],
+  "commands": []
+}

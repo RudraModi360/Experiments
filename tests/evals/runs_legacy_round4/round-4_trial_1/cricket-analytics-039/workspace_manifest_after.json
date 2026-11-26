@@ -1,0 +1,14 @@
+{
+  "match.json": {
+    "sha256": "b1c2051f56dacd3d05282c9626f3131c144e9177d4bf78bdf096ace5b4b91252",
+    "size": 850
+  },
+  "report.md": {
+    "sha256": "63ed48fc6a85733f8332a166d9b76f3b839a9c6ed0b420f3782cd96f840c8471",
+    "size": 2223
+  },
+  "stats.csv": {
+    "sha256": "4babb00c7b6a75035c3ca5f290e13929dbebab7dab9d6f55706b637b45759ce6",
+    "size": 1556
+  }
+}

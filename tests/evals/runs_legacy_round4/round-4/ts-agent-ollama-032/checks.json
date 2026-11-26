@@ -1,0 +1,77 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "file:agent.ts:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:agent.ts:contains:max_steps",
+      "passed": false,
+      "detail": "missing",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:agent.ts:contains:read_file",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:agent.ts:contains:write_file",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:agent.ts:contains:bash",
+      "passed": true,
+      "detail": "found",
+      "kind": "deterministic"
+    },
+    {
+      "name": "file:README.md:exists",
+      "passed": true,
+      "detail": "file exists",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:write_file:min_calls",
+      "passed": true,
+      "detail": "5 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:bash:min_calls",
+      "passed": true,
+      "detail": "10 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": false,
+      "detail": "23 steps (max 20)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": true,
+      "detail": "completed",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [
+    "file:agent.ts:contains:max_steps",
+    "budget:max_steps"
+  ],
+  "infra_failures": [],
+  "commands": []
+}

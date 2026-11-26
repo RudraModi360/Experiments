@@ -1,0 +1,32 @@
+id = "ts-agent-ollama-032"
+name = "TypeScript agent on Ollama"
+enabled = true
+tags = ["ai","agentic","greenfield","tools"]
+profile = "tools"
+difficulty = "medium"
+input = "Build a small TypeScript agent agent.ts that uses a local Ollama model with exactly 3 tools (read_file, write_file, bash). Implement a tool loop with a max-step guard and loop detection. Add tests and a README. Run the tests."
+expected_output = "agent.ts, tests, README; tests pass; exactly 3 tools; max-step guard and loop detection present."
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "agent.ts"
+exists = true
+contains = ["max_steps","read_file","write_file","bash"]
+[[expect.files]]
+path = "README.md"
+exists = true
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[[expect.tools]]
+name = "bash"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "tools"

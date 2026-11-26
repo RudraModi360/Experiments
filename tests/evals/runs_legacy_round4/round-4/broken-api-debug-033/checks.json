@@ -1,0 +1,82 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "name": "infra:ok",
+      "passed": true,
+      "detail": "no infrastructure failure detected",
+      "kind": "infra"
+    },
+    {
+      "name": "tool:bash:min_calls",
+      "passed": true,
+      "detail": "4 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:read_file:min_calls",
+      "passed": true,
+      "detail": "12 calls, expected >= 2",
+      "kind": "deterministic"
+    },
+    {
+      "name": "tool:edit_file:min_calls",
+      "passed": true,
+      "detail": "4 calls, expected >= 1",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:max_steps",
+      "passed": false,
+      "detail": "25 steps (max 22)",
+      "kind": "deterministic"
+    },
+    {
+      "name": "budget:not_truncated",
+      "passed": false,
+      "detail": "truncated (['step limit reached'])",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_auth.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_tasks.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "workspace:unchanged:repo/tests/test_store.py",
+      "passed": true,
+      "detail": "unchanged",
+      "kind": "deterministic"
+    },
+    {
+      "name": "command:python3 -m unittest discover -s tests -q",
+      "passed": false,
+      "detail": "exit=1 expected=0",
+      "kind": "deterministic"
+    }
+  ],
+  "failures": [
+    "budget:max_steps",
+    "budget:not_truncated",
+    "command:python3 -m unittest discover -s tests -q"
+  ],
+  "infra_failures": [],
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s tests -q",
+      "cwd": "/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-broken-api-debug-033-qksg9xdp/workspace/repo",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "======================================================================\nERROR: test_routes (unittest.loader._FailedTest.test_routes)\n----------------------------------------------------------------------\nImportError: Failed to import test module: test_routes\nTraceback (most recent call last):\n  File \"/Users/rudram/.local/share/uv/python/cpython-3.12.16-macos-aarch64-none/lib/python3.12/unittest/loader.py\", line 396, in _find_test_path\n    module = self._get_module_from_name(name)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/rudram/.local/share/uv/python/cpython-3.12.16-macos-aarch64-none/lib/python3.12/unittest/loader.py\", line 339, in _get_module_from_name\n    __import__(name)\n  File \"/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-broken-api-debug-033-qksg9xdp/workspace/repo/tests/test_routes.py\", line 3, in <module>\n    from app.routes import list_items\nImportError: cannot import name 'list_items' from 'app.routes' (/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-broken-api-debug-033-qksg9xdp/workspace/repo/app/routes.py)\n\n\n======================================================================\nFAIL: test_no_dup (test_store.T.test_no_dup)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/var/folders/h8/mdvx0_qd4512__f312ql3rf80000gn/T/agenteval-broken-api-debug-033-qksg9xdp/workspace/repo/tests/test_store.py\", line 10, in test_no_dup\n    add({\"id\":2}); add({\"id\":2}); self.assertEqual(len(all_items()),2)\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 1 != 2\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nFAILED (failures=1, errors=1)\n",
+      "timed_out": false,
+      "duration": 0.05393420899781631
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "anomalies.csv": {
+    "sha256": "0434fd52a5f7530ee65b06949493bbf048eb6b184b145775cd444777a93d78f8",
+    "size": 1876
+  },
+  "timeline.md": {
+    "sha256": "eda0e5eef5639a6d7902aa74e11ceb2634cd7fa5effc577270173b1a1bbda619",
+    "size": 3190
+  },
+  "logs/app.log": {
+    "sha256": "0de86668e0fb51249f6504d5830ce7609b1ed19d752ba1e7a79f7da106247c42",
+    "size": 498701
+  }
+}

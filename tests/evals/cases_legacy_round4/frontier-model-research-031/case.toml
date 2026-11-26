@@ -1,0 +1,60 @@
+id = "frontier-model-research-031"
+name = "Frontier model research (multi-turn)"
+enabled = true
+tags = ["docs","research","multi-turn","report"]
+profile = "conversation"
+difficulty = "medium"
+grounding = "tool_outputs"
+expected_outcome = "Executive summary report with comparison table, sweet-spot analysis, benchmark citations."
+
+input = "Research the latest frontier models from Google, Anthropic, and OpenAI. Compare their top 3 models on cost, speed, performance/intelligence. Make a comparison table and a final assessment."
+
+[workspace]
+network = true
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/docs"
+target = "docs"
+
+[[turns]]
+role = "user"
+content = "Research the latest frontier models from Google, Anthropic, and OpenAI. Compare their top 3 models on cost, speed, performance/intelligence. Make a comparison table and a final assessment."
+
+[[turns]]
+role = "assistant"
+content = "Initial comparison table and assessment."
+
+[[turns]]
+role = "user"
+content = "Narrow it to the cost-performance sweet spot and add benchmark citations."
+
+[[turns]]
+role = "assistant"
+content = "Refined sweet-spot analysis with citations."
+
+[[turns]]
+role = "user"
+content = "Produce an executive-summary report report.md + comparison.csv."
+
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "report.md"
+exists = true
+[[expect.files]]
+path = "comparison.csv"
+exists = true
+[[expect.tools]]
+name = "read_file"
+min_calls = 2
+[[expect.tools]]
+name = "write_file"
+min_calls = 2
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"

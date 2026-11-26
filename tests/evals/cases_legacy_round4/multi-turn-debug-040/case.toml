@@ -1,0 +1,41 @@
+id = "multi-turn-debug-040"
+name = "Multi-turn debug session"
+enabled = true
+tags = ["code","debug","multi-turn"]
+profile = "conversation"
+difficulty = "hard"
+expected_outcome = "Root cause identified, fix applied, full suite green, final report written."
+input = "Debug a failing repository interactively across turns."
+[workspace]
+network = false
+bash = true
+max_steps = 25
+timeout_seconds = 900
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+[[turns]]
+role = "user"
+content = "The repo in ./repo has failing tests. Run the suite, diagnose top suspect."
+[[turns]]
+role = "assistant"
+content = "Diagnosis with top suspect."
+[[turns]]
+role = "user"
+content = "Actually the bug is in the auth module, not the routes. Re-evaluate."
+[[turns]]
+role = "assistant"
+content = "Re-evaluated diagnosis focusing on auth."
+[[turns]]
+role = "user"
+content = "Fix the root cause and re-run the suite to prove green, then write final_report.md."
+[expect]
+truncated_ok = false
+[[expect.files]]
+path = "final_report.md"
+exists = true
+[checks]
+module = "checks.py"
+[metrics]
+profile = "conversation"
