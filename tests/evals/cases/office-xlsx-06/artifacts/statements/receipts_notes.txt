@@ -1,0 +1,4 @@
+- Chase Credit Card Autopay ($2,400.00) is an inter-account transfer paying off the credit card—EXCLUDE from expenses.
+- Fiber Internet Annual Plan ($1,200.00) is 50% business / 50% personal -> $600.00 deductible under Home Office.
+- One of the two $89.00 Cloudflare Hosting charges on 2026-01-12 is a duplicate billing error—flag it and do NOT double-count.
+- Whole Foods Market ($210) and City Water Utility ($180) are Personal / Non-Deductible.

@@ -1,0 +1,6 @@
+{"q": "What is the hotel nightly rate cap in Tier-1 cities?", "category": "travel", "expected_doc": "pol_travel", "expected_clause": "POL-102"}
+{"q": "How quickly must SEV-1 security breaches be escalated?", "category": "security", "expected_doc": "pol_security", "expected_clause": "POL-202"}
+{"q": "How many weeks of paid parental leave do employees get?", "category": "hr", "expected_doc": "pol_hr", "expected_clause": "POL-301"}
+{"q": "When do vendor contracts require CFO sign-off?", "category": "finance", "expected_doc": "pol_finance", "expected_clause": "POL-401"}
+{"q": "What is required for company laptop disk encryption?", "category": "security", "expected_doc": "pol_adv_02", "expected_clause": "POL-299"}
+{"q": "How should airport transfers be expensed?", "category": "travel", "expected_doc": "pol_adv_01", "expected_clause": "POL-199"}

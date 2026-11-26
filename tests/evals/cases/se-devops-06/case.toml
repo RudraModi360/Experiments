@@ -1,0 +1,41 @@
+id = "se-devops-06"
+name = "Harden Dockerfile, pin dependencies, and fix silent cron cleanup failure"
+description = "Hard-to-medium DevOps task: multi-stage non-root Dockerfile, pinned requirements, crontab path, and strict space-safe cleanup.sh."
+enabled = true
+tags = ["code", "devops", "hard"]
+profile = "code"
+difficulty = "hard"
+
+input = '''
+Our container build in `./repo` violates `policy/container_policy.yaml` (bloated single-stage image, runs as root, unpinned deps) and the cleanup cron job fails silently on paths with spaces. Harden the packaging setup and verify all tests in `tests/test_packaging.py` pass without modifying the test file.
+'''
+
+expected_output = '''
+Hardened `Dockerfile` (multi-stage `python:3.12.7-slim`, non-root `USER`, `HEALTHCHECK`), pinned exact `==` versions in `requirements.txt`, fixed `cron/crontab` to point to `scripts/cleanup.sh`, and rewrote `scripts/cleanup.sh` with `set -euo pipefail`, safe quoting/`-print0` for spaces, and non-zero exit on missing directories. Verified `tests/test_packaging.py` passes unchanged.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_packaging.py"]
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "repo"
+exit_code = 0
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

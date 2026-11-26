@@ -1,0 +1,2 @@
+DBA Objection (Kiran): Outbox table will bloat Postgres disk unless we run automated partition/TTL cleanup every 24 hours.
+Security Objection (Elena): Event payloads contain customer PII—must apply field-level envelope encryption (KMS) and 7-day topic retention.

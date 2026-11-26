@@ -1,0 +1,45 @@
+id = "se-backend-03"
+name = "Fix checkout double-charge race, duplicate refunds, and currency rounding drift"
+description = "Ultra-hard backend debugging: SQLite concurrency race condition, idempotency constraints, webhook dedup, and Decimal ROUND_HALF_UP rules."
+enabled = true
+tags = ["code", "backend", "ultra-hard"]
+profile = "code"
+difficulty = "ultra-hard"
+
+input = '''
+Customers are seeing double charges on retried checkout requests, duplicate refund webhooks are being applied twice, and nightly reconciliation is off by a few cents. Fix the ledger service in `./repo` per `docs/accounting_rules.md` and verify all concurrency and reconciliation tests pass without editing `tests/test_concurrency_and_reconcile.py`.
+'''
+
+expected_output = '''
+Fixed all three defects in `app/db.py` and `app/ledger.py`:
+1. Added `UNIQUE` constraints on `charges.idempotency_key` and `refunds.event_id`, and handled concurrent inserts atomically (e.g. `BEGIN IMMEDIATE` / `IntegrityError` fallback returning the existing charge ID).
+2. Made `apply_refund_webhook` idempotent, returning `False` on duplicate `event_id`.
+3. Replaced float math in `compute_total` with `Decimal` and `ROUND_HALF_UP` (2 decimals for USD/EUR, 0 decimals for JPY).
+Verified `python3 -m unittest discover -s tests` passes cleanly with `tests/test_concurrency_and_reconcile.py` untouched.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 28
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_concurrency_and_reconcile.py"]
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "repo"
+exit_code = 0
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

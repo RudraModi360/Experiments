@@ -1,0 +1,6 @@
+criterion,type,weight_pct,requirement
+EU_Data_Residency,MANDATORY_BLOCKER,0,Must host EU customer data inside EU
+SOC2_Type_II,MANDATORY_BLOCKER,0,Must hold current SOC2 Type II
+Three_Year_TCO,WEIGHTED,40,Must not exceed CFO 3-year cap
+Technical_Score,WEIGHTED,40,Architecture and API fit
+SLA_Uptime,WEIGHTED,20,Minimum 99.9%

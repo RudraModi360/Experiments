@@ -1,0 +1,9 @@
+required_base_pin: "python:3.12.7-slim"
+require_multistage: true
+require_non_root_user: true
+require_healthcheck: true
+require_pinned_requirements: true
+cleanup_script:
+  must_use_strict_mode: true
+  must_handle_spaces_in_paths: true
+  must_not_swallow_errors: true

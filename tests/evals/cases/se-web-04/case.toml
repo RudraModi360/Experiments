@@ -1,0 +1,46 @@
+id = "se-web-04"
+name = "Fix search race condition, URL filter persistence, API mismatch, and comment XSS"
+description = "Ultra-hard web dev debugging across JS frontend modules, API contract, and PDF security audit."
+enabled = true
+tags = ["code", "web", "ultra-hard"]
+profile = "code"
+difficulty = "ultra-hard"
+
+input = '''
+In `./repo`, dashboard search shows stale results when typing fast, filters reset on reload, and security flagged an XSS bug in comments (see `docs/security_audit.pdf`). Fix all issues and verify the Node test suite passes without editing `tests/test_app.mjs`.
+'''
+
+expected_output = '''
+Fixed all issues across `web/src/`:
+1. Added request sequence tracking in `searchController.js` so stale out-of-order responses are ignored, and read `resp.items` to match `api/server.js`.
+2. Implemented full `URLSearchParams` serialization/parsing for `q`, `status`, and `sort` in `filterState.js`.
+3. Escaped HTML characters (`&`, `<`, `>`, `"`, `'`) and sanitized `javascript:`/`data:` URLs to `#` in `commentRenderer.js`.
+Verified `node --test tests/test_app.mjs` passes with `tests/test_app.mjs` untouched.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 28
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_app.mjs"]
+
+[[expect.commands]]
+command = "PATH=/opt/homebrew/bin:/usr/local/bin:$PATH node --test tests/test_app.mjs"
+cwd = "repo"
+exit_code = 0
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"
+use = ["instruction_hierarchy"]

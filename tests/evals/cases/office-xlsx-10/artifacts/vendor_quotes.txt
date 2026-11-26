@@ -1,0 +1,6 @@
+Venue Rental: $3,500 flat
+AV & Projector Package: $800 flat
+Catering Tiers (based on confirmed unique attendees):
+  - 1 to 15 attendees: $95 / person
+  - 16 to 30 attendees: $80 / person
+  - 31+ attendees: $70 / person

@@ -359,6 +359,11 @@ def cmd_run(args) -> int:
         env["EVAL_JUDGE_PROVIDER"] = args.judge_provider
     if args.judge_base_url:
         env["EVAL_JUDGE_BASE_URL"] = args.judge_base_url
+    if getattr(args, "judge_api_key", None):
+        # One key shared by judge and SUT (when SUT runs on Gemini).
+        env["EVAL_GOOGLE_API_KEY"] = args.judge_api_key
+        env["GEMINI_API_KEY"] = args.judge_api_key
+        env["GOOGLE_API_KEY"] = args.judge_api_key
     if args.agent_model:
         env["AGENT_MODEL"] = args.agent_model
     if args.agent_provider:
@@ -637,6 +642,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--judge-model")
     p.add_argument("--judge-provider")
     p.add_argument("--judge-base-url")
+    p.add_argument("--judge-api-key", "--api-key", dest="judge_api_key",
+                   help="Google/Gemini API key used for BOTH the judge and the agent (SUT) when it runs on Gemini")
     p.add_argument("--agent-model")
     p.add_argument("--agent-provider")
     p.add_argument("--agent-base-url")

@@ -1,0 +1,10 @@
+key,summary,points,status,blocker
+ENG-401,OAuth token refresh,5,Done,
+ENG-402,Invoice PDF export,8,Done,
+ENG-403,Webhook retry queue,5,Done,
+ENG-404,Audit log pagination,3,Done,
+ENG-405,Dark mode contrast fixes,5,Done,
+ENG-406,CSV importer streaming,8,Done,
+ENG-410,SSO metadata sync,5,In Progress,
+ENG-412,PCI vault rotation,5,Blocked,Waiting on InfoSec IAM role
+ENG-419,Stripe v3 webhook cutover,3,Blocked,Sandbox key expired

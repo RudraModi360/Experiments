@@ -1,7 +1,8 @@
 """LLM-judge configuration with a sticky fallback chain.
 
-The judge is the local Ollama model nemotron-3.5-bolt:e4b-64k (single target,
-no fallback chain). It is deliberately separate from the agent under test.
+The judge is Gemini (single target, no fallback chain): gemini-3.5-flash-lite.
+It is deliberately separate from the agent under test. Authentication errors
+are fatal so a bad key is visible instead of silently scoring another model.
 
 This is a DeepEval-compatible model: it implements ``DeepEvalBaseLLM`` and
 delegates ``generate`` / ``a_generate`` (with schema) to the active target,
@@ -32,7 +33,7 @@ RETRY_PREFIX = "[eval-judge-retry]"
 _LOGGED_CHAINS: set[str] = set()
 
 DEFAULT_JUDGE_CHAIN = (
-    "ollama:nemotron-3.5-bolt:e4b-64k",
+    "google:gemini-3.5-flash-lite",
 )
 DEFAULT_OLLAMA_JUDGE = "nemotron-3.5-bolt:e4b-64k"
 DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
@@ -108,9 +109,11 @@ def judge_chain() -> list[JudgeTarget]:
 
     targets = _parse_chain(",".join(DEFAULT_JUDGE_CHAIN))
     if not google_api_key():
-        # No Google key: keep only the local safety net.
-        targets = [t for t in targets if t.provider != "google"]
-    return targets or [JudgeTarget("ollama", DEFAULT_OLLAMA_JUDGE, DEFAULT_OLLAMA_BASE_URL)]
+        raise RuntimeError(
+            "Gemini judge requires an API key. Set EVAL_GOOGLE_API_KEY / GEMINI_API_KEY / "
+            "GOOGLE_API_KEY, or pass --judge-api-key, or use EVAL_JUDGE_PROVIDER=ollama."
+        )
+    return targets
 
 
 def describe_judge_chain() -> str:

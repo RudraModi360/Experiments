@@ -1,0 +1,6 @@
+timestamp,timezone,event
+2026-11-18 14:45:00,IST,Checkout API 503 alert triggered
+2026-11-18 09:30:00,UTC,DNS ruled out; shard-03 DB spike identified
+2026-11-18 15:45:00,IST,Root cause confirmed: shard-03 migration lock -> connection pool exhaustion
+2026-11-18 10:40:00,UTC,Migration killed and worker pool recycled
+2026-11-18 16:20:00,IST,Service fully recovered

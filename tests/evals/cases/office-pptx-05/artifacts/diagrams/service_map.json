@@ -1,0 +1,4 @@
+{
+  "monolith": ["api-gateway", "orders-db"],
+  "target": ["api-gateway", "outbox-relay", "kafka-orders-topic", "export-worker", "reconcile-worker"]
+}

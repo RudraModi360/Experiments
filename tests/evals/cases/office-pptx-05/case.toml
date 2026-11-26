@@ -1,0 +1,46 @@
+id = "office-pptx-05"
+name = "Create 6-slide Technical Architecture Migration Pitch Deck"
+description = "Hard-to-medium Office PPTX task: synthesize RFC, latency CSV bottlenecks, service map, and DBA/Security objections into a 6-slide deck."
+enabled = true
+tags = ["office", "pptx", "docs", "hard"]
+profile = "docs"
+difficulty = "hard"
+grounding = "tool_outputs"
+prompt_instructions = [
+  "Create Monolith_to_Events_Pitch.pptx with exactly 6 slides.",
+  "Cite the top two p99 bottlenecks (2480ms and 1920ms) and explicitly address both the DBA and Security objections."
+]
+
+input = '''
+Create a 6-slide technical pitch deck (`Monolith_to_Events_Pitch.pptx`) for our architecture review using `./docs`, `./data/latency_benchmarks.csv`, and `./diagrams/service_map.json`, covering current bottlenecks, target design, migration phases, and open risks.
+'''
+
+expected_output = '''
+Created 6-slide `Monolith_to_Events_Pitch.pptx` highlighting the top two p99 bottlenecks (`/api/orders/export` at 2480ms and `/api/billing/reconcile` at 1920ms), the outbox + Kafka event-driven target architecture, 3-phase migration plan, and explicit mitigations for DBA outbox bloat (24h TTL/partition cleanup) and Security PII encryption (KMS envelope encryption + 7-day retention).
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts"
+target = "."
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "Monolith_to_Events_Pitch.pptx"
+exists = true
+min_bytes = 1500
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"
+use = ["prompt_alignment"]

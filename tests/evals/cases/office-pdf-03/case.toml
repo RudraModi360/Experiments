@@ -1,0 +1,42 @@
+id = "office-pdf-03"
+name = "Generate Cloud Vendor RFP Selection & TCO PDF Report"
+description = "Ultra-hard Office PDF task: extract pricing and compliance from 3 vendor PDFs, enforce EU residency hard blocker & CFO budget cap, and build decision PDF."
+enabled = true
+tags = ["office", "pdf", "docs", "ultra-hard"]
+profile = "docs"
+difficulty = "ultra-hard"
+grounding = "tool_outputs"
+
+input = '''
+Compare the three cloud vendor proposals in `./rfp` against `rfp/compliance_matrix.csv` and `rfp/cfo_budget_email.txt`, and generate a polished, decision-ready PDF (`Vendor_Selection_Report.pdf`) for the procurement committee.
+'''
+
+expected_output = '''
+Generated `Vendor_Selection_Report.pdf` comparing Vendor Alpha ($405,000 3-yr TCO), Vendor Beta ($480,000 3-yr TCO), and Vendor Gamma ($630,000 3-yr TCO).
+Recommended **Vendor Beta** as the sole compliant option within budget: Vendor Alpha is disqualified for failing the mandatory EU Data Residency blocker (US-East only), and Vendor Gamma exceeds the CFO's $550,000 3-year TCO cap.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 28
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/rfp"
+target = "rfp"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "Vendor_Selection_Report.pdf"
+exists = true
+min_bytes = 1000
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

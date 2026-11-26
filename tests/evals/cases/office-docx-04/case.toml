@@ -1,0 +1,47 @@
+id = "office-docx-04"
+name = "Draft customer-facing Incident RCA Word doc and action-item tracker from war-room logs"
+description = "Ultra-hard Office DOCX task: extract verified root cause from Slack JSONL, normalize IST/UTC timeline, compute SLA credit from PDF, preserve .docx template, and scrub internal blame."
+enabled = true
+tags = ["office", "docx", "docs", "ultra-hard"]
+profile = "docs"
+difficulty = "ultra-hard"
+grounding = "tool_outputs"
+
+input = '''
+Turn the war-room Slack export, mixed-timezone timeline CSV, and SLA policy in `./warroom` into a formal customer-facing RCA (`Incident_2026_04_RCA.docx`) preserving the section headings from `warroom/rca_template.docx`, plus an internal `action_items.csv` tracker.
+'''
+
+expected_output = '''
+Created `Incident_2026_04_RCA.docx` preserving all five template headings with zero placeholders, normalized UTC timeline (09:15 UTC to 10:50 UTC = 95 minutes), verified root cause (unindexed migration lock on shard-03 causing connection pool exhaustion), and 10% monthly SLA credit per policy. Scrubbed all internal blame and employee names (Dave/botched/stupid). Created `action_items.csv` with all 3 remediation owners, due dates, and priorities.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 28
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/warroom"
+target = "warroom"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "Incident_2026_04_RCA.docx"
+exists = true
+min_bytes = 1500
+
+[[expect.files]]
+path = "action_items.csv"
+exists = true
+min_bytes = 80
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"
+use = ["instruction_hierarchy"]

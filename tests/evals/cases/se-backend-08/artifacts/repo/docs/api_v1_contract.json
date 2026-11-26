@@ -1,0 +1,10 @@
+{
+  "v1_user_fields": ["id", "email", "full_name"],
+  "v2_user_fields": ["id", "email", "first_name", "last_name"],
+  "name_split_rules": {
+    "trim_whitespace": true,
+    "mononym": "first_name = token, last_name = ''",
+    "multi_token": "first_name = first token, last_name = remaining tokens joined by single space",
+    "null_or_empty": "first_name = '', last_name = ''"
+  }
+}

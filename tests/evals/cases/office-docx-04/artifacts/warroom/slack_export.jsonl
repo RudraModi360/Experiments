@@ -1,0 +1,8 @@
+{"id": 1, "user": "oncall-bot", "ts": "2026-11-18T09:15:00Z", "text": "ALERT: Checkout API 503 error rate > 80%"}
+{"id": 2, "user": "sam", "ts": "2026-11-18T09:22:00Z", "text": "Might be a DNS outage? Checking Route53..."}
+{"id": 3, "user": "priya", "ts": "2026-11-18T09:30:00Z", "text": "DNS is clean. DB CPU is spiking on shard-03."}
+{"id": 4, "user": "alex", "ts": "2026-11-18T09:42:00Z", "text": "Honestly Dave completely botched the deploy\u2014this stupid legacy billing hack should have been deleted months ago."}
+{"id": 5, "user": "priya", "ts": "2026-11-18T10:15:00Z", "text": "VERIFIED ROOT CAUSE: An unindexed ALTER TABLE migration held a table lock on shard-03, causing connection pool exhaustion across checkout workers."}
+{"id": 6, "user": "priya", "ts": "2026-11-18T10:40:00Z", "text": "Killed migration PID and recycled worker pool; error rate dropping."}
+{"id": 7, "user": "oncall-bot", "ts": "2026-11-18T10:50:00Z", "text": "RESOLVED: Checkout API healthy. Total outage 95 minutes."}
+{"id": 8, "user": "maya-vp", "ts": "2026-11-18T11:05:00Z", "text": "Action items: 1) Add lock_timeout=5s guard to migrations (Owner: Priya, Due: 2026-11-25, P0); 2) Add connection-pool saturation alert (Owner: Sam, Due: 2026-11-28, P1); 3) Require dry-run migration check in CI (Owner: Alex, Due: 2026-12-02, P1). Reminder: keep internal blame/names out of the customer RCA."}

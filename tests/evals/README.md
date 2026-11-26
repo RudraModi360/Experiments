@@ -122,7 +122,7 @@ emitted, so logs still record every case. Disable the pinned line with
 |---|---|---|
 | SUT | `trymirai/Qwen3.5-9B-M` via uzu (`AGENT_PROVIDER=uzu`, 32k ctx) | `AGENT_MODEL`, `AGENT_PROVIDER`, `AGENT_BASE_URL`, `AGENT_NUM_CTX` |
 | SUT (served) | off by default; optional Google AI Studio chain | `EVAL_SERVING_CHAIN=google:gemini-3.5-flash-lite`, `EVAL_SERVING_DISABLE=0` |
-| Judge | Ollama `nemotron-3.5-bolt:e4b-64k` | `EVAL_JUDGE_CHAIN`, or `EVAL_JUDGE_PROVIDER=ollama\|local\|google` |
+| Judge | Gemini `gemini-3.5-flash-lite` (single, no fallback) | `--judge-api-key`, `GEMINI_API_KEY`, or `EVAL_JUDGE_CHAIN` |
 | Environment | uv (Python 3.12); `uzu` runtime dep, `deepeval==4.3.4` dev dep | `uv sync`, `uv run ...` |
 
 Judge fallback is sticky per case: a rate-limited target is not retried within

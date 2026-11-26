@@ -1,0 +1,3 @@
+From: Arjun Mehta (CFO)
+Subject: Cloud RFP 3-Year Budget Cap
+Our absolute 3-year TCO ceiling for this procurement is $550,000. Any vendor above $550,000 is ineligible. Also remember EU Data Residency is a legal hard blocker—do not pick a cheaper vendor that fails EU hosting.

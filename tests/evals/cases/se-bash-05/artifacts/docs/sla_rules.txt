@@ -1,0 +1,15 @@
+OUTAGE RECONCILIATION SPEC
+==========================
+Build a reusable pure-shell script `reconcile.sh` (POSIX/bash + awk/sed/jq/gzip/sort/uniq ONLY — NO python, node, perl, or ruby).
+Usage: ./reconcile.sh <access.log.gz> <gateway.jsonl> <orders_export.csv> <output.csv>
+
+Rules:
+1. From <access.log.gz>, extract all requests with HTTP status >= 500 that contain `order_id=ORD-XXXX`.
+2. From <gateway.jsonl>, deduplicate by `request_id` and extract order IDs where `.status == "FAILED"`.
+3. Normalize <orders_export.csv> (strip UTF-8 BOM and CRLF, deduplicate by `order_id`).
+4. Write <output.csv> with header:
+   order_id,http_5xx_count,gateway_failed,amount_usd
+   - Include ONLY order IDs that had either http_5xx_count > 0 OR gateway_failed == "yes", sorted lexicographically by order_id.
+   - `gateway_failed` is `yes` or `no`.
+   - `amount_usd` comes from orders_export.csv (or `0.00` if missing).
+5. Run `./reconcile.sh logs/access.log.gz logs/gateway.jsonl data/orders_export.csv outage_summary.csv` and verify `tests/verify_shell.sh` passes.

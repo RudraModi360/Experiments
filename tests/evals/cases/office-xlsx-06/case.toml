@@ -1,0 +1,41 @@
+id = "office-xlsx-06"
+name = "Organize bank & credit card CSVs into a Tax & Deductions Excel workbook"
+description = "Hard-to-medium Office XLSX task: exclude inter-account card transfer, flag duplicate charge, prorate 50/50 internet expense, and compute live formula totals."
+enabled = true
+tags = ["office", "xlsx", "docs", "hard"]
+profile = "docs"
+difficulty = "hard"
+grounding = "tool_outputs"
+
+input = '''
+Organize my bank statements, credit card CSV, and receipt notes in `./statements` using `./rules/deduction_categories.md` into `Tax_Prep_2026.xlsx` grouped by deductible category with live Excel totals, excluded transfers, prorated splits, and flagged duplicates. Summarize the totals in your response.
+'''
+
+expected_output = '''
+Created `Tax_Prep_2026.xlsx` with live Excel formulas. Excluded the $2,400 Chase Credit Card Autopay inter-account transfer, flagged the duplicate $89 Cloudflare charge on 2026-01-12, prorated Fiber Internet 50% ($600), and excluded non-deductible personal items. Deductible totals: Software & Cloud $209, Professional Services $650, Home Office & Equipment $1,050; Total Deductible = $1,909.00.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts"
+target = "."
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "Tax_Prep_2026.xlsx"
+exists = true
+min_bytes = 1500
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

@@ -1,0 +1,14 @@
+﻿order_id,customer,amount_usd
+ORD-1001,"Acme, Unit 1",125.00
+ORD-1002,"Acme, Unit 2",359.00
+ORD-1003,"Acme, Unit 3",223.00
+ORD-1004,"Acme, Unit 4",352.00
+ORD-1005,"Acme, Unit 5",129.00
+ORD-1006,"Acme, Unit 6",141.00
+ORD-1007,"Acme, Unit 7",24.00
+ORD-1007,"Acme, Unit 7",24.00
+ORD-1008,"Acme, Unit 8",339.00
+ORD-1009,"Acme, Unit 9",168.00
+ORD-1010,"Acme, Unit 10",212.00
+ORD-1011,"Acme, Unit 11",364.00
+ORD-1012,"Acme, Unit 12",228.00

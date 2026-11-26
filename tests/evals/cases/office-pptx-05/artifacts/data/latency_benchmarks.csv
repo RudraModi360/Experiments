@@ -1,0 +1,7 @@
+endpoint,p50_ms,p95_ms,p99_ms
+/api/health,4,8,12
+/api/catalog,35,90,145
+/api/checkout,110,320,580
+/api/orders/export,620,1650,2480
+/api/billing/reconcile,490,1210,1920
+/api/users/me,22,55,95

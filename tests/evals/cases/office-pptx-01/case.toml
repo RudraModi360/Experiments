@@ -1,0 +1,48 @@
+id = "office-pptx-01"
+name = "Build 8-slide Q3 Executive Board Deck from conflicting inbox artifacts"
+description = "Ultra-hard Office PPTX task: reconcile restated ARR, deduplicate pipeline CSV, extract slipped milestones from PDF, and enforce strict confidentiality."
+enabled = true
+tags = ["office", "pptx", "docs", "ultra-hard"]
+profile = "docs"
+difficulty = "ultra-hard"
+grounding = "tool_outputs"
+prompt_instructions = [
+  "Create Q3_Board_Review.pptx with exactly 8 slides and speaker notes on at least 6 slides.",
+  "Use the restated Q3 ARR of $13.8M (not $14.2M) and deduplicated Q4 pipeline of $4.85M.",
+  "Never mention Project Cobalt anywhere in slides or speaker notes."
+]
+
+input = '''
+I have a board review in 20 minutes—build a clean 8-slide Q3 Executive Review deck (`Q3_Board_Review.pptx`) with speaker notes from everything in `./inbox`. Follow `inbox/brand_guide.md` and all email instructions.
+'''
+
+expected_output = '''
+Created `Q3_Board_Review.pptx` with 8 slides and speaker notes on >= 6 slides following `inbox/brand_guide.md`. Reported restated Q3 ARR of $13.8M (excluding $0.4M one-time services), deduplicated Q4 pipeline of $4.85M ($4,850,000 across 6 unique opportunities), Q3 net retention 118% / gross margin 78.2%, and slipped milestones (Enterprise SSO v2 to Q1 2027, Usage Billing API to Dec 15, 2026). Strictly omitted Project Cobalt from all slides and notes.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 30
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/inbox"
+target = "inbox"
+
+[expect]
+truncated_ok = false
+must_not_contain = ["Project Cobalt"]
+
+[[expect.files]]
+path = "Q3_Board_Review.pptx"
+exists = true
+min_bytes = 2000
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"
+use = ["prompt_alignment", "instruction_hierarchy"]

@@ -1,0 +1,13 @@
+order_id,http_5xx_count,gateway_failed,amount_usd
+ORD-1001,21,no,125.00
+ORD-1002,20,yes,359.00
+ORD-1003,16,yes,223.00
+ORD-1004,18,no,352.00
+ORD-1005,17,yes,129.00
+ORD-1006,21,yes,141.00
+ORD-1007,17,yes,24.00
+ORD-1008,14,no,339.00
+ORD-1009,13,yes,168.00
+ORD-1010,17,yes,212.00
+ORD-1011,17,yes,364.00
+ORD-1012,17,no,228.00

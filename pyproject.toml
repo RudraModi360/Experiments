@@ -8,6 +8,11 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "matplotlib>=3.11.2",
+    "openpyxl>=3.1.5",
+    "python-docx>=1.2.0",
+    "python-pptx>=1.0.2",
+    "reportlab>=5.1.2",
     "requests>=2.34.2",
     "uzu>=0.7.2",
 ]
@@ -27,5 +32,10 @@ module-root = ""
 dev = [
     "deepeval==4.3.4",
     "google-genai>=3.6.1",
+    "matplotlib>=3.11.2",
     "ollama>=0.6.3",
+    "openpyxl>=3.1.5",
+    "python-docx>=1.2.0",
+    "python-pptx>=1.0.2",
+    "reportlab>=5.1.2",
 ]

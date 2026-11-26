@@ -1,0 +1,48 @@
+id = "office-docx-07"
+name = "Update Client Statement of Work Word document from call transcript and rate card"
+description = "Hard-to-medium Office DOCX task: apply 5 scope/date/term changes + mandatory IP clause, recalculate fee to $52,000, exclude deferred Phase-2 item."
+enabled = true
+tags = ["office", "docx", "docs", "hard"]
+profile = "docs"
+difficulty = "hard"
+grounding = "tool_outputs"
+
+input = '''
+Update `Draft_SOW.docx` with everything agreed in `call_transcript.txt`, `rate_card_2026.csv`, and `legal_clauses.md`. Save the updated Word document as `Final_SOW.docx` and write a concise `changes_summary.md` listing the exact deltas.
+'''
+
+expected_output = '''
+Created `Final_SOW.docx` and `changes_summary.md`. Applied all agreed updates: removed Legacy CSV Export Bridge (-$4,000), added Okta SSO Integration (+$8,000) bringing Total Phase 1 Fixed Fee to $52,000, updated Target Launch Date to 2026-12-18, changed Payment Terms to Net-30, inserted the mandatory IP clause ("All custom deliverables become Client Intellectual Property upon full payment"), and noted iOS Mobile App is deferred to Phase 2 with $0 Phase 1 fee.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts"
+target = "."
+
+[expect]
+truncated_ok = false
+files_unchanged = ["Draft_SOW.docx"]
+
+[[expect.files]]
+path = "Final_SOW.docx"
+exists = true
+min_bytes = 1200
+
+[[expect.files]]
+path = "changes_summary.md"
+exists = true
+min_bytes = 80
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"
+use = ["cross_file_consistency"]

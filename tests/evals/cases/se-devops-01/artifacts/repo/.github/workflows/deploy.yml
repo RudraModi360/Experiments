@@ -1,0 +1,18 @@
+name: Staging Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "lint ok"
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: python3 -m unittest discover -s tests
+  deploy-staging:
+    needs: [lint, unit-test]
+    runs-on: ubuntu-latest
+    steps:
+      - run: bash scripts/smoke_check.sh

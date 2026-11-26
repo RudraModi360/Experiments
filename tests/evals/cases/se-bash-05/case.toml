@@ -1,0 +1,47 @@
+id = "se-bash-05"
+name = "Pure-shell outage log forensics and CSV reconciliation"
+description = "Hard-to-medium pure bash task: gzipped access logs, JSONL gateway logs, BOM/CRLF CSV, and hidden fixture verification without Python."
+enabled = true
+tags = ["code", "bash", "hard"]
+profile = "code"
+difficulty = "hard"
+
+input = '''
+Parse the raw access and gateway logs from last night's outage per `docs/sla_rules.txt`, write a pure-shell `reconcile.sh` (no Python/Node/Perl/Ruby), generate `outage_summary.csv`, and verify `tests/verify_shell.sh` passes without modifying anything in `tests/`.
+'''
+
+expected_output = '''
+Created pure-shell `reconcile.sh` using gzip/awk/sed/jq/sort (no Python/Node/Perl/Ruby), stripped UTF-8 BOM and CRLF from `orders_export.csv`, deduplicated `gateway.jsonl` by `request_id`, generated `outage_summary.csv`, and verified `tests/verify_shell.sh` passes on both primary and hidden fixtures.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts"
+target = "."
+
+[expect]
+truncated_ok = false
+files_unchanged = ["tests/verify_shell.sh", "tests/expected_primary.csv", "tests/expected_hidden.csv"]
+
+[[expect.commands]]
+command = "bash tests/verify_shell.sh"
+cwd = "."
+exit_code = 0
+contains = ["SHELL_VERIFY_OK"]
+
+[[expect.files]]
+path = "outage_summary.csv"
+exists = true
+contains = ["order_id,http_5xx_count,gateway_failed,amount_usd"]
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

@@ -1,0 +1,43 @@
+id = "office-pdf-08"
+name = "Build Multi-City Europe Trip PDF Itinerary and flag timezone/transfer conflicts"
+description = "Hard-to-medium Office PDF task: merge flights, hotel PDF, ICS invites, and per-diem rules while catching 2 hidden schedule conflicts."
+enabled = true
+tags = ["office", "pdf", "docs", "hard"]
+profile = "docs"
+difficulty = "hard"
+grounding = "tool_outputs"
+
+input = '''
+Build a clean printable PDF itinerary (`Europe_Trip_Itinerary.pdf`) combining my flights, hotel vouchers, calendar invites, and expense policy in `./bookings`—and explicitly flag any timing or timezone conflicts.
+'''
+
+expected_output = '''
+Created `Europe_Trip_Itinerary.pdf` with chronological London (Dec 7-8, The Hoxton Holborn HOX-771, GBP 85/day) and Frankfurt (Dec 8-10, Steigenberger STG-204, EUR 75/day) schedule, flight references BA118/BA-991X and LH902/LH-442K, and flagged both schedule conflicts:
+1. Dec 7 timezone overlap: London Partner Workshop (15:00 GMT) overlaps directly with Berlin Sales Sync (16:00 CET = 15:00 GMT).
+2. Dec 8 impossible transfer: LH902 lands at FRA at 14:25 CET, leaving only 35 minutes before the 15:00 CET Frankfurt Bank CIO Briefing (policy requires 75-min buffer and transit is 40 min).
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 20
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts/bookings"
+target = "bookings"
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "Europe_Trip_Itinerary.pdf"
+exists = true
+min_bytes = 800
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

@@ -1,0 +1,42 @@
+id = "se-backend-08"
+name = "Fix SQLite user name migration, v1/v2 API compatibility, and sliding-window rate limiter"
+description = "Hard-to-medium backend task: idempotent schema migration with edge-case names and exact sliding-window rate limiter."
+enabled = true
+tags = ["code", "backend", "hard"]
+profile = "code"
+difficulty = "hard"
+
+input = '''
+Fix the user profile migration (`src/migrate.py`) in `./repo` per `docs/api_v1_contract.json` so `full_name` is split into `first_name`/`last_name` idempotently without breaking v1 clients, and fix the sliding-window rate limiter in `src/ratelimit.py`. Verify `tests/test_migration_and_api.py` passes without modifying the tests.
+'''
+
+expected_output = '''
+Fixed `src/migrate.py` to check existing columns before `ALTER TABLE` (idempotent), preserve `full_name`, trim whitespace, and handle mononyms, multi-token names, and empty/null values per `docs/api_v1_contract.json`. Fixed `src/ratelimit.py` to prune timestamps at `now - t >= window_seconds` and only append timestamps for allowed requests. Verified `tests/test_migration_and_api.py` passes unchanged.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 22
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_migration_and_api.py"]
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "repo"
+exit_code = 0
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"
+use = ["cross_file_consistency"]

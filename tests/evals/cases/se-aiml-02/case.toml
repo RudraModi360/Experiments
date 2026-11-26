@@ -1,0 +1,50 @@
+id = "se-aiml-02"
+name = "Fix churn model target leakage, schema drift, and evaluation pipeline"
+description = "Ultra-hard AI/ML debugging: post-churn leakage column, random vs chronological split, prod casing/missing-value drift, and PDF feature spec."
+enabled = true
+tags = ["code", "aiml", "ultra-hard"]
+profile = "code"
+difficulty = "ultra-hard"
+
+input = '''
+The churn model in `./repo` hits ~97% AUC in training but fails in production holdout. Read the feature spec in `docs/feature_spec.pdf`, find why, fix the training and inference pipeline, retrain, and write `evaluation_report.md` with the verified results. Do not edit `tests/test_pipeline.py`.
+'''
+
+expected_output = '''
+Identified and fixed all root causes:
+1. Removed post-churn leakage column `cancellation_ticket_flag` from `src/features.py` (per `docs/feature_spec.pdf`).
+2. Normalized `plan_tier` to lowercase and imputed missing `monthly_spend` with the training-set median so `prod_holdout.csv` does not crash or drift.
+3. Switched `src/train.py` from random split to chronological split ordered by `event_month` (`split_strategy = "chronological"`).
+4. Retrained `model.json`, verified holdout ROC-AUC >= 0.82 on `data/prod_holdout.csv`, wrote `evaluation_report.md`, and confirmed `tests/test_pipeline.py` passes unchanged.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 30
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_pipeline.py"]
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "repo"
+exit_code = 0
+
+[[expect.files]]
+path = "repo/evaluation_report.md"
+exists = true
+min_bytes = 120
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

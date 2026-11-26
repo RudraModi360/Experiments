@@ -1,0 +1,6 @@
+Client Call Transcript (2026-11-24):
+- Sarah (Client): Let's drop the Legacy CSV Export Bridge (-20 hrs Senior Engineer) and add Okta SSO Integration (+40 hrs Senior Engineer).
+- Raj (Delivery): Sounds good. That shifts our Target Launch Date by two weeks to 2026-12-18.
+- Sarah (Client): Agreed. Also we'll update Payment Terms from Net-60 to Net-30.
+- Sarah (Client): What about the iOS Mobile App? Let's explicitly defer the Mobile App to Phase 2—do NOT include any Mobile App fees in Phase 1.
+- Raj (Delivery): Got it, and we'll insert the mandatory IP ownership clause from legal.

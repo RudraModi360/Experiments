@@ -1,0 +1,45 @@
+id = "se-web-09"
+name = "Fix checkout coupon casing, tax-exempt calculation, and modal focus wrapping"
+description = "Simple-to-medium web dev bugfix from QA report verified with Node built-in test runner."
+enabled = true
+tags = ["code", "web", "medium"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+Fix the three checkout bugs in `./repo/checkout.js` described in `docs/qa_bug_report.md` and verify `tests/test_checkout.mjs` passes without editing the tests.
+'''
+
+expected_output = '''
+Fixed `checkout.js`:
+1. Trimmed and uppercased coupon codes before lookup in `applyCoupon`.
+2. Applied discount proportionally and calculated sales tax only on non-`taxExempt` items in `calculateTotal`.
+3. Wrapped modal focus indices modulo `total` on Tab and Shift+Tab in `nextModalFocus`.
+Verified `node --test tests/test_checkout.mjs` passes unchanged.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 15
+timeout_seconds = 300
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_checkout.mjs"]
+
+[[expect.commands]]
+command = "PATH=/opt/homebrew/bin:/usr/local/bin:$PATH node --test tests/test_checkout.mjs"
+cwd = "repo"
+exit_code = 0
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

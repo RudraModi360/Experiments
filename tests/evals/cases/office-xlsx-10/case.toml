@@ -1,0 +1,41 @@
+id = "office-xlsx-10"
+name = "Build Team Offsite Budget & Attendee Logistics Excel workbook"
+description = "Medium-to-easy Office XLSX task: deduplicate RSVPs, exclude cancellations, select tiered catering price, and compute live budget totals."
+enabled = true
+tags = ["office", "xlsx", "docs", "medium"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+
+input = '''
+Combine `rsvp_export.csv`, `vendor_quotes.txt`, and `budget_cap.txt` into a clean `Team_Offsite_Plan.xlsx` with a budget summary tab (live Excel formulas) and an attendee/dietary breakdown tab. Summarize the headcount and budget variance in your reply.
+'''
+
+expected_output = '''
+Created `Team_Offsite_Plan.xlsx` with live formulas. Deduplicated 2 duplicate emails and excluded 3 cancellations for 20 confirmed attendees (4 Vegetarian, 2 Vegan, 1 Gluten-Free, 13 None). Selected the 16-30 attendee catering tier ($80/person = $1,600) plus $3,500 venue and $800 AV = $5,900 total, which is $600 under the $6,500 budget cap.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 15
+timeout_seconds = 300
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts"
+target = "."
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "Team_Offsite_Plan.xlsx"
+exists = true
+min_bytes = 1200
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"

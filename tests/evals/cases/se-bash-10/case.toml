@@ -1,0 +1,42 @@
+id = "se-bash-10"
+name = "Write backup & 7-daily/4-weekly rotation script with symlink hygiene"
+description = "Simple-to-medium pure bash task: tar archiving with spaces, .backupignore, broken symlink skipping, and macOS-compatible date retention."
+enabled = true
+tags = ["code", "bash", "medium"]
+profile = "code"
+difficulty = "medium"
+
+input = '''
+Write `rotate_backups.sh` following `docs/retention_policy.md` to archive `./projects` (respecting `.backupignore`, spaces in paths, and skipping broken symlinks) and enforce the 7-daily + 4-Sunday-weekly retention policy on `./backups`. Verify `tests/test_backup.sh` passes without modifying it.
+'''
+
+expected_output = '''
+Created `rotate_backups.sh` supporting `--ref-date YYYY-MM-DD`, archiving `./projects` while excluding `.backupignore` patterns and broken symlinks, and pruning `./backups/backup-*.tar.gz` to keep the 7 most recent daily backups plus the 4 most recent Sunday backups. Verified `bash tests/test_backup.sh` prints `BACKUP_ROTATION_OK`.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 16
+timeout_seconds = 300
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts"
+target = "."
+
+[expect]
+truncated_ok = false
+files_unchanged = ["tests/test_backup.sh"]
+
+[[expect.commands]]
+command = "bash tests/test_backup.sh"
+cwd = "."
+exit_code = 0
+contains = ["BACKUP_ROTATION_OK"]
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"

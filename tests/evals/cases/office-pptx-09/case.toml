@@ -1,0 +1,46 @@
+id = "office-pptx-09"
+name = "Create 5-slide Friday Sprint 14 Stakeholder Update Deck"
+description = "Medium-to-easy Office PPTX task: summarize Jira CSV story points, wins, and blockers into 5 slides."
+enabled = true
+tags = ["office", "pptx", "docs", "medium"]
+profile = "docs"
+difficulty = "medium"
+grounding = "tool_outputs"
+prompt_instructions = [
+  "Create Sprint_14_Update.pptx with exactly 5 slides.",
+  "Report exact completed points (34), carryover points (13), and both blocked tickets (ENG-412, ENG-419)."
+]
+
+input = '''
+Turn our sprint notes, goals, and Jira CSV export in the workspace into a quick 5-slide Friday stakeholder update (`Sprint_14_Update.pptx`).
+'''
+
+expected_output = '''
+Created 5-slide `Sprint_14_Update.pptx` reporting 34 completed story points (6 Done tickets), 13 carryover points (1 In Progress, 2 Blocked), key wins (Invoice PDF export, CSV streaming importer), and both blockers requiring escalation (`ENG-412` InfoSec IAM role and `ENG-419` expired Stripe sandbox key).
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 15
+timeout_seconds = 300
+
+[[workspace.artifacts]]
+kind = "docs"
+source = "artifacts"
+target = "."
+
+[expect]
+truncated_ok = false
+
+[[expect.files]]
+path = "Sprint_14_Update.pptx"
+exists = true
+min_bytes = 1200
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "docs"
+use = ["prompt_alignment"]

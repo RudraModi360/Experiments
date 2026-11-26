@@ -1,0 +1,53 @@
+id = "se-devops-01"
+name = "Fix multi-layer staging deploy & payment-worker crash-loop"
+description = "Ultra-hard DevOps debugging across compose, nginx, Dockerfile, GitHub Actions, staging.env, and a 150KB log file."
+enabled = true
+tags = ["code", "devops", "ultra-hard"]
+profile = "code"
+difficulty = "ultra-hard"
+
+input = '''
+Our staging deploy pipeline in `./repo` broke after Friday's infra cleanup and the payment worker keeps crash-looping. Fix the deployment setup and verify the stack passes all smoke checks and unit tests without modifying `tests/test_infra.py`.
+'''
+
+expected_output = '''
+Fixed all four cross-file infra defects:
+1. Updated `nginx.conf` upstream from `api:8000` to `api:8080` to match `docker-compose.yml` and `Dockerfile.api`.
+2. Updated `Dockerfile.worker` HEALTHCHECK from `/tmp/worker.ok` to `/tmp/worker.ready` to match `app/worker.py`.
+3. Fixed `REDIS_URI` -> `REDIS_URL` in `docker-compose.yml` and `staging.env`, and added `PAYMENT_SIGNING_KEY` to `staging.env`.
+4. Fixed `.github/workflows/deploy.yml` `deploy-staging` job dependency from `unit-test` to `tests`.
+Verified `scripts/smoke_check.sh` and `python3 -m unittest discover -s tests` pass with `tests/test_infra.py` unchanged.
+'''
+
+[workspace]
+network = false
+bash = true
+max_steps = 30
+timeout_seconds = 600
+
+[[workspace.artifacts]]
+kind = "repo"
+source = "artifacts/repo"
+target = "repo"
+
+[expect]
+truncated_ok = false
+files_unchanged = ["repo/tests/test_infra.py"]
+
+[[expect.commands]]
+command = "python3 -m unittest discover -s tests -q"
+cwd = "repo"
+exit_code = 0
+
+[[expect.commands]]
+command = "bash scripts/smoke_check.sh"
+cwd = "repo"
+exit_code = 0
+contains = ["worker ok"]
+
+[checks]
+module = "checks.py"
+
+[metrics]
+profile = "code"
+use = ["cross_file_consistency"]
